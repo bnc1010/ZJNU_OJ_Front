@@ -9,21 +9,20 @@
           <ul class="legals social">
             <li>
               <a href="http://www.zjnu.edu.cn/" title="浙江师范大学" target="_blank">
+                <svg-icon icon-class="zjnu"></svg-icon>
+              </a>
+            </li>
+            <li>
+              <a href="mailto:zjnu-acm@outlook.com" title="联系地址">
                 <svg-icon icon-class="email"></svg-icon>
               </a>
             </li>
             <li>
-              <a href="mailto:zjnu-acm@outlook.com" title="商务合作">
-                <svg-icon icon-class="email"></svg-icon>
-              </a>
-            </li>
-            <li>
-              <a href="https://github.com/bnc1010/ZJNU_OJ_Front" title="开源" target="_blank">
+              <a href="https://github.com/bnc1010/ZJNU_OJ_Front" title="开源地址" target="_blank">
                 <svg-icon icon-class="github"></svg-icon>
               </a>
             </li>
           </ul>
-          
           <p class="copy">© 2020 · ZJNU-ACM · All Rights Reserved</p>
         </div>
       </div>
