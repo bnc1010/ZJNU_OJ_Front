@@ -4,7 +4,7 @@
       <el-row :gutter="20">
         <el-col :span="6" :xs="24">
           <user-card :user="user" />
-          <AbilityCard />
+          <AbilityCard :chartData="chartData" />
         </el-col>
         <el-col :span="18" :xs="24">
           <el-card>
@@ -41,7 +41,8 @@ export default {
       user: {},
       birthday:'2020-07-29 00:00:00',
       activeTab: 'account',
-      sex:1
+      sex:1,
+      chartData:[50, 60, 70, 10, 20, 80]
     }
   },
   created() {
