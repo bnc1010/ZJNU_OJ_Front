@@ -51,9 +51,7 @@ export default {
     }
   },
   created(){
-    console.log(this.permission_routes)
     if(this.permission_routes.length===0){
-      
       this.$store.dispatch('permission/generateRoutes',[])
     }
   }

@@ -19,17 +19,35 @@
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
-        <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+        <div v-if="havelogin">
+          <div class="avatar-wrapper">
+            <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+            <i class="el-icon-caret-bottom" />
+          </div>
+        </div>
+        <div v-else>
+          <div class="avatar-wrapper">
+            <img src="../../assets/nologin.png" class="user-avatar">
+            <i class="el-icon-caret-bottom" />
+          </div>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
-            <el-dropdown-item>个人中心</el-dropdown-item>
-          </router-link>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
-          </el-dropdown-item>
+          <div v-if="havelogin">
+            <router-link to="/profile/index">
+              <el-dropdown-item>个人中心</el-dropdown-item>
+            </router-link>
+            <el-dropdown-item divided @click.native="logout">
+              <span style="display:block;">登  出</span>
+            </el-dropdown-item>
+          </div>
+          <div v-else>
+            <router-link to="/login">
+              <el-dropdown-item>登  录</el-dropdown-item>
+            </router-link>
+            <router-link to="/register">
+              <el-dropdown-item>注  册</el-dropdown-item>
+            </router-link>
+          </div>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -48,11 +66,17 @@ export default {
     Hamburger,
     ErrorLog,
   },
+  data(){
+    return {
+      havelogin:true
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
       'avatar',
-      'device'
+      'device',
+      'token'
     ])
   },
   methods: {
@@ -62,6 +86,11 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    }
+  },
+  created(){
+    if(this.token==null || this.token.length===0){
+      this.havelogin=false
     }
   }
 }
