@@ -26,14 +26,13 @@
 
 <script>
 import UserCard from './components/UserCard'
-import Activity from './components/Activity'
 import Timeline from './components/Timeline'
 import Account from './components/Account'
 import AbilityCard from './components/AbilityCard'
 
 export default {
   name: 'Profile',
-  components: { UserCard, Activity, Timeline, Account, AbilityCard},
+  components: { UserCard, Timeline, Account, AbilityCard},
   data() {
     return {
       name:'test',
