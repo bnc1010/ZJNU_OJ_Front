@@ -5,12 +5,18 @@
         <router-view :key="key" />
       </keep-alive>
     </transition>
+    <footerBar></footerBar>
   </section>
 </template>
 
 <script>
+import footerBar from '@/components/FooterBar'
+
 export default {
   name: 'AppMain',
+  components:{
+    footerBar
+  },
   computed: {
     cachedViews() {
       return this.$store.state.tagsView.cachedViews
