@@ -1,11 +1,15 @@
 <template>
-    <mavonEditor v-model="content"
-    :ishljs="true"
-    :subfield="false"                                    
- 		:boxShadow="false"                                    
- 		defaultOpen="preview"                                    
- 		:toolbarsFlag="false" 
-    ></mavonEditor>
+    <div class="app-container">
+      <el-card>
+        <mavonEditor v-model="content"
+        :ishljs="true"
+        :subfield="false"                                    
+        :boxShadow="false"                                    
+        defaultOpen="preview"                                    
+        :toolbarsFlag="false" 
+        ></mavonEditor>
+      </el-card>
+    </div>
 </template>
 <script>
 
