@@ -84,6 +84,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/profile',
+    component: Layout,
+    children: [
+      {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('@/views/profile'),
+        meta: { title: '个人中心' }
+      }
+    ],
+    hidden: true
+  },
+  {
     path: '/problem',
     component: Layout,
     children: [

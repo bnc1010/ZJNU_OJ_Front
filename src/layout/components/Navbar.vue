@@ -33,7 +33,7 @@
         </div>
         <el-dropdown-menu slot="dropdown">
           <div v-if="havelogin">
-            <router-link to="/profile/index">
+            <router-link to="/profile">
               <el-dropdown-item>个人中心</el-dropdown-item>
             </router-link>
             <el-dropdown-item divided @click.native="logout">
