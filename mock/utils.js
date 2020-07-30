@@ -20,6 +20,15 @@ function param2Obj(url) {
   return obj
 }
 
+function resultfulParam(url) {
+  let parm = decodeURIComponent(url.split('/').slice(-1)).replace(/\+/g, ' ')
+  if (!parm) {
+    return {}
+  }
+  return parm
+}
+
+
 /**
  * This is just a simple version of deep copy
  * Has a lot of edge cases bug

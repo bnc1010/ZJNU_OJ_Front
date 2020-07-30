@@ -46,16 +46,18 @@
                 :data="tableData"
                 :fit="true"
                 style="width: 100%"
-                :row-class-name="tableRowClassName">>
+                :row-class-name="tableRowClassName">
                 <el-table-column
                     prop="id"
                     label="ID"
                     width="80">
                 </el-table-column>
-                <el-table-column
-                    prop="problem"
-                    label="题目名称"
-                    width="350">
+                <el-table-column label="题目名称" width="350">
+                    <template slot-scope="scope">
+                        <router-link :to="'./detial/' + scope.row.id">
+                            {{scope.row.problem}}
+                        </router-link>
+                    </template>
                 </el-table-column>
                 <el-table-column label="标签" width="320">
                     <template slot-scope="scope">
