@@ -180,6 +180,18 @@ export function param2Obj(url) {
 }
 
 /**
+ * @param {string} url
+ * @returns {Object}
+ */
+export function paramOfResultfulUrl(url) {
+  let parm = decodeURIComponent(url.split('/').slice(-1)).replace(/\+/g, ' ')
+  if (!parm) {
+    return ''
+  }
+  return parm
+}
+
+/**
  * @param {string} val
  * @returns {string}
  */
@@ -355,3 +367,31 @@ export function removeClass(ele, cls) {
     ele.className = ele.className.replace(reg, ' ')
   }
 }
+
+export function calSize(sz){
+    var tp = sz
+    if (tp < 1024){
+        return '' +  tp.toFixed(2) + 'b'
+    }
+    
+    tp = tp / 1024
+    if (tp < 1024){
+        return '' +  tp.toFixed(2) + 'K'
+    }
+
+    tp = tp / 1024
+    if (tp < 1024){
+        return '' + tp.toFixed(2) + 'M'
+    }
+
+    tp = tp / 1024
+    if (tp < 1024){
+        return '' +  tp.toFixed(2) + 'G'
+    }
+
+    tp = tp / 1024
+    if (tp < 1024){
+        return '' +  tp.toFixed(2) + 'T'
+    }
+
+  }

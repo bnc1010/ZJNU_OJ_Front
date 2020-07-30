@@ -99,15 +99,26 @@ export const constantRoutes = [
   {
     path: '/problem',
     component: Layout,
+    redirect: '/problem/index',
+    meta: { title: '题库', icon: 'list',},
     children: [
       {
-        path: '/problem',
+        path: 'index',
         component: () => import('@/views/problem'),
         name: 'problem',
-        meta: { title: '题库', icon: 'list',}
-      }
+        hidden: true,
+        meta: { title: '题目列表', activeMenu: '/problem'},
+      },
+      {
+        path: 'detial/:id(\\d+)',
+        hidden: true,
+        component: () => import('@/views/problem/detial'),
+        name: 'problemDetial',
+        meta: { title: '题目', activeMenu: '/problem', noCache: true}
+      },
     ]
   },
+  
   {
     path: '/contest',
     component: Layout,
