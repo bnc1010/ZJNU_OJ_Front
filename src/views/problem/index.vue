@@ -41,6 +41,20 @@
                 </el-row>
             </el-card>
             <el-card>
+            <div class="pagebar">
+                <center>
+                    <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="page"
+                    :page-sizes="[20, 50, 100]"
+                    :page-size="pagesize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="pagetotal">
+                    </el-pagination>
+                </center>
+            </div>
+            <el-divider></el-divider>
             <center>
               <el-table
                 :data="tableData"
@@ -68,7 +82,7 @@
                 </el-table-column>
                 <el-table-column label="通过率" width="120">
                     <template slot-scope="scope">
-                        <el-tooltip class="item" effect="dark" :content="'ac:' + scope.row.ac + ' / submit:' + scope.row.total" placement="top-start">
+                        <el-tooltip class="item" effect="dark" :content="'ac:' + scope.row.acc + ' / submit:' + scope.row.total" placement="top-start">
                             <el-progress :text-inside="true" :stroke-width="20" :percentage="scope.row.acrate" color="#5cb87a" ></el-progress>
                         </el-tooltip>
                     </template>
@@ -81,14 +95,18 @@
                 </el-table-column>
                 </el-table>
             </center>
+            <el-divider></el-divider>
                 <div class="pagebar">
                     <center>
                         <el-pagination
-                        layout="prev, pager, next"
+                        @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :page-size="this.pagesize"
-                        :total="this.pagetotal"
-                        ></el-pagination>
+                        :current-page="page"
+                        :page-sizes="[20, 50, 100]"
+                        :page-size="pagesize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="pagetotal">
+                        </el-pagination>
                     </center>
                 </div>
             </el-card>
@@ -97,85 +115,30 @@
   </div>
 </template>
 <script>
+import {getProblems, getTags} from '@/api/problem'
 export default {
     name: "problem",
     components:{} ,
     data(){
         return {
-            pagetotal: 600,
-            pagesize: 10,
-            tableData: [{
-                id: '1',
-                problem: 'test1',
-                tags: ['组合数学', '贪心', '搜索', '二分图'],
-                ac: 5,
-                total: 10,
-                value: 10,
-                acrate: 50,
-                ac: false
-                }, {
-                id: '2',
-                problem: 'test2',
-                tags: ['组合数学', '贪心'],
-                ac: 5,
-                total: 10,
-                value: 10,
-                acrate: 50,
-                ac: false
-                }, {
-                id: '3',
-                problem: 'test3',
-                tags: ['组合数学', '贪心'],
-                ac: 5,
-                total: 10,
-                value: 10,
-                acrate: 50,
-                ac: true
-                }, {
-                id: '4',
-                problem: 'test4',
-                tags: ['组合数学', '贪心'],
-                ac: 5,
-                total: 10,
-                value: 10,
-                acrate: 50,
-                ac: false
-                }, {
-                id: '5',
-                problem: 'test5',
-                tags: ['组合数学', '贪心'],
-                ac: 5,
-                total: 10,
-                value: 10,
-                acrate: 50,
-                ac: false
-                }, {
-                id: '6',
-                problem: 'test6',
-                tags: ['组合数学', '贪心'],
-                ac: 5,
-                total: 10,
-                value: 10,
-                acrate: 50,
-                ac: false
-                }, {
-                id: '7',
-                problem: 'test7',
-                tags: ['组合数学', '贪心'],
-                ac: 5,
-                total: 10,
-                value: 10,
-                acrate: 50,
-                ac: true
-            }],
-            tags:['组合数学', '贪心', '搜索', '二分图', '计算几何', '容斥', '模拟'],
+            pagesize: 20,
+            page: 1,
+            search:'',
+            pagetotal: 0,
+            tableData: [],
+            tags:[],
             searchText: '',
-            searchTag: ['组合数学']
+            searchTag: []
         }
     },
     methods:{
-        handleCurrentChange: function(){
-            return 
+        handleCurrentChange: function(val){
+            this.page=val
+            this.flushProblemList()
+        },
+        handleSizeChange: function(val){
+            this.pagesize=val
+            this.flushProblemList()
         },
         tagColor: function(key){
             let colors = ['#2185d0', '#21ba45', '#f2711c', '#e03997', '#a5673f']
@@ -195,10 +158,26 @@ export default {
             if(this.searchTag.indexOf(tag)===-1){
                 this.searchTag.push(tag)
             }
+        },
+        flushProblemList: function(){
+            getProblems(this.page, this.pagesize, this.search).then(res => {
+                this.tableData=res.data.content
+                this.pagetotal=res.data.pagetotal
+            }).catch(err => {
+
+            })
+        },
+        handleTags: function(){
+            getTags().then(res => {
+                this.tags = res.data
+            }).catch(err => {
+
+            })
         }
     },
-    computed: {
-        
+    mounted(){
+        this.handleTags()
+        this.flushProblemList()
     }
 }
 </script>

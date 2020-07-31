@@ -15,3 +15,5 @@ npm run dev
 ```
 
 This will automatically open http://localhost:9527
+
+online dome : http://101.132.160.250:9527/ 数据由mock产生
