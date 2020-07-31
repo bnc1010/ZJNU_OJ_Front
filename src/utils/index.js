@@ -395,3 +395,35 @@ export function calSize(sz){
     }
 
   }
+
+  export function calTime(sz){
+    var tp = sz
+    var res=''
+    var tmp = tp % 60
+    if (tmp != 0){
+       res = tmp + '秒' + res
+    }
+    tp = Math.floor(tp / 60)
+    tmp = tp % 60
+    if (tmp != 0){
+      res = tmp + '分' + res
+    }
+    
+    tp = Math.floor(tp / 60)
+    tmp = tp % 24
+    if (tmp != 0){
+      res = tmp + '时' + res
+    }
+    
+    tp = Math.floor(tp / 24)
+    tmp = tp % 365
+    if (tmp != 0){
+      res = tmp + '天' + res
+    }
+    tp = Math.floor(tp / 365)
+    if(tp > 0){
+      res = tmp + '年' + res
+    }
+    return res
+  }
+

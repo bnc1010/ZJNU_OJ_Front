@@ -53,5 +53,6 @@ function deepClone(source) {
 
 module.exports = {
   param2Obj,
-  deepClone
+  deepClone,
+  resultfulParam
 }

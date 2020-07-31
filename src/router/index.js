@@ -121,14 +121,23 @@ export const constantRoutes = [
   
   {
     path: '/contest',
+    redirect: '/contest/index',
+    meta: { title: '比赛', icon: 'contest2' },
     component: Layout,
     children: [
       {
-        path: '/contest',
+        path: '/contest/index',
         component: () => import('@/views/contest'),
         name: 'contest',
-        meta: { title: '比赛', icon: 'contest2' }
-      }
+        meta: { title: '比赛列表', activeMenu: '/contest'}
+      },
+      {
+        path: 'detial/:id(\\d+)',
+        hidden: true,
+        component: () => import('@/views/contest/detial'),
+        name: 'contestDetial',
+        meta: { title: '详情', activeMenu: '/contest', noCache: true}
+      },
     ]
   },
   {

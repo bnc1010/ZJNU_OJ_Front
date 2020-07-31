@@ -32,11 +32,11 @@
                     <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :current-page="page"
+                    :current-page="page.index"
                     :page-sizes="[20, 50, 100]"
-                    :page-size="pagesize"
+                    :page-size="page.size"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="pagetotal">
+                    :total="page.total">
                     </el-pagination>
                 </center>
             </div>
@@ -87,11 +87,11 @@
                         <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :current-page="page"
+                        :current-page="page.index"
                         :page-sizes="[20, 50, 100]"
-                        :page-size="pagesize"
+                        :page-size="page.size"
                         layout="total, sizes, prev, pager, next, jumper"
-                        :total="pagetotal">
+                        :total="page.total">
                         </el-pagination>
                     </center>
                 </div>
@@ -121,23 +121,25 @@ export default {
     components:{} ,
     data(){
         return {
-            pagesize: 20,
-            page: 1,
+            page:{
+                index:1,
+                size:20,
+                total:0,
+                query:''
+            },
             search:'',
-            pagetotal: 0,
             tableData: [],
             tags:[],
-            searchText: '',
             searchTag: []
         }
     },
     methods:{
         handleCurrentChange: function(val){
-            this.page=val
+            this.page.index=val
             this.flushProblemList()
         },
         handleSizeChange: function(val){
-            this.pagesize=val
+            this.page.size=val
             this.flushProblemList()
         },
         tagColor: function(key){
@@ -160,9 +162,9 @@ export default {
             }
         },
         flushProblemList: function(){
-            getProblems(this.page, this.pagesize, this.search).then(res => {
+            getProblems(this.page.index, this.page.size, this.page.query).then(res => {
                 this.tableData=res.data.content
-                this.pagetotal=res.data.pagetotal
+                this.page.total=res.data.page.total
             }).catch(err => {
 
             })
