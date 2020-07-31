@@ -191,9 +191,9 @@ import 'codemirror/mode/go/go.js'
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/theme/ttcn.css'
 import config from '@/utils/config'
-
+import {mavonEditor} from 'mavon-editor'
 export default {
-    components:{codemirror, problemBody},
+    components:{codemirror, problemBody,mavonEditor},
     data(){
         return{
             problem:{},
