@@ -1,6 +1,4 @@
-
 const Mock = require('mockjs')
-
 
 const res ={
     caseNumber: 1,
@@ -88,6 +86,31 @@ const lastSubmits=[
     }
 ]
 
+const alltags=['组合数学', '贪心', '搜索', '二分图', '计算几何', '容斥', '模拟', '模拟退火']
+
+const pagesize=30
+const pagetotal=600
+const pros=[]
+for (let i = 1; i <= pagetotal; i++) {
+    pros.push(Mock.mock({
+        id: i,
+        problem: '@string("lower", 5)',
+        tags: () => {
+            return [alltags[Math.floor(Math.random()*alltags.length)]];
+        },
+        acc: '@integer(0, 500)',
+        total: '@integer(500, 700)',
+        value: '@integer(10, 20)',
+        acrate: '@integer(0, 100)',
+        ac: '@boolean'
+    }))
+}
+  
+function min(a,b){
+    if(a<b)return a
+    else return b
+}
+
 module.exports = [
     {
         url: '/vue-element-admin/api/status/view/[0-9].*',
@@ -138,5 +161,35 @@ module.exports = [
                 data: problems[0]
             };
         }
-    }
+    },
+    {
+        url: '/vue-element-admin/api/problems/tags',
+        type: 'get',
+        response: config => {
+            return {
+                code: 20000,
+                data: alltags
+            };
+        }
+    },
+    {//寻$$初级,数论
+        url: '/vue-element-admin/api/problems',
+        type: 'get',
+        response: config => {
+            const { page, pagesize, search } = config.query
+            let _page=Number(page)
+            let _pagesize=Number(pagesize)
+            let st=_pagesize*(_page-1)
+            let ed=min(st+_pagesize, pros.length)
+            let res=[]
+            for(let i=st;i<ed;i++){
+                res.push(pros[i]);
+            }
+            return {
+                code: 20000,
+                data: {content:res, pagetotal:pagetotal}
+            };
+        }
+    },
+    
 ]

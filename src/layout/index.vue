@@ -1,5 +1,6 @@
 <template>
   <div :class="classObj" class="app-wrapper">
+    
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <sidebar class="sidebar-container" />
     <div :class="{hasTagsView:needTagsView}" class="main-container">
@@ -12,6 +13,7 @@
         <settings />
       </right-panel> -->
     </div>
+    <el-backtop class="backtop" target="#app" :bottom="100" style="z-index:9999"></el-backtop>
   </div>
 </template>
 
@@ -99,4 +101,5 @@ export default {
   .mobile .fixed-header {
     width: 100%;
   }
+  
 </style>

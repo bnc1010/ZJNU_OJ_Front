@@ -8,6 +8,21 @@ export function getProblemById(id) {
   })
 }
 
+export function getProblems(page, pagesize, search) {
+  return request({
+    url: BASE_PATH +'/api/problems',
+    method: 'get',
+    params:{page:page, pagesize:pagesize, search:search}
+  })
+}
+
+export function getTags() {
+  return request({
+    url: BASE_PATH +'/api/problems/tags',
+    method: 'get',
+  })
+}
+
 export function getLastSubmits(id) {
   return request({
     url: BASE_PATH +'/api/status/user/latest/submit/' + id,
