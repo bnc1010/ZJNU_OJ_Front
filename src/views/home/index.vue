@@ -98,5 +98,8 @@ export default {
 }
 </script>
 <style scoped>
-
+.v-note-wrapper{
+    min-height: 50px;
+    z-index: auto;
+}
 </style>

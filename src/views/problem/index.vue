@@ -7,7 +7,7 @@
                     <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
                     <el-col :span="12">
                         <div class="grid-content bg-purple">
-                            <el-input placeholder="搜索题目或题号" v-model="searchText" class="input-with-select">
+                            <el-input placeholder="搜索题目或题号" v-model="page.query" class="input-with-select">
                                 <el-button slot="append" icon="el-icon-search"></el-button>
                             </el-input>
                         </div>

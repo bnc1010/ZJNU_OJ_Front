@@ -40,62 +40,7 @@
                     </el-table>
                 </el-row>
             </el-card>
-            <el-card class="problemBody">
-                <h2>题目描述</h2>
-                <mavonEditor v-model="problem.description"
-                :ishljs="true"
-                :subfield="false"                                    
-                :boxShadow="false"                                    
-                defaultOpen="preview"                                    
-                :toolbarsFlag="false" 
-                ></mavonEditor>
-                <el-divider></el-divider>
-                <h2>输入</h2>
-                <mavonEditor v-model="problem.input"
-                :ishljs="true"
-                :subfield="false"                                    
-                :boxShadow="false"                                    
-                defaultOpen="preview"                                    
-                :toolbarsFlag="false"
-                min-height="50px"
-                ></mavonEditor>
-                <el-divider></el-divider>
-                <h2>输出</h2>
-                <mavonEditor v-model="problem.output"
-                :ishljs="true"
-                :subfield="false"                                    
-                :boxShadow="false"                                    
-                defaultOpen="preview"                                    
-                :toolbarsFlag="false" 
-                ></mavonEditor>
-                <el-divider></el-divider>
-                <h2>样例输入</h2>
-                <mavonEditor v-model="problem.sampleInput"
-                :ishljs="true"
-                :subfield="false"                                    
-                :boxShadow="false"                                    
-                defaultOpen="preview"                                    
-                :toolbarsFlag="false" 
-                ></mavonEditor>
-                <el-divider></el-divider>
-                <h2>样例输出</h2>
-                <mavonEditor v-model="problem.sampleOutput"
-                :ishljs="true"
-                :subfield="false"                                    
-                :boxShadow="false"                                    
-                defaultOpen="preview"                                    
-                :toolbarsFlag="false" 
-                ></mavonEditor>
-                <el-divider></el-divider>
-                <h2>提示</h2>
-                <mavonEditor v-model="problem.hint"
-                :ishljs="true"
-                :subfield="false"
-                :boxShadow="false"
-                defaultOpen="preview"
-                :toolbarsFlag="false" 
-                ></mavonEditor>
-            </el-card>
+            <problemBody :problem="problem"></problemBody>
             <el-card class="codeEditor">
                 <el-form :inline="true"  class="demo-form-inline">
                     <el-form-item label="选择语言:">
@@ -235,9 +180,9 @@
 </template>
 <script>
 import {calSize, paramOfResultfulUrl} from '@/utils'
-import {mavonEditor} from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
+import problemBody from './components/ProblemBody'
 import {getStatusBySubmitId, setStatuShareBySubmitId, submitCode, getProblemById, getLastSubmits} from '@/api/problem'
+import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/python/python.js'
@@ -245,10 +190,10 @@ import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/go/go.js'
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/theme/ttcn.css'
-
+import config from '@/utils/config'
 
 export default {
-    components:{mavonEditor, codemirror},
+    components:{codemirror, problemBody},
     data(){
         return{
             problem:{},
@@ -267,41 +212,8 @@ export default {
                 shareButton:'设为公开'
             },
             submitDetialForm:[],
-            cmOptions:{
-                mode: 'text/x-csrc',
-                smartIndent:true,
-                matchBrackets: true,
-                tabSize: 4,
-                theme: 'ttcn',
-                lineNumbers: true,
-                line: true,
-            },
-            langOptions:[
-                {
-                    value:'text/x-csrc',
-                    label: 'C'
-                },
-                {
-                    value:'text/x-c++src',
-                    label: 'C++'
-                },
-                {
-                    value:'text/x-java',
-                    label: 'Java'
-                },
-                {
-                    value:'text/x-python',
-                    label: 'Python2'
-                },
-                {
-                    value:'text/x-python',
-                    label: 'Python3'
-                },
-                {
-                    value:'text/x-go',
-                    label: 'Golang'
-                },
-            ],
+            cmOptions:config.CMOptions,
+            langOptions:config.LangOptions,
             submitOption:{
                 selectedLang:'C',
                 share:true,
@@ -435,10 +347,6 @@ export default {
 
 .problemHeader .el-table tbody tr:hover>td { 
     background-color:#ffffff!important
-}
-
-.problemBody .v-note-wrapper{
-    min-height: 50px;
 }
 
 .tagsbox{
