@@ -135,7 +135,7 @@ module.exports = [
     {
         url: '/vue-element-admin/api/problem/submit/[0-9].*',
         type: 'post',
-        response: config => {
+        response: _ => {
             return {
                 code: 20000,
                 data: "success"

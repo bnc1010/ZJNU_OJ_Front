@@ -35,7 +35,7 @@
                                         v-for="(item,key) in langOptions"
                                         :key="key"
                                         :label="item.label"
-                                        :value="item.value">
+                                        :value="key">
                                     </el-option>
                                 </el-select>
                             </el-form-item>
@@ -160,7 +160,7 @@ export default {
     },
     methods:{
         handleLangChanged: function(value){
-            this.cmOptions.mode=value;
+            this.cmOptions.mode=this.langOptions[value].value;
         },
         handleSubmitCode: function(){
             submitCode(this.submitOption.problemId, this.submitOption.selectedLang, this.submitOption.share, this.submitOption.code).then(res =>{

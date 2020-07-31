@@ -49,7 +49,7 @@
                                 v-for="(item,key) in langOptions"
                                 :key="key"
                                 :label="item.label"
-                                :value="item.value">
+                                :value="key">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -215,7 +215,7 @@ export default {
             cmOptions:config.CMOptions,
             langOptions:config.LangOptions,
             submitOption:{
-                selectedLang:'C',
+                selectedLang:0,
                 share:true,
                 code:'',
                 problemId: -1
@@ -314,10 +314,10 @@ export default {
             })
         },
         handleLangChanged: function(value){
-            this.cmOptions.mode=value;
+            this.cmOptions.mode=this.langOptions[value].value;
         },
         handleSubmitCode: function(){
-            submitCode(this.submitOption.problemId, this.submitOption.selectedLang, this.submitOption.share, this.submitOption.code).then(res =>{
+            submitCode(this.submitOption.problemId, this.langOptions[this.submitOption.selectedLang].label, this.submitOption.share, this.submitOption.code).then(res =>{
                 this.$message({
                     message: '提交成功',
                     type: 'success'
