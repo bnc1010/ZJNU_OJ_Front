@@ -1,21 +1,7 @@
 <template>
     <div class="app-container">
       <el-row :gutter="20">
-        <el-col :span="5" :xs="24">
-            <el-card style="margin-bottom:20px;">
-                <div slot="header" class="clearfix">
-                <span>题目标签</span>
-                </div>
-                <div class="tagsbox">
-                    <div class="box-center">
-                        <div v-for="(tag,key) in tags" :key="key" class="tagbox">
-                            <el-tag class="tagboard" size="mini" :color="tagColor(key)" effect="dark" @click="handleAddSearchTag(tag)">{{tag }}&nbsp;</el-tag>&nbsp;
-                        </div>
-                    </div>
-                </div>
-            </el-card>
-        </el-col>
-        <el-col :span="19" :xs="24">
+        <el-col :span="20" :xs="24">
             <el-card>
                 <el-row :gutter="20">
                     <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
@@ -40,7 +26,7 @@
                     <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
                 </el-row>
             </el-card>
-            <el-card>
+            <el-card class="problemBox">
             <div class="pagebar">
                 <center>
                     <el-pagination
@@ -108,6 +94,20 @@
                         :total="pagetotal">
                         </el-pagination>
                     </center>
+                </div>
+            </el-card>
+        </el-col>
+        <el-col :span="4" :xs="24">
+            <el-card style="margin-bottom:20px;padding:10px;">
+                <div slot="header" class="clearfix">
+                <span>题目标签</span>
+                </div>
+                <div class="tagsbox">
+                    <div class="box-center">
+                        <div v-for="(tag,key) in tags" :key="key" class="tagbox">
+                            <el-tag class="tagboard" size="mini" :color="tagColor(key)" effect="dark" @click="handleAddSearchTag(tag)">{{tag }}&nbsp;</el-tag>&nbsp;
+                        </div>
+                    </div>
                 </div>
             </el-card>
         </el-col>
@@ -202,11 +202,13 @@ export default {
 
 .tagsbox{
     float: left;
+    width: 100%;
+    padding-left: 5px;
 }
 
 .tagsbox .tagbox{
     float: left;
-    margin: 6px 2px;
+    margin-bottom: 10px;
 }
 
 .tagsbox .tagbox :hover{
@@ -219,6 +221,10 @@ export default {
 
 .el-col{
     border: 1px solid transparent; 
+}
+
+.problemBox{
+    margin-top: 20px;
 }
 
 </style>
