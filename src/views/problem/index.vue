@@ -164,7 +164,7 @@ export default {
         flushProblemList: function(){
             getProblems(this.page.index, this.page.size, this.page.query).then(res => {
                 this.tableData=res.data.content
-                this.page.total=res.data.page.total
+                this.page.total=res.data.pagetotal
             }).catch(err => {
 
             })

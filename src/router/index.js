@@ -129,6 +129,7 @@ export const constantRoutes = [
         path: '/contest/index',
         component: () => import('@/views/contest'),
         name: 'contest',
+        hidden: true,
         meta: { title: '比赛列表', activeMenu: '/contest'}
       },
       {
