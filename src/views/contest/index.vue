@@ -3,7 +3,7 @@
         <el-card>
 
         </el-card>
-        <el-card class="contestBox">
+        <el-card class="bodybox">
             <center>
                 <el-pagination
                     @size-change="handleSizeChange"
@@ -153,16 +153,16 @@ export default {
 }
 </script>
 <style scoped>
-.contestBox{
+.bodybox{
     margin-top: 20px;
 }
 
-.contestBox .tagboard{
+.bodybox .tagboard{
     border: none;
     cursor:default 
 }
 
-.contestBox .statuFont{
+.bodybox .statuFont{
     font-size: 14px;
     font-weight: bold;
 }
