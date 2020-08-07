@@ -1,11 +1,18 @@
 <template>
   <div class="app-container">
     <el-card>
-      <div class="grid-content bg-purple">
-        <el-input placeholder="搜索排名或姓名" v-model="page.query" class="input-with-select">
-          <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>
-      </div>
+        <el-row :gutter="20">
+          <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+          <el-col :span="12">
+              <div class="grid-content bg-purple">
+                <el-input placeholder="搜索排名或姓名" v-model="page.query" class="input-with-select">
+                  <el-button slot="append" icon="el-icon-search"></el-button>
+                </el-input>
+              </div>
+          </el-col>
+          <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+      </el-row>
+      
       </el-card>
       <el-card class="bodybox">
         <center>
@@ -162,5 +169,9 @@ export default {
 <style lang="scss" scoped>
 .bodybox{
   margin-top: 20px;
+}
+
+.el-col{
+    border: 1px solid transparent; 
 }
 </style>

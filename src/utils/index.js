@@ -371,7 +371,7 @@ export function removeClass(ele, cls) {
 export function calSize(sz){
     var tp = sz
     if (tp < 1024){
-        return '' +  tp.toFixed(2) + 'b'
+        return '' +  tp.toFixed(2) + 'B'
     }
     
     tp = tp / 1024

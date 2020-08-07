@@ -1,99 +1,63 @@
 <template>
   <div class="app-container">
       <el-card>
-        <div class="box">用户名：</div>
-        <div class="box">
-        <el-input v-model="query.searchName" class="input-with-select" width="200"></el-input>
-        </div>
-        <div class="box">题目编号：</div>
-        <div class="box">
-        <el-input v-model="query.searchID" class="input-with-select" width="200"></el-input>
-        </div>
-        <div class="box">
-        <el-checkbox v-model="query.onlyAccept">仅通过</el-checkbox>
-        </div>
-        <div class="box">
-        <el-button slot="append" icon="el-icon-search"></el-button>
-        </div>
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <div class="grid-content bg-purple">
+              <div class="box">用户名：</div>
+              <div class="box">
+                <el-input v-model="query.searchName" class="input-with-select" width="200"></el-input>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="grid-content bg-purple">
+              <div class="box">题目编号：</div>
+              <div class="box">
+              <el-input v-model="query.searchID" class="input-with-select" width="200"></el-input>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="grid-content bg-purple">
+                <div class="box">
+                <el-checkbox v-model="query.onlyAccept">仅通过</el-checkbox>
+                </div>
+                <div class="box">
+                <el-button slot="append" icon="el-icon-search"></el-button>
+                </div>
+            </div>
+          </el-col>
+          <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+        </el-row>
     </el-card>
     <el-card class="bodybox">
     <el-table
       :data="tableData"
       style="width: 100%;font-size:11px"
       :fit="true">
-      <el-table-column prop="runid" label="RUN ID" align="center"></el-table-column>
-      <el-table-column prop="name" label="用户名" align="center"></el-table-column>
-      <el-table-column prop="problem" label="题目" align="center">
+      <el-table-column prop="id" label="RUN ID" align="center"></el-table-column>
+      <el-table-column prop="user.username" label="用户名" align="center"></el-table-column>
+      <el-table-column prop="problem.id" label="题目" align="center">
         <template slot-scope="scope">
-          <router-link :to="'./pdetial/' + scope.row.problem">{{scope.row.problem}}</router-link>
+          <router-link :to="'./problem/detial/' + scope.row.problem.id">{{scope.row.problem.id}}</router-link>
         </template>
       </el-table-column>
       <el-table-column prop="result" label="结果" align="center">
         <template slot-scope="scope">
-          <el-button type="text" @click="dialogVisible = true" style="font-size:10px;font-weight:bold;">{{scope.row.result}}</el-button>
+            <el-button type="text" @click="handleShowDetial(scope.row)" style="font-size:10px;font-weight:bold;" :class="handleResultColor(scope.row.result)">{{scope.row.result}}</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="time" label="用时(ms)" align="center"></el-table-column>
-      <el-table-column prop="memory" label="内存(KB)" align="center"></el-table-column>
+      <el-table-column label="内存" align="center">
+        <template slot-scope="scope">
+          {{getSize(scope.row.memory)}}
+        </template>
+      </el-table-column>
       <el-table-column prop="length" label="代码长度" align="center"></el-table-column>
       <el-table-column prop="language" label="语言" align="center"></el-table-column>
-      <el-table-column prop="date" label="提交时间" align="center"></el-table-column>
+      <el-table-column prop="normalSubmitTime" label="提交时间" align="center"></el-table-column>
     </el-table>
-
-    <el-dialog title="# 用户名:  题目:  "
-    :visible.sync="dialogVisible" width="66%" :before-close="handleClose">
-    <el-card shadow="never"  >
-            <el-table
-                :data="submitDetialForm"
-                border
-                style="width: 100%;">
-                <el-table-column
-                prop="normalResult"
-                label="结果"
-                width="120"
-                align="center">
-                </el-table-column>
-                <el-table-column
-                prop="time"
-                label="用时(ms)"
-                width="100"
-                align="center">
-                </el-table-column>
-                <el-table-column
-                prop="memory"
-                label="内存"
-                width="100"
-                align="center">
-                </el-table-column>
-                <el-table-column
-                prop="length"
-                label="代码长度"
-                width="100"
-                align="center">
-                </el-table-column>
-                <el-table-column
-                prop="normalLanguage"
-                label="语言"
-                width="100"
-                align="center">
-                </el-table-column>
-                <el-table-column
-                prop="share"
-                label="公开"
-                width="100"
-                align="center">
-                </el-table-column>
-                <el-table-column
-                prop="normalSubmitTime"
-                label="提交时间"
-                align="center">
-                </el-table-column>
-            </el-table>
-        </el-card>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
-    </el-dialog>
     <center>
       <div class="block">
         <el-pagination
@@ -108,11 +72,78 @@
       </div>
     </center>
     </el-card>
+    <el-dialog
+        :visible.sync="submitDetialVisible"
+        width="66%"
+        :title="'#'+ submitDetial.id +' 用户名:' + submitDetial.user.username + ' 题目:' + submitDetial.problem.id">
+        <el-card shadow="never" class="StatuShowBox">
+            <el-table
+                :data="submitDetialForm"
+                border
+                :header-cell-style="headClass"
+                style="width: 100%">
+                <el-table-column
+                prop="normalResult"
+                label="结果"
+                width="120">
+                </el-table-column>
+                <el-table-column
+                prop="time"
+                label="用时(ms)"
+                width="100">
+                </el-table-column>
+                <el-table-column
+                prop="memory"
+                label="内存"
+                width="100">
+                </el-table-column>
+                <el-table-column
+                prop="length"
+                label="代码长度"
+                width="100">
+                </el-table-column>
+                <el-table-column
+                prop="normalLanguage"
+                label="语言"
+                width="100">
+                </el-table-column>
+                <el-table-column
+                prop="share"
+                label="公开"
+                width="100">
+                </el-table-column>
+                <el-table-column
+                prop="normalSubmitTime"
+                label="提交时间">
+                </el-table-column>
+            </el-table>
+        </el-card>
+        <el-card>
+            <mavonEditor v-model="submitDetial.source"
+                :ishljs="true"
+                :subfield="false"
+                :boxShadow="false"
+                defaultOpen="preview"
+                :toolbarsFlag="false" 
+                :tabSize="2"
+                ></mavonEditor>
+        </el-card>
+        <span slot="footer" class="dialog-footer">
+            <!-- <el-button  @click="handleSetShareStatu" type="primary" plain>{{submitDetial.shareButton}}</el-button> -->
+            <el-button  @click="submitDetialVisible=false" type="danger" plain>关 闭</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {getStatusBySubmitId} from '@/api/problem'
+import {mavonEditor} from 'mavon-editor'
+import {calSize} from '@/utils'
+import {getStatus} from '@/api/status'
 export default {
+  name:"Status",
+  components:{mavonEditor},
   data() {
     return {
         page:{
@@ -124,155 +155,91 @@ export default {
         query:{
             searchID: "",
             searchName: "",
-            onlyAccept: true,
+            onlyAccept: false,
         },
-      dialogVisible: false,
-      tableData: [
-        {
-          runid: "0000010",
-          name: "小明10",
-          problem: "1010",
-          result: "Accept",
-          time: "0",
-          memory: "2894",
-          length: "988",
-          language: "C",
-          date: "2020-08-01 00:00:09",
-          istrue: true,
-        },
-        {
-          runid: "0000009",
-          name: "小明9",
-          problem: "1009",
-          result: "Accept",
-          time: "0",
-          memory: "300",
-          length: "1215",
-          language: "C",
-          date: "2020-08-01 00:00:08",
-          istrue: true,
-        },
-        {
-          runid: "0000008",
-          name: "小明8",
-          problem: "1008",
-          result: "Wrong Answer",
-          time: "0",
-          memory: "0",
-          length: "321",
-          language: "Python",
-          date: "2020-08-01 00:00:07",
-          istrue: false,
-        },
-        {
-          runid: "0000007",
-          name: "小明7",
-          problem: "1007",
-          result: "Wrong Answer",
-          time: "0",
-          memory: "0",
-          length: "650",
-          language: "C",
-          date: "2020-08-01 00:00:06",
-          istrue: false,
-        },
-        {
-          runid: "0000006",
-          name: "小明6",
-          problem: "1006",
-          result: "Memory Limit Exceeded",
-          time: "324",
-          memory: "65535",
-          length: "1824",
-          language: "C",
-          date: "2020-08-01 00:00:05",
-          istrue: false,
-        },
-        {
-          runid: "0000005",
-          name: "小明5",
-          problem: "1005",
-          result: "Accept",
-          time: "1056",
-          memory: "2266",
-          length: "895",
-          language: "Java",
-          date: "2020-08-01 00:00:04",
-          istrue: 1,
-        },
-        {
-          runid: "0000004",
-          name: "小明4",
-          problem: "1004",
-          result: "Time Limit Exceeded",
-          time: "2000",
-          memory: "123",
-          length: "1022",
-          language: "C",
-          date: "2020-08-01 00:00:03",
-          istrue: false,
-        },
-        {
-          runid: "0000003",
-          name: "小明3",
-          problem: "1003",
-          result: "Wrong Answer",
-          time: "0",
-          memory: "655",
-          length: "387",
-          language: "C",
-          date: "2020-08-01 00:00:02",
-          istrue: false,
-        },
-        {
-          runid: "0000002",
-          name: "小明1",
-          problem: "1002",
-          result: "Runtime Error",
-          time: "0",
-          memory: "100",
-          length: "920",
-          language: "C",
-          date: "2020-08-01 00:00:01",
-          istrue: false,
-        },
-        {
-          runid: "0000001",
-          name: "小明1",
-          problem: "1001",
-          result: "Accept",
-          time: "0",
-          memory: "1",
-          length: "985",
-          language: "C",
-          date: "2020-08-01 00:00:00",
-          istrue: false,
-        },
-        
-      ],
+      submitDetialVisible: false,
+      tableData:[],
       submitDetialForm:[],
+      submitDetial:{
+                user:{
+                    username:''
+                },
+                id:-1,
+                problem:{
+                    id:-1
+                },
+                source:'',
+                shareButton:'设为公开'
+            },
     };
   },
   methods: {
-    handleCurrentChange: function () {
-      return;
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-    },
-    handleClose() {
-        this.dialogVisible=false
-    },
+      headClass () {
+            return 'text-align: center;background:#F2F6FC;'
+      },
+      handleSizeChange: function(val){
+            this.page.size=val
+            this.flushStatusList()
+      },
+      handleCurrentChange: function(val){
+          this.page.index=val
+          this.flushStatusList()
+      },
+      handleClose() {
+          this.dialogVisible=false
+      },
+      handleResultColor : function(result){
+        if(result == 'Accept' || result == 'accept'){
+          return 'acClass'
+        }
+        else if(result == 'Wrong Answer' || result == 'wrong answer'){
+          return 'waClass'
+        }
+        else{
+          return 'otClass'
+        }
+      },
+      handleShowDetial:function(row){
+          this.submitDetialVisible=true
+          getStatusBySubmitId(row.id).then(res =>{
+                this.submitDetial=res.data
+                this.submitDetial.source='```' + this.submitDetial.normalLanguage + '\n' + this.submitDetial.source + '\n```\n'
+                this.submitDetial.shareButton=this.submitDetial.share?'设为私密':'设为公开'
+                this.submitDetialForm=[]
+                this.submitDetialForm.push({
+                    normalResult:this.submitDetial.normalResult,
+                    time:this.submitDetial.time,
+                    memory:calSize(this.submitDetial.memory),
+                    length:this.submitDetial.length,
+                    normalLanguage:this.submitDetial.normalLanguage,
+                    normalSubmitTime: this.submitDetial.normalSubmitTime,
+                    share: this.submitDetial.share?'公开':'私密'
+                })
+            }).catch(err =>{
+              console.log(err)
+                this.submitDetialVisible=false
+            })
+      },
+      flushStatusList: function(){
+          getStatus(this.page.index, this.page.size, this.page.query).then(res => {
+              this.tableData = res.data.content
+              console.log(this.tableData)
+              this.page.total = res.data.pagetotal
+          }).catch(err => {
+
+          })
+        },
+        getSize:function(val){
+          console.log(val)
+          return calSize(val)
+        }
     },
     mounted(){
-        this.page.total=10
+        this.flushStatusList()
     }
   }
 </script>
-<style scoped>
+<style>
 .box {
   text-align: center;
   vertical-align: middle;
@@ -284,4 +251,21 @@ export default {
 .bodybox{
     margin-top: 20px;
 }
+
+.acClass{
+  color: #67C23A;
+}
+
+.waClass{
+  color: #F56C6C;
+}
+
+.otClass{
+  color: #E6A23C;
+}
+.StatuShowBox td{
+    font-size: 15px;
+    text-align: center;
+}
+
 </style>
