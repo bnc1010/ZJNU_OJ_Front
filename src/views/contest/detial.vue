@@ -18,15 +18,15 @@
                 <el-col :span="18" :xs="24">
                     <el-card class="problemHeader">
                         <el-row>
-                            <h1>{{contest.problems[0].tempTitle}}</h1>
+                            <h1>{{contest.problems[getIntChoosedProblemId()].tempTitle}}</h1>
                             <el-divider></el-divider>
                             <el-row :gutter="20">
-                                <el-col :span="12">{{'时间限制: ' + contest.problems[0].problem.timeLimit}}</el-col>
-                                <el-col :span="12">{{'空间限制: ' + getMemery(contest.problems[0].problem.memoryLimit)}}</el-col>
+                                <el-col :span="12">{{'时间限制: ' + contest.problems[getIntChoosedProblemId()].problem.timeLimit + "ms"}}</el-col>
+                                <el-col :span="12">{{'空间限制: ' + getMemery(contest.problems[getIntChoosedProblemId()].problem.memoryLimit)}}</el-col>
                             </el-row>
                         </el-row>
                     </el-card>
-                    <ProblemBody :problem="contest.problems[0].problem"></ProblemBody>
+                    <ProblemBody ref="problemBody" :problem="contest.problems[getIntChoosedProblemId()].problem"></ProblemBody>
                     <el-card class="codeEditor">
                         <el-form :inline="true"  class="demo-form-inline">
                             <el-form-item label="选择语言:">
@@ -50,7 +50,10 @@
                     <el-card>
                         <el-table
                             :data="tableData"
-                            style="width: 100%">
+                            style="width: 100%"
+                            :row-class-name="choosedProblemClass"
+                            @row-click="handleChangeProblem"
+                            >
                             <el-table-column
                             prop="id"
                             label="题号"
@@ -63,11 +66,14 @@
                         </el-table>
                     </el-card>
                         <el-card class="infoCard">
-                            这里放一个饼图
+                            <div slot="header" class="clearfix">
+                                <span>统计&nbsp;<i class='el-icon-refresh-right'></i></span>
+                            </div>
+                            <acRate class="infoCard" :chartData="chartData"/>
                         </el-card>
-                        <el-card class="infoCard">
+                        <!-- <el-card class="infoCard">
                             这里放其它信息
-                        </el-card>
+                        </el-card> -->
                 </el-col>
             </el-row>
         </el-tab-pane>
@@ -83,7 +89,6 @@
 </template>
 <script>
 import {mavonEditor} from 'mavon-editor'
-import {paramOfResultfulUrl} from '@/utils'
 import ProblemBody from '../problem/components/ProblemBody'
 import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
@@ -93,12 +98,13 @@ import 'codemirror/mode/clike/clike.js'
 import 'codemirror/mode/go/go.js'
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/theme/ttcn.css'
-import {cmOptions, langOptions} from '@/utils/config'
 import config from '@/utils/config'
-import {calSize} from '@/utils'
+import {calSize, mapAlpha2Num, mapNum2Alpha, paramOfResultfulUrl} from '@/utils'
+import {getDetialContest} from '@/api/contest'
+import acRate from './components/acRate'
 export default {
     name:'ContestDetial',
-    components:{ProblemBody,mavonEditor,codemirror},
+    components:{ProblemBody,mavonEditor,codemirror,acRate},
     data(){
         return{
             cmOptions:config.CMOptions,
@@ -110,52 +116,20 @@ export default {
                 problemId: -1
             },
             contest:{
-                description: "## 这是比赛说明\n```c++\n#include<bits/stdc++.h>\n```\n",
-                endTime: "2020-03-06T11:45:00Z",
-                ended: true,
-                id: 3,
-                length: "300",
-                normalEndTime: "2020-03-06 19:45",
-                normalStartTime: "2020-03-06 14:45",
-                pattern: "acm",
-                privilege: "public",
-                problems: [
-                    {
-                        id: 9, 
-                        problem: {
-                            active: true,
-                            description: "甜甜从小就喜欢画图画，最近他买了一支智能画笔，由于刚刚接触，所以甜甜只会用它来画直线，于是他就在平面直角坐标系中画出如下的图形：\n![](http://118.25.96.118:8081/api/media/d3015e28cc1b105b3c78a385c8702144)\n甜甜的好朋友蜜蜜发现上面的图还是有点规则的，于是他问甜甜：在你画的图中，我给你两个点，请你算一算连接两点的折线长度（即沿折线走的路线长度）吧。",
-                            hint: "",
-                            input: "第一个数是正整数 $N(\le100)$ 。代表数据的组数。\n每组数据由四个非负整数组成 $x1,y1,x2,y2$；所有的数都不会大于100。",
-                            memoryLimit: 32768000,
-                            output: "对于每组数据，输出两点(x1,y1),(x2,y2)之间的折线距离。注意输出结果精确到小数点后3位。",
-                            sampleInput: "5\n0 0 0 1\n0 0 1 0\n2 3 3 1\n99 99 9 9\n5 5 5 5",
-                            sampleOutput: "1.000\n2.414\n10.646\n54985.047\n0.000",
-                            source: "",
-                            timeLimit: 1000,
-                            title: ""
-                        }, 
-                        tempId: 1, 
-                        tempTitle: "A simple problemold", 
-                        submitted: 5, 
-                        accepted: 4
-                    }
-                ],
-                runStatu: "已结束",
-                startTime: "2020-03-06T06:45:00Z",
-                started: true,
-                title: "学分制班考试"
+                problems:[{problem:{timeLimit:'',timeLimit:'',memoryLimit:''}}]
             },
-            tableData: [{
-                id:'A',
-                title:'寻神者的道路'
-                }, {
-                id:'B',
-                title:'寻神者的道路'
-                }, {
-                id:'C',
-                title:'寻神者的道路'
-            }]
+            tableData: [],
+            choosedProblemId:'A',
+            chartData: [
+                {
+                    name:'ac',
+                    value:0
+                },
+                {
+                    name:'wa',
+                    value:0
+                }
+            ]
         }
     },
     methods:{
@@ -177,14 +151,58 @@ export default {
         },
         getMemery: function(sz){
             return calSize(sz)
+        },
+        choosedProblemClass({row, rowIndex}) {
+            if (row.id === this.choosedProblemId) {
+                return 'choosed-row';
+            } else{
+                return 'nochoosed-row';
+            }
+        },
+        handleChangeProblem(row, col, e){
+            if (row.id !== this.choosedProblemId) {
+                this.choosedProblemId=row.id
+                this.setEchart()
+            }
+        },
+        getIntChoosedProblemId: function(){
+            return mapAlpha2Num(this.choosedProblemId)
+        },
+        setEchart: function(){
+            this.chartData=[]
+            this.chartData.push({
+                name:'ac',
+                value:this.contest.problems[this.getIntChoosedProblemId()].accepted
+            })
+            this.chartData.push({
+                name:'wa',
+                value:this.contest.problems[this.getIntChoosedProblemId()].submitted-this.contest.problems[this.getIntChoosedProblemId()].accepted
+            })
+            console.log(this.chartData)
         }
     },
     mounted(){
-        
+        getDetialContest(paramOfResultfulUrl(window.location.href)).then( res => {
+            this.contest = res.data
+            var problems = this.contest.problems
+            for(let x in problems){
+                this.tableData.push({
+                    id:mapNum2Alpha(problems[x].tempId,1,-1),
+                    title:problems[x].tempTitle
+                })
+            }
+            this.setEchart()
+        }).catch( err => {
+            console.log(err);
+            this.$message({
+                message: '比赛信息加载失败',
+                type: 'error'
+            })
+        })
     }
 }
 </script>
-<style scoped>
+<style>
 .problemHeader{
     text-align: center;
 }
@@ -194,5 +212,15 @@ export default {
 }
 .infoCard{
     margin-top: 20px;
+}
+.el-table .choosed-row{
+    background:burlywood;
+    cursor: pointer;
+}
+.el-table .nochoosed-row{
+    cursor: pointer;
+}
+.el-table--enable-row-hover .el-table__body tr:hover > td {
+  background-color: rgba(0, 0, 0, 0) !important;
 }
 </style>

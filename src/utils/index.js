@@ -371,27 +371,27 @@ export function removeClass(ele, cls) {
 export function calSize(sz){
     var tp = sz
     if (tp < 1024){
-        return '' +  tp.toFixed(2) + 'B'
+        return '' +  tp + 'B'
     }
     
-    tp = tp / 1024
+    tp = Math.round(tp / 1024)
     if (tp < 1024){
-        return '' +  tp.toFixed(2) + 'K'
+        return '' +  tp + 'K'
     }
 
-    tp = tp / 1024
+    tp = Math.round(tp / 1024)
     if (tp < 1024){
-        return '' + tp.toFixed(2) + 'M'
+        return '' + tp + 'M'
     }
 
-    tp = tp / 1024
+    tp = Math.round(tp / 1024)
     if (tp < 1024){
-        return '' +  tp.toFixed(2) + 'G'
+        return '' +  tp + 'G'
     }
 
-    tp = tp / 1024
+    tp = Math.round(tp / 1024)
     if (tp < 1024){
-        return '' +  tp.toFixed(2) + 'T'
+        return '' +  tp + 'T'
     }
 
   }
@@ -427,3 +427,20 @@ export function calSize(sz){
     return res
   }
 
+
+
+ export function mapAlpha2Num(alpha){
+    alpha = alpha.toLowerCase() 
+    var mp={'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7, 'i':8, 'j':9, 'k':10, 'l':11, 'm':12, 'n':13, '0':14, 'p':15, 'q':16, 'r':17, 's':18, 't':19, 'u':20, 'v':21, 'w':22, 'x':23, 'y':24, 'z':25}
+    return mp[alpha]
+ }
+
+ export function mapNum2Alpha(num, isUpper, offset=0){
+  var mp=['a','b','c','d','e','f','g','h','i','j','k','l', 'm', 'n', '0', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y','z']
+  if(isUpper){
+    return mp[num+offset].toUpperCase()
+  }
+  else{
+    return mp[num+offset]
+  }
+}

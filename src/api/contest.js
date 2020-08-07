@@ -7,4 +7,11 @@ export function getContests(page, pagesize, search) {
       method: 'get',
       params:{page:page, pagesize:pagesize, search:search}
     })
-  }
+}
+
+export function getDetialContest(id) {
+  return request({
+    url: BASE_PATH +'/api/contest/problem/' + id,
+    method: 'get',
+  })
+}
