@@ -78,7 +78,7 @@
             </el-row>
         </el-tab-pane>
         <el-tab-pane label="排行榜">
-
+            <contestRanklist/>
         </el-tab-pane>
         <el-tab-pane label="A&Q">
 
@@ -102,9 +102,10 @@ import config from '@/utils/config'
 import {calSize, mapAlpha2Num, mapNum2Alpha, paramOfResultfulUrl} from '@/utils'
 import {getDetialContest} from '@/api/contest'
 import acRate from './components/acRate'
+import contestRanklist from './components/contestRanklist'
 export default {
     name:'ContestDetial',
-    components:{ProblemBody,mavonEditor,codemirror,acRate},
+    components:{ProblemBody,mavonEditor,codemirror,acRate,contestRanklist},
     data(){
         return{
             cmOptions:config.CMOptions,
@@ -178,7 +179,6 @@ export default {
                 name:'wa',
                 value:this.contest.problems[this.getIntChoosedProblemId()].submitted-this.contest.problems[this.getIntChoosedProblemId()].accepted
             })
-            console.log(this.chartData)
         }
     },
     mounted(){
