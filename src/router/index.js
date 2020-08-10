@@ -172,26 +172,33 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/error',
+    path: '/userList',
     component: Layout,
-    redirect: 'noRedirect',
-    name: 'ErrorPages',
+    redirect: 'userAdmin/userList',
+    name: 'userList',
     meta: {
-      title: 'Error Pages',
-      icon: '404'
+      roles: ['admin'],
+      title: '用户管理',
+      icon: 'peoples'
     },
     children: [
       {
-        path: '401',
-        component: () => import('@/views/error-page/401'),
-        name: 'Page401',
-        meta: { title: '401', noCache: true }
+        path: 'userList',
+        component: () => import('@/views/user-admin/user-list.vue'),
+        name: 'users',
+        meta: { title: '用户' }
       },
       {
-        path: '404',
-        component: () => import('@/views/error-page/404'),
-        name: 'Page404',
-        meta: { title: '404', noCache: true }
+        path: 'roleList',
+        component: () => import('@/views/user-admin/role-list.vue'),
+        name: 'roles',
+        meta: { title: '角色' }
+      },
+      {
+        path: 'permissionList',
+        component: () => import('@/views/user-admin/permission-list.vue'),
+        name: 'permissions',
+        meta: { title: '权限' }
       }
     ]
   },

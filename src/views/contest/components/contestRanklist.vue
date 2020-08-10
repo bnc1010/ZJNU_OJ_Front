@@ -1,39 +1,105 @@
 <template>
     <div>
-        <el-card></el-card>
-        <el-card class="bodybox">
+        <el-card>
+            <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+                <el-col :span="12">
+                    <div class="grid-content bg-purple">
+                        <el-input placeholder="搜索排名或用户名" v-model="page.query" class="input-with-select">
+                            <el-button slot="append" icon="el-icon-search"></el-button>
+                        </el-input>
+                    </div>
+                </el-col>
+                <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+            </el-row>
+        </el-card>
+        <el-card class="bodybox ranklist">
             <el-table
                 :data="tableData"
                 width="100%">
                 <div v-for="(x, index) in columns" :key="'col' + index">
-                    <el-table-column :label="x.label" :width="x.width" align="center" >
+                    <el-table-column :label="x.label" :width="x.width" :align="getCellAlign(getTypeOfColumn(x.prop))" >
                         <template slot-scope="scope">
                             <div v-if="getTypeOfColumn(x.prop) == 1">
-                               <div>
-                                   {{getProp(scope.row, [x.prop, 'firstTime'])}}
-                               </div>
+                                <div v-if="getProp(scope.row, [x.prop, 'isAccept'])">
+                                    <div :class="handleOkBoxClass(getProp(scope.row, [x.prop, 'isFirst']))">
+                                        <span style="font-weight: bold; color: rgb(82, 196, 26);">
+                                            <span v-if="getContentByTry(getProp(scope.row, [x.prop, 'try']), true)==1">
+                                                <svg-icon icon-class="ac" style="height:1em"></svg-icon>
+                                            </span>
+                                            <span v-else>
+                                                {{getContentByTry(getProp(scope.row, [x.prop, 'try']), true)}}
+                                            </span>
+                                        </span>
+                                        <br/>
+                                        <span class="time">
+                                        {{'(' + getTime(getProp(scope.row, [x.prop, 'firstTime'])) + ')'}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    <div v-if="getContentByTry(getProp(scope.row, [x.prop, 'try']), false)==2">
+                                        
+                                    </div>
+                                    <div v-else>
+                                        <span style="font-weight: bold; color: rgb(231, 76, 60);">
+                                            {{getContentByTry(getProp(scope.row, [x.prop, 'try']), false)}}
+                                        </span>
+                                    </div>
+                                    
+                                </div>
                             </div>
                             <div v-else-if="getTypeOfColumn(x.prop) == 2">
-                                {{getProp(scope.row, [x.prop, 'acceptCount'])}}
+                                <div class="ACStatusBox">
+                                    <span style="font-weight: bold; color: #606266;">{{getProp(scope.row, [x.prop, 'acceptCount'])}}</span>
+                                    <br/>
+                                    <span class="time">
+                                        {{'(' + getTime(getProp(scope.row, [x.prop, 'totalTime'])) + ')'}}
+                                    </span>
+                                </div>
                             </div>
-                            <div v-else-if="getTypeOfColumn(x.prop) == 3">
+                            <div v-else>
                                 {{getProp(scope.row, [x.prop])}}
                             </div>
                         </template>
                     </el-table-column>
                 </div>
             </el-table>
+            <el-divider></el-divider>
+            <center>
+                    <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="page.index"
+                    :page-sizes="[20, 50, 100]"
+                    :page-size="page.size"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="page.total">
+                    </el-pagination>
+                </center>
         </el-card>
     </div>
 </template>
 <script>
+import {seconds2Clock} from '@/utils'
 export default {
     name:"ContestRankList",
     data() {
       return {
+        page:{
+            index:1,
+            size:20,
+            total:0,
+            query:''
+        },
         columns:[
             {
 
+            },
+            {
+                prop:'rank',
+                label:'排名',
+                width:80
             },
             {
                 prop:'username',
@@ -42,7 +108,7 @@ export default {
             },
             {
                 prop:'total',
-                label:'总分',
+                label:'成绩',
                 width:100
             },
             {
@@ -63,29 +129,67 @@ export default {
         ],
         tableData: [{
           username: '王小虎',
+          rank:1,
           total: {
-              acceptCount:0,
-              totalTime:0
+              acceptCount:2,
+              totalTime:3720
           },
           A:{
-              isAccept:false,
-              try:1,
-              firstTime:0
+              isAccept:true,
+              try:3,
+              firstTime:120,
+              isFirst:false
           },
           B:{
-              isAccept:false,
+              isAccept:true,
               try:1,
-              firstTime:0
+              firstTime:3600,
+              isFirst:true
           },
           C:{
               isAccept:false,
               try:1,
-              firstTime:0
+              firstTime:0,
+              isFirst:false
+          },
+        },
+        {
+          username: '张三',
+          rank:2,
+          total: {
+              acceptCount:1,
+              totalTime:7260
+          },
+          A:{
+              isAccept:true,
+              try:3,
+              firstTime:60,
+              isFirst:true
+          },
+          B:{
+              isAccept:true,
+              try:2,
+              firstTime:7200,
+              isFirst:false
+          },
+          C:{
+              isAccept:false,
+              try:4,
+              firstTime:0,
+              isFirst:false
           },
         }]
       }
     },
     methods:{
+        handleCurrentChange: function(val){
+            // this.page.index=val
+            console.log(val)
+        },
+        handleSizeChange: function(val){
+            // this.page.size=val
+            console.log(val)
+        },
         getTypeOfColumn: function(prop){
             if(!prop){
                 return -1
@@ -96,12 +200,10 @@ export default {
             else if(prop == 'total'){
                 return 2
             }
-            else if(prop == 'username'){
+            else {
                 return 3
             }
-            else{
-                return 0
-            }
+
         },
         getProp: function(object, props){
             let pp = ''
@@ -109,7 +211,44 @@ export default {
                 pp += '.' + props[x]
             }
             return eval('object' + pp)
-        }
+        },
+        getTime:function(second){
+            return seconds2Clock(second)
+        },
+        handleOkBoxClass: function(isFirst){
+            if(isFirst){
+                return 'ACStatusBox firstAC'
+            }
+            else{
+                return 'ACStatusBox'
+            }
+        },
+        getContentByTry: function(tryTimes, isAccept){
+            if(isAccept){
+                if(tryTimes && tryTimes==1){
+                    return 1
+                }
+                else{
+                    return '+' + (tryTimes-1)
+                }
+            }
+            else{
+                if(tryTimes==0){
+                    return 2
+                }
+                else{
+                    return '-' + tryTimes
+                }
+            }
+        },
+        getCellAlign: function(type){
+                if(type == 3){
+                    return 'left'
+                }
+                else{
+                    return 'center'
+                }
+            }
     },
     computed:{
         getTableWidth: function() {
@@ -121,14 +260,41 @@ export default {
         }
     },
     mounted(){
-        
+        this.page.total=2
     }
 }
 </script>
-<style scoped>
+<style>
 .bodybox{
   margin-top: 20px;
 }
 
+.ranklist .el-table td, .el-table th{
+    padding:0 !important
+}
+
+.ranklist .el-table .cell{
+    padding:0 1px !important
+}
+
+.firstAC{
+    background-color: rgb(217, 240, 199);
+}
+
+.ACStatusBox{
+    padding: 0.5em 0;
+    text-align: center;
+    min-width: 4.8em;
+    line-height: 1em;
+    height: 3em;
+}
+
+.ACStatusBox .time{
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 12px;
+}
+.el-col{
+    border: 1px solid transparent; 
+}
 
 </style>

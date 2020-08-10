@@ -445,9 +445,21 @@ export function calSize(sz){
   }
 }
 
-// export function seconds2Clock(seconds){
-//   var res = ''
-//   if(seconds % 60){
-//     res
-//   }
-// }
+function seconds2ClockHelper(x){
+  if(x<10){
+    return '0' + x
+  }
+  else{
+    return '' + x
+  }
+}
+
+export function seconds2Clock(seconds){
+  var res = ''
+  res = ':' + seconds2ClockHelper(seconds % 60)
+  seconds = Math.floor(seconds / 60)
+  res = ':' + seconds2ClockHelper(seconds % 60) + res
+  seconds = Math.floor(seconds / 60)
+  res = seconds2ClockHelper(seconds % 60) + res
+  return res
+}
