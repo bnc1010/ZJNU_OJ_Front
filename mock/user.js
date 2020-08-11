@@ -1,5 +1,8 @@
 
 const tokens = {
+  root:{
+    token: 'root-token'
+  },
   admin: {
     token: 'admin-token'
   },
@@ -9,11 +12,17 @@ const tokens = {
 }
 
 const users = {
+  'root-token': {
+    roles: ['root'],
+    introduction: 'I am a super administrator',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: 'Super Admin'
+  },
   'admin-token': {
     roles: ['admin'],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
+    name: 'Normal Admin'
   },
   'editor-token': {
     roles: ['editor'],
@@ -31,7 +40,7 @@ module.exports = [
     response: config => {
       const { username } = config.body
       const token = tokens[username]
-
+      console.log(token)
       // mock error
       if (!token) {
         return {

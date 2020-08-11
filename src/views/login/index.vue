@@ -49,6 +49,10 @@
 
       <div style="position:relative">
         <div class="tips">
+          <span>Username : root</span>
+          <span>Password : any</span>
+        </div>
+        <div class="tips">
           <span>Username : admin</span>
           <span>Password : any</span>
         </div>

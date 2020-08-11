@@ -130,7 +130,7 @@ export const constantRoutes = [
         component: () => import('@/views/contest'),
         name: 'contest',
         hidden: true,
-        meta: { title: '比赛列表', activeMenu: '/contest'}
+        meta: { title: '比赛列表', activeMenu: '/contest', noCache: true}
       },
       {
         path: 'detial/:id(\\d+)',
@@ -172,10 +172,10 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/userList',
+    path: '/userAdmin',
     component: Layout,
-    redirect: 'userAdmin/userList',
-    name: 'userList',
+    name: 'userAdmin',
+    redirect: '/userAdmin/userList',
     meta: {
       roles: ['admin'],
       title: '用户管理',
@@ -183,22 +183,80 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'userList',
+        path: '/userAdmin/userList',
         component: () => import('@/views/user-admin/user-list.vue'),
         name: 'users',
-        meta: { title: '用户' }
+        meta: { title: '用户', noCache: true, roles: ['admin']}
       },
       {
-        path: 'roleList',
+        path: '/userAdmin/roleList',
         component: () => import('@/views/user-admin/role-list.vue'),
         name: 'roles',
-        meta: { title: '角色' }
+        meta: { title: '角色', noCache: true, roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/ojAdmin',
+    component: Layout,
+    name: 'ojAdmin',
+    redirect: '/ojAdmin/problem',
+    meta: {
+      roles: ['admin'],
+      title: 'OJ管理',
+      icon: 'ojadmin'
+    },
+    children: [
+      {
+        path: '/ojAdmin/problem',
+        component: () => import('@/views/oj-admin/problem-admin.vue'),
+        name: 'problemAdmin',
+        meta: { title: '题目管理', noCache: true, roles: ['admin']}
+      },
+      {
+        path: '/ojAdmin/problem/edit/:id(\\d+)',
+        component: () => import('@/views/oj-admin/problem-edit.vue'),
+        name: 'problemEdit',
+        hidden:true,
+        meta: { title: '编辑题目',activeMenu: '/ojAdmin/problem', noCache: true, roles: ['admin']}
+      },
+      {
+        path: '/ojAdmin/problem/add',
+        component: () => import('@/views/oj-admin/problem-add.vue'),
+        name: 'problemAdd',
+        hidden:true,
+        meta: { title: '新建题目',activeMenu: '/ojAdmin/problem', noCache: true, roles: ['admin']}
+      },
+      {
+        path: '/ojAdmin/contest',
+        component: () => import('@/views/oj-admin/contest-admin.vue'),
+        name: 'contestAdmin',
+        meta: { title: '比赛管理', noCache: true, roles: ['admin']}
+      },
+    ]
+  },
+  {
+    path: '/systemAdmin',
+    component: Layout,
+    name: 'systemAdmin',
+    redirect: '/systemAdmin/permissionList',
+    meta: {
+      roles: ['root'],
+      title: '系统管理',
+      icon: 'systemadmin'
+    },
+    children: [
+      {
+        path: 'permissionList2',
+        component: () => import('@/views/user-admin/permission-list.vue'),
+        name: 'permissions2',
+        meta: { title: '系统概览占位', noCache: true, roles: ['root']}
       },
       {
         path: 'permissionList',
         component: () => import('@/views/user-admin/permission-list.vue'),
         name: 'permissions',
-        meta: { title: '权限' }
+        meta: { title: '权限', noCache: true, roles: ['root']}
       }
     ]
   },

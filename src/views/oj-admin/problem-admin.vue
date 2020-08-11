@@ -12,7 +12,9 @@
                             </el-input>
                         </div>
                     </el-col>
-                    <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+                    <el-col :span="6"><div class="grid-content bg-purple">
+                        <el-button type="primary" plain @click="handleAdd">新建题目</el-button>
+                    </div></el-col>
                 </el-row>
                 <el-row :gutter="20">
                     <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
@@ -46,15 +48,15 @@
                 :data="tableData"
                 :fit="true"
                 style="width: 100%"
-                :row-class-name="tableRowClassName">
+                >
                 <el-table-column
                     prop="id"
                     label="ID"
                     width="80">
                 </el-table-column>
-                <el-table-column label="题目名称" width="350">
+                <el-table-column label="题目名称" width="320">
                     <template slot-scope="scope">
-                        <router-link :to="'./detial/' + scope.row.id">
+                        <router-link :to="'/problem/detial/' + scope.row.id">
                             {{scope.row.problem}}
                         </router-link>
                     </template>
@@ -77,7 +79,12 @@
                     prop="value"
                     label="积分"
                     width="80"
-                    align="right">
+                    align="center">
+                </el-table-column>
+                <el-table-column align="right">
+                    <template slot-scope="scope">
+                        <el-button type="warning" plain size="small" @click="handleUpdate(scope.row.id)">update</el-button>
+                    </template>
                 </el-table-column>
                 </el-table>
             </center>
@@ -117,7 +124,7 @@
 <script>
 import {getProblems, getTags} from '@/api/problem'
 export default {
-    name: "problem",
+    name: "ProblemAdmin",
     components:{} ,
     data(){
         return {
@@ -146,14 +153,9 @@ export default {
             let colors = ['#2185d0', '#21ba45', '#f2711c', '#e03997', '#a5673f']
             return colors[key%colors.length]
         },
-        tableRowClassName({row, rowIndex}) {
-            if (row.ac) {
-                return 'success-row';
-            }
-            return '';
-        },
         handleTagClose :function(tag){
             this.searchTag.splice(this.searchTag.indexOf(tag), 1)
+            console.log(this.searchTag)
         },
         handleAddSearchTag :function(tag){
             if(this.searchTag.indexOf(tag)===-1){
@@ -174,6 +176,16 @@ export default {
             }).catch(err => {
 
             })
+        },
+        handleUpdate: function(problemId){
+             this.$router.push({
+                 path: '/ojAdmin/problem/edit/' + problemId
+             })
+        },
+        handleAdd: function(problemId){
+             this.$router.push({
+                 path: '/ojAdmin/problem/add'
+             })
         }
     },
     mounted(){
