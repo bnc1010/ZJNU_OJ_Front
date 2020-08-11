@@ -170,7 +170,7 @@ export default {
         this.tableData = res.data.content
         this.page.total = res.data.pagetotal
       }).catch(err => {
-
+        console.log(err)
       })
     },
     handleTags: function() {
@@ -235,5 +235,4 @@ export default {
 .problemBox{
     margin-top: 20px;
 }
-
 </style>
