@@ -46,7 +46,7 @@ service.interceptors.response.use(
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
-     if (res.code !== 20000) {                                  // do not make a messagebox
+    if (res.code !== 200) { // do not make a messagebox
     //   Message({
     //     message: res.message || 'Error',
     //     type: 'error',
