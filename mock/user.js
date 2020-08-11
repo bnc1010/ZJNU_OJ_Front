@@ -89,5 +89,24 @@ module.exports = [
         data: 'success'
       }
     }
+  },
+  {
+    url: '/vue-element-admin/users/all',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: [{
+          createtime: "2020-05-14T13:59:19Z",
+          email: "123@456.com",
+          id: 62,
+          intro: "bbb",
+          name: "段老师",
+          username: "abz2358",
+          level:9
+        }],
+        pagetotal:1
+      }
+    }
   }
 ]

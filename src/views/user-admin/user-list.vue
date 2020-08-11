@@ -1,21 +1,22 @@
 <template>
   <div class="app-container">
-    <section>
+    <el-card>
       <!--工具条-->
-      <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-        <el-form :inline="true" :model="filters">
-          <el-form-item>
-            <el-input v-model="filters.name" placeholder="用户名"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="getUsers">查询</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="handleAdd">新增</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-
+      <el-row :gutter="20">
+          <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+          <el-col :span="6">
+              <div class="grid-content bg-purple">
+                <el-input placeholder="搜索用户名或ID" v-model="page.query" class="input-with-select">
+                  <el-button slot="append" icon="el-icon-search"></el-button>
+                </el-input>
+                
+              </div>
+          </el-col>
+          <el-col :span="6"><div class="grid-content bg-purple"><el-button type="primary" plain @click="handleAdd">新建用户</el-button></div></el-col>
+          <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+      </el-row>
+    </el-card>
+    <el-card class="bodybox">
       <!--列表-->
       <el-table
         :data="users"
@@ -25,13 +26,12 @@
         style="width: 100%"
       >
         <el-table-column type="selection"></el-table-column>
-        <el-table-column type="index" width="50"></el-table-column>
-        <el-table-column prop="uId" label="ID" width="120" sortable></el-table-column>
-        <el-table-column prop="userName" label="用户名" width="150" sortable></el-table-column>
-        <el-table-column prop="uRank" label="身份" width="120"></el-table-column>
-        <el-table-column prop="sex" label="性别" width="80" :formatter="formatSex"></el-table-column>
-        <el-table-column prop="age" label="年龄" width="80" sortable></el-table-column>
-        <el-table-column prop="birthday" label="生日" :formatter="formatDate"></el-table-column>
+        <el-table-column prop="id" label="ID" width="120"></el-table-column>
+        <el-table-column prop="username" label="用户名" width="150"></el-table-column>
+        <el-table-column prop="name" label="姓名" width="150"></el-table-column>
+        <el-table-column prop="email" label="邮箱" width="200"></el-table-column>
+        <el-table-column prop="level" label="权限等级" width="120"></el-table-column>
+
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">
@@ -49,37 +49,38 @@
           </template>
         </el-table-column>
       </el-table>
-
+      <el-divider></el-divider>
       <!--工具条-->
       <el-col :span="24" class="toolbar">
         <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-        <el-pagination
-          layout="prev, pager, next"
+        <center>
+          <el-pagination
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :page-size="20"
-          :total="this.total"
-          style="float:right;"
-        ></el-pagination>
+          :current-page="page.index"
+          :page-sizes="[20, 50, 100]"
+          :page-size="page.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="page.total">
+          </el-pagination>
+        </center>
       </el-col>
-
-      <!--编辑界面-->
+    </el-card>
+    <!--编辑界面-->
       <el-dialog title="编辑" :visible.sync="editFormVisible" :append-to-body="true">
         <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-          <el-form-item label="姓名" prop="userName">
-            <el-input v-model="editForm.userName" auto-complete="off" disabled></el-input>
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="editForm.username" auto-complete="off" disabled></el-input>
           </el-form-item>
-          <el-form-item label="性别">
-            <el-radio-group v-model="editForm.sex">
-              <el-radio class="radio" :label="1">男</el-radio>
-              <el-radio class="radio" :label="0">女</el-radio>
-            </el-radio-group>
+          <el-form-item label="姓名" prop="name">
+            <el-input v-model="editForm.name" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="年龄">
-            <el-input-number v-model="editForm.age" :min="0" :max="200"></el-input-number>
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="editForm.email" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="生日">
-            <el-date-picker type="date" placeholder="选择日期" v-model="editForm.birthday"></el-date-picker>
-          </el-form-item>
+          <!-- <el-table-column prop="name" label="姓名" width="150"></el-table-column>
+          <el-table-column prop="email" label="邮箱" width="200"></el-table-column>
+          <el-table-column prop="level" label="权限等级" width="120"></el-table-column> -->
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click.native="editFormVisible = false, editLoading=false">取消</el-button>
@@ -90,20 +91,14 @@
       <!--新增界面-->
       <el-dialog title="新增" :visible.sync="addFormVisible" :append-to-body="true">
         <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-          <el-form-item label="用户名" prop="userName">
-            <el-input v-model="addForm.userName" auto-complete="off"></el-input>
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="addForm.username" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="性别">
-            <el-radio-group v-model="addForm.sex">
-              <el-radio class="radio" :label="1">男</el-radio>
-              <el-radio class="radio" :label="0">女</el-radio>
-            </el-radio-group>
+          <el-form-item label="姓名" prop="name">
+            <el-input v-model="addForm.name" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="年龄">
-            <el-input-number v-model="addForm.age" :min="0" :max="150"></el-input-number>
-          </el-form-item>
-          <el-form-item label="生日">
-            <el-date-picker type="date" placeholder="选择日期" v-model="addForm.birthday"></el-date-picker>
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="addForm.email" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="初始密码" prop="password">
             <el-input v-model="addForm.password" auto-complete="off"></el-input>
@@ -129,7 +124,6 @@
           <el-button type="primary" @click="handleUpdateRole();">提 交</el-button>
         </span>
       </el-dialog>
-    </section>
   </div>
 </template>
 
@@ -152,13 +146,16 @@ import { type } from 'os';
 export default {
   data() {
     return {
+      page:{
+        index:1,
+        total:0,
+        size:20,
+        query:''
+      },
       filters: {
         name: ""
       },
       users: [],
-      total: 0,
-      pageNum: 1,
-      pageSize: 20,
       listLoading: false,
       resetLoading: false,
       sels: [], //列表选中列
@@ -169,29 +166,23 @@ export default {
       },
       //编辑界面数据
       editForm: {
-        age: -1,
-        birthday: "",
-        password: "",
-        sex: -1,
-        uId: -1,
-        uRank: -1,
-        userName: ""
+        username: "",
+        name:'',
+        email:'',
       },
       addFormVisible: false, //新增界面是否显示
       addLoading: false,
       roleVisible: false,
       addFormRules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        username: [{ required: true, message: "请输入用户名", trigger: "blur" }]
       },
       //新增界面数据
       addForm: {
-        age: -1,
-        birthday: "",
+        username: "",
+        name:'',
+        email:'',
         password: "",
-        sex: -1,
-        uId: -1,
-        uRank: -1,
-        userName: ""
       },
       nowId: -1,
       roleData: [],
@@ -201,6 +192,17 @@ export default {
     };
   },
   methods: {
+    handleCurrentChange: function(val){
+      this.page.index=val
+      this.getUsers();
+      // this.flushProblemList()
+      console.log(val)
+    },
+    handleSizeChange: function(val){
+        this.page.size=val
+        // this.flushProblemList()
+        console.log(val)
+    },
     //性别显示转换
     formatSex: function(row, column) {
       return row.sex == 1 ? "男" : row.sex == 0 ? "女" : "未知";
@@ -212,22 +214,24 @@ export default {
         return "-";
       }
     },
-    handleCurrentChange(val) {
-      this.pageNum = val;
-      this.getUsers();
-    },
     //获取用户列表
     getUsers() {
-      let pageNum = this.pageNum;
-      let pageSize = this.pageSize;
+      let pageNum = this.page.index;
+      let pageSize = this.page.size;
       this.listLoading = true;
       //NProgress.start();
       getUserList(pageNum, pageSize).then(res => {
-        this.total = res.etxra.total;
+        this.page.total = res.pagetotal;
         this.users = res.data;
         this.listLoading = false;
         // console.log( res.etxra);
         //NProgress.done();
+      }).catch(err => {
+        console.log(err)
+        this.$message({
+          type:'error',
+          message: '用户列表加载失败'
+        })
       });
     },
     //删除
@@ -489,10 +493,16 @@ export default {
   },
   mounted() {
     this.getUsers();
-    this.getRoles();
+    // this.getRoles();
   }
 };
 </script>
 
 <style scoped>
+.bodybox{
+  margin-top: 20px;
+}
+.el-col{
+    border: 1px solid transparent; 
+}
 </style>

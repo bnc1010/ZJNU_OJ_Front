@@ -101,9 +101,9 @@
                         @row-click="handleSubmitRowClick"
                         style="width: 100%">
                         <el-table-column
-                        prop="normalResult"
+                        prop="result"
                         label="提交结果"
-                        width="150">
+                        width="120">
                         </el-table-column>
                         <el-table-column
                         prop="normalSubmitTime"
