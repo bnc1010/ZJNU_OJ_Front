@@ -20,10 +20,10 @@
       <template>
         <el-table :data="roles" highlight-current-row v-loading="loading" style="width: 100%;">
           <el-table-column type="index" width="60"></el-table-column>
-          <el-table-column prop="rId" label="ID" width="120" sortable></el-table-column>
-          <el-table-column prop="roleName" label="角色名" sortable></el-table-column>
-          <el-table-column prop="rRank" label="等级" sortable></el-table-column>
-          <el-table-column prop="rtype" label="类型" sortable></el-table-column>
+          <el-table-column prop="id" label="ID" width="120" sortable></el-table-column>
+          <el-table-column prop="name" label="角色名" sortable></el-table-column>
+          <el-table-column prop="level" label="等级" sortable></el-table-column>
+          <el-table-column prop="type" label="类型(r:root,a:admin,c:common)"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">
@@ -55,14 +55,14 @@
       <!--新增界面-->
       <el-dialog title="新增" :visible.sync="addFormVisible" :append-to-body="true">
         <el-form :model="addForm" label-width="80px" ref="addForm">
-          <el-form-item label="角色名" prop="rName">
-            <el-input v-model="addForm.rName" auto-complete="off"></el-input>
+          <el-form-item label="角色名" prop="name">
+            <el-input v-model="addForm.name" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="等级" prop="rRank">
-            <el-input v-model="addForm.rRank" auto-complete="off"></el-input>
+          <el-form-item label="等级" prop="level">
+            <el-input v-model="addForm.level" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="类型" prop="rType">
-            <el-input v-model="addForm.rType" auto-complete="off"></el-input>
+          <el-form-item label="类型" prop="type">
+            <el-input v-model="addForm.type" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -99,11 +99,10 @@ export default {
       perValue: [],
       nowId: -1,
       access: 1,
-
       addForm: {
-        rType: "",
-        rRank: 1000,
-        rName: ""
+        type: "",
+        level: 1000,
+        name: ""
       },
       addFormVisible: false,
       addLoading: false
@@ -173,8 +172,8 @@ export default {
       for (var x in this.permission) {
         // console.log(this.permission[x])
         this.data.push({
-          key: this.permission[x].pId,
-          label: this.permission[x].pName
+          key: this.permission[x].id,
+          label: this.permission[x].name
         });
       }
       this.value = [];
@@ -188,9 +187,9 @@ export default {
       } else {
         this.addFormVisible = true;
         this.addForm = {
-          rType: "",
-          rRank: 1000,
-          rName: ""
+          type: "",
+          level: 1000,
+          name: ""
         };
       }
     },
@@ -201,8 +200,8 @@ export default {
           type: "error"
         });
       } else {
-        this.nowId = row.rId;
-        this.getOwnPermission(row.rId);
+        this.nowId = row.id;
+        this.getOwnPermission(row.id);
         this.permissionVisible = true;
       }
     },
@@ -262,8 +261,8 @@ export default {
           })
           .catch(err => {
             this.$message({
-              message: msg,
-              type: "warning"
+              message: "赋权限失败",
+              type: "erroe"
             });
           });
       }
@@ -276,7 +275,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          deleteRole(row.rId)
+          deleteRole(row.id)
             .then(res => {
               this.$message({
                 message: "删除成功",
@@ -286,14 +285,14 @@ export default {
             })
             .catch(err => {
               this.$message({
-                message: err.response.data.msg,
+                message: err.response.data.msg || "删除失败",
                 type: "error"
               });
             });
         })
         .catch(() => {
           this.$message({
-            message: msg,
+            message: "",
             type: "warning"
           });
         });
@@ -301,7 +300,7 @@ export default {
     submitAddRole: function() {
       this.$confirm("确认提交吗？", "提示", {}).then(() => {
         this.addLoading = true;
-        addRole(this.addForm.rName, this.addForm.rType, this.addForm.rRank)
+        addRole(this.addForm.name, this.addForm.type, this.addForm.level)
           .then(res => {
             this.$message({
               message: "添加成功",

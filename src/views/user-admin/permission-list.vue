@@ -18,11 +18,10 @@
           v-loading="loading"
           style="width: 100%;"
         >
-          <el-table-column type="index" width="60"></el-table-column>
-          <el-table-column prop="pId" label="ID" width="80" sortable></el-table-column>
-          <el-table-column prop="pName" label="权限名"></el-table-column>
-          <el-table-column prop="pUrl" label="权限表达式"></el-table-column>
-          <el-table-column prop="pType" label="权限类型" width="100" sortable></el-table-column>
+          <el-table-column prop="id" label="ID" width="80" sortable></el-table-column>
+          <el-table-column prop="name" label="权限名" width="250"></el-table-column>
+          <el-table-column prop="url" label="权限表达式" width="250"></el-table-column>
+          <el-table-column prop="type" label="权限类型" width="120" sortable></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">
@@ -39,13 +38,13 @@
 		<el-dialog title="新增" :visible.sync="addFormVisible" :append-to-body="true">
 			<el-form :model="addForm" label-width="80px" ref="addForm">
 				<el-form-item label="权限名" prop="pName">
-					<el-input v-model="addForm.pName" auto-complete="off"></el-input>
+					<el-input v-model="addForm.name" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="表达式" prop="pUrl">
-					<el-input v-model="addForm.pUrl" auto-complete="off"></el-input>
+					<el-input v-model="addForm.url" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="权限类型" prop="pType">
-					<el-input v-model="addForm.pType" auto-complete="off"></el-input>
+					<el-input v-model="addForm.type" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -57,13 +56,13 @@
 		<el-dialog title="编辑" :visible.sync="editFormVisible" :append-to-body="true">
 			<el-form :model="editForm" label-width="80px" ref="editForm">
 				<el-form-item label="权限名" prop="pName">
-					<el-input v-model="editForm.pName" auto-complete="off"></el-input>
+					<el-input v-model="editForm.name" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="表达式" prop="pUrl">
-					<el-input v-model="editForm.pUrl" auto-complete="off"></el-input>
+					<el-input v-model="editForm.url" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="权限类型" prop="pType">
-					<el-input v-model="editForm.pType" auto-complete="off"></el-input>
+					<el-input v-model="editForm.type" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -98,17 +97,17 @@ export default {
       permissions: [],
       addFormVisible: false,
       addForm: {
-        pId: "",
-        pName: "",
-        pUrl: "",
-        pType: "",
+        id: "",
+        name: "",
+        url: "",
+        type: "",
       },
       addLoading: false,
       editForm: {
-        pId: "",
-        pName: "",
-        pUrl: "",
-        pType: "",
+        id: "",
+        name: "",
+        url: "",
+        type: "",
       },
       editFormVisible: false,
       editLoading: false,
@@ -140,10 +139,10 @@ export default {
     handleAdd: function () {
       this.addFormVisible = true;
       this.addForm = {
-        pId: "",
-        pName: "",
-        pUrl: "",
-        pType: "",
+        id: "",
+        name: "",
+        url: "",
+        type: "",
       };
     },
 
@@ -151,7 +150,7 @@ export default {
       this.$confirm("删除后相关角色将失去该权限，确认删除该权限吗?", "提示", {
         type: "warning",
       }).then(() => {
-        deletePermission(row.pId)
+        deletePermission(row.id)
           .then((res) => {
             this.$message({
               message: "删除成功",
@@ -169,9 +168,9 @@ export default {
     },
     submitAddPermission: function () {
       if (
-        this.addForm.pName == "" ||
-        this.addForm.pUrl == "" ||
-        this.addForm.pType == ""
+        this.addForm.name == "" ||
+        this.addForm.url == "" ||
+        this.addForm.type == ""
       ) {
         this.$message({
           message: "信息不完整",
@@ -199,18 +198,18 @@ export default {
     },
     handleEdit(index, row) {
       this.editForm = {
-        pId: row.pId,
-        pName: row.pName,
-        pUrl: row.pUrl,
-        pType: row.pType,
+        id: row.id,
+        name: row.name,
+        url: row.url,
+        type: row.type,
       };
       this.editFormVisible = true;
     },
     submitEditPermission: function () {
       if (
-        this.editForm.pName == "" ||
-        this.editForm.pUrl == "" ||
-        this.editForm.pType == ""
+        this.editForm.name == "" ||
+        this.editForm.url == "" ||
+        this.editForm.type == ""
       ) {
         this.$message({
           message: "信息不完整",

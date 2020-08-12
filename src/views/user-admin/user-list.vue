@@ -203,17 +203,6 @@ export default {
         // this.flushProblemList()
         console.log(val)
     },
-    //性别显示转换
-    formatSex: function(row, column) {
-      return row.sex == 1 ? "男" : row.sex == 0 ? "女" : "未知";
-    },
-    formatDate: function(row, column) {
-      if (row.birthday) {
-        return row.birthday.split(" ")[0];
-      } else {
-        return "-";
-      }
-    },
     //获取用户列表
     getUsers() {
       let pageNum = this.page.index;
@@ -270,12 +259,10 @@ export default {
     handleAdd: function() {
       this.addFormVisible = true;
       this.addForm = {
-        age: null,
-        birthday: null,
         password: "123456",
-        sex: null,
-        uRank: 10000,
-        userName: ""
+        level: 10000,
+        username: "",
+        email:""
       };
     },
     handleReset: function(index, row) {
@@ -285,7 +272,7 @@ export default {
         .then(() => {
           //NProgress.start();
           // console.log(row)
-          resetUser(row.uId)
+          resetUser(row.id)
             .then(res => {
               //NProgress.done();
               this.$message({
@@ -294,7 +281,10 @@ export default {
               });
             })
             .catch(err => {
-              // console.log(err.response)
+              this.$message({
+                type:'error',
+                message:"重置密码失败"
+              })
             });
         })
         .catch(() => {});
@@ -305,8 +295,8 @@ export default {
       for (var x in this.roles) {
         // console.log(this.permission[x])
         this.roleData.push({
-          key: this.roles[x].rId,
-          label: this.roles[x].roleName
+          key: this.roles[x].id,
+          label: this.roles[x].name
         });
       }
       this.roleValue = [];
@@ -320,9 +310,9 @@ export default {
       this.roleVisible = true;
       this.getRoles();
       this.flushRole();
-      this.nowId = row.uId;
+      this.nowId = row.id;
 
-      getUserRole(row.uId)
+      getUserRole(row.id)
         .then(res => {
           this.roleValue = res.data;
           this.perRoleValue = res.data;
@@ -396,13 +386,6 @@ export default {
             this.editLoading = true;
             //NProgress.start();
             let para = Object.assign({}, this.editForm);
-            para.birthday =
-              !para.birthday || para.birthday == ""
-                ? null
-                : util.formatDate.format(
-                    new Date(para.birthday),
-                    "yyyy-MM-dd HH:mm:ss"
-                  );
             updateUser(para)
               .then(res => {
                 this.editLoading = false;
@@ -431,17 +414,6 @@ export default {
             this.addLoading = true;
             //NProgress.start();
             let para = Object.assign({}, this.addForm);
-            console.log(
-              util.formatDate.format(new Date(para.birthday), "yyyy-MM-dd")
-            );
-            para.birthday =
-              !para.birthday || para.birthday == ""
-                ? null
-                : util.formatDate.format(
-                    new Date(para.birthday),
-                    "yyyy-MM-dd HH:mm:ss"
-                  );
-            console.log(para);
             addUser(para)
               .then(res => {
                 this.editLoading = false;
@@ -493,7 +465,7 @@ export default {
   },
   mounted() {
     this.getUsers();
-    // this.getRoles();
+    this.getRoles();
   }
 };
 </script>
