@@ -120,6 +120,7 @@
 import 'mavon-editor/dist/css/index.css'
 import {getProblems, getTags} from '@/api/problem'
 import {mavonEditor} from 'mavon-editor'
+import { insertProblem } from '@/api/oj-admin'
 export default {
     name:"ProblemAdd",
     components:{mavonEditor},
@@ -190,7 +191,10 @@ export default {
         },
         handleTags: function(){
             getTags().then(res => {
-                this.tags = res.data
+                this.tags = []
+                for (const idx in res.data) {
+                this.tags.push(res.data[idx].name)
+                }
             }).catch(err => {
 
             })
@@ -218,7 +222,14 @@ export default {
         handleSubmit:function(){
             this.changeMemory()
             console.log(this.problem)
-            //to do : 适配api
+            insertProblem(this.problem).then( res => {
+                this.$message({
+                    type:'success',
+                    message:'添加成功'
+                })
+            }).catch( err = {
+
+            })
         }
     },
     mounted(){

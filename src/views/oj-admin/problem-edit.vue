@@ -120,6 +120,8 @@
 import 'mavon-editor/dist/css/index.css'
 import {getProblems, getTags} from '@/api/problem'
 import {mavonEditor} from 'mavon-editor'
+import {paramOfResultfulUrl} from '@/utils'
+import {getEditProblem, editProblem} from '@/api/oj-admin'
 export default {
     name:"PromblemEdit",
     components:{mavonEditor},
@@ -190,9 +192,42 @@ export default {
         },
         handleTags: function(){
             getTags().then(res => {
-                this.tags = res.data
+                this.tags = []
+                for (const idx in res.data) {
+                this.tags.push(res.data[idx].name)
+                }
             }).catch(err => {
-
+                console.log(err)
+                this.$message({
+                    type:'error',
+                    message: '标签加载失败'
+                })
+            })
+        },
+        handleLoadProblem: function() {
+            let pid = paramOfResultfulUrl(window.location.href)
+            getEditProblem(pid).then(res => {
+                    this.problem={
+                    active: res.data.active,
+                    description:res.data.description, 
+                    hint: res.data.hint,
+                    input: res.data.input,
+                    _memory: res.data.memoryLimit,
+                    memory: res.data.memoryLimit,
+                    output: res.data.output,
+                    sampleInput: res.data.sampleInput,
+                    sampleOutput: res.data.sampleOutput,
+                    score: res.data.score,
+                    source: res.data.source,
+                    tags:res.data.tags,
+                    time: res.data.timeLimit,
+                    title: res.data.title,
+                }
+                for(let jdx in this.problem.tags){
+                    this.problem.tags[jdx]=this.problem.tags[jdx].name
+                }
+            }).catch(err => {
+                console.log(err)
             })
         },
         handleProblemAddTag: function(tag){
@@ -217,12 +252,22 @@ export default {
         },
         handleSubmit:function(){
             this.changeMemory()
-            console.log(this.problem)
-            //to do : 适配api
+            editProblem(this.problem, paramOfResultfulUrl(window.location.href)).then(res => {
+                this.$message({
+                    type:'success',
+                    message: '修改成功'
+                }) 
+            }).catch(err => {
+                this.$message({
+                    type:'error',
+                    message: '修改失败'
+                }) 
+            })
         }
     },
     mounted(){
         this.handleTags()
+        this.handleLoadProblem()
     }
 }
 </script>

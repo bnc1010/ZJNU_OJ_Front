@@ -184,7 +184,7 @@ export function param2Obj(url) {
  * @returns {Object}
  */
 export function paramOfResultfulUrl(url) {
-  let parm = decodeURIComponent(url.split('/').slice(-1)).replace(/\+/g, ' ')
+  const parm = decodeURIComponent(url.split('/').slice(-1)).replace(/\+/g, ' ')
   if (!parm) {
     return ''
   }
@@ -368,93 +368,81 @@ export function removeClass(ele, cls) {
   }
 }
 
-export function calSize(sz){
-    var tp = sz
-    if (tp < 1024){
-        return '' +  tp + 'B'
-    }
-    
-    tp = Math.round(tp / 1024)
-    if (tp < 1024){
-        return '' +  tp + 'K'
-    }
-
-    tp = Math.round(tp / 1024)
-    if (tp < 1024){
-        return '' + tp + 'M'
-    }
-
-    tp = Math.round(tp / 1024)
-    if (tp < 1024){
-        return '' +  tp + 'G'
-    }
-
-    tp = Math.round(tp / 1024)
-    if (tp < 1024){
-        return '' +  tp + 'T'
-    }
-
+export function calSize(sz) {
+  var tp = sz
+  if (tp < 1024) {
+    return '' + tp + 'B'
   }
-
-  export function calTime(sz){
-    var tp = sz
-    var res=''
-    var tmp = tp % 60
-    if (tmp != 0){
-       res = tmp + '秒' + res
-    }
-    tp = Math.floor(tp / 60)
-    tmp = tp % 60
-    if (tmp != 0){
-      res = tmp + '分' + res
-    }
-    
-    tp = Math.floor(tp / 60)
-    tmp = tp % 24
-    if (tmp != 0){
-      res = tmp + '时' + res
-    }
-    
-    tp = Math.floor(tp / 24)
-    tmp = tp % 365
-    if (tmp != 0){
-      res = tmp + '天' + res
-    }
-    tp = Math.floor(tp / 365)
-    if(tp > 0){
-      res = tmp + '年' + res
-    }
-    return res
+  tp = Math.round(tp / 1024)
+  if (tp < 1024) {
+    return '' + tp + 'K'
   }
-
-
-
- export function mapAlpha2Num(alpha){
-    alpha = alpha.toLowerCase() 
-    var mp={'a':0, 'b':1, 'c':2, 'd':3, 'e':4, 'f':5, 'g':6, 'h':7, 'i':8, 'j':9, 'k':10, 'l':11, 'm':12, 'n':13, 'o':14, 'p':15, 'q':16, 'r':17, 's':18, 't':19, 'u':20, 'v':21, 'w':22, 'x':23, 'y':24, 'z':25}
-    return mp[alpha]
- }
-
- export function mapNum2Alpha(num, isUpper, offset=0){
-  var mp=['a','b','c','d','e','f','g','h','i','j','k','l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y','z']
-  if(isUpper){
-    return mp[num+offset].toUpperCase()
+  tp = Math.round(tp / 1024)
+  if (tp < 1024) {
+    return '' + tp + 'M'
   }
-  else{
-    return mp[num+offset]
+  tp = Math.round(tp / 1024)
+  if (tp < 1024) {
+    return '' + tp + 'G'
+  }
+  tp = Math.round(tp / 1024)
+  if (tp < 1024) {
+    return '' + tp + 'T'
+  }
+}
+export function calTime(sz) {
+  var tp = sz
+  var res = ''
+  var tmp = tp % 60
+  if (tmp !== 0) {
+    res = tmp + '秒' + res
+  }
+  tp = Math.floor(tp / 60)
+  tmp = tp % 60
+  if (tmp !== 0) {
+    res = tmp + '分' + res
+  }
+  tp = Math.floor(tp / 60)
+  tmp = tp % 24
+  if (tmp !== 0) {
+    res = tmp + '时' + res
+  }
+  tp = Math.floor(tp / 24)
+  tmp = tp % 365
+  if (tmp !== 0) {
+    res = tmp + '天' + res
+  }
+  tp = Math.floor(tp / 365)
+  if (tp > 0) {
+    res = tmp + '年' + res
+  }
+  return res
+}
+
+export function mapAlpha2Num(alpha) {
+  alpha = alpha.toLowerCase()
+  var mp = { 'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7, 'i': 8, 'j': 9, 'k': 10, 'l': 11, 'm': 12, 'n': 13, 'o': 14, 'p': 15, 'q': 16, 'r': 17, 's': 18, 't': 19, 'u': 20, 'v': 21, 'w': 22, 'x': 23, 'y': 24, 'z': 25 }
+  return mp[alpha]
+}
+
+export function mapNum2Alpha(num, isUpper, offset = 0) {
+  var mp = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+  if (isUpper) {
+    return mp[num + offset].toUpperCase()
+  } else {
+    return mp[num + offset]
   }
 }
 
-function seconds2ClockHelper(x){
-  if(x<10){
+function seconds2ClockHelper(x) {
+  if (x < 10) {
     return '0' + x
-  }
-  else{
+  } else {
     return '' + x
   }
 }
 
-export function seconds2Clock(seconds){
+export function seconds2Clock(seconds) {
   var res = ''
   res = ':' + seconds2ClockHelper(seconds % 60)
   seconds = Math.floor(seconds / 60)

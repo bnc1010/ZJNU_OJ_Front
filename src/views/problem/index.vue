@@ -8,7 +8,7 @@
             <el-col :span="12">
               <div class="grid-content bg-purple">
                 <el-input v-model="page.query" placeholder="搜索题目或题号" class="input-with-select">
-                  <el-button slot="append" icon="el-icon-search" />
+                  <el-button slot="append" icon="el-icon-search" @click="handleSearch"/>
                 </el-input>
               </div>
             </el-col>
@@ -56,7 +56,7 @@
               <el-table-column label="题目名称" width="350">
                 <template slot-scope="scope">
                   <router-link :to="'./detial/' + scope.row.id">
-                    {{ scope.row.problem }}
+                    {{ scope.row.title }}
                   </router-link>
                 </template>
               </el-table-column>
@@ -75,7 +75,7 @@
                 </template>
               </el-table-column>
               <el-table-column
-                prop="value"
+                prop="score"
                 label="积分"
                 width="80"
                 align="right"
@@ -168,7 +168,12 @@ export default {
     flushProblemList: function() {
       getProblems(this.page.index, this.page.size, this.page.query).then(res => {
         this.tableData = res.data.content
-        this.page.total = res.data.pagetotal
+        this.page.total = res.data.totalPages
+        for(let idx in this.tableData){
+            for(let jdx in this.tableData[idx].tags){
+                this.tableData[idx].tags[jdx]=this.tableData[idx].tags[jdx].name
+            }
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -186,6 +191,17 @@ export default {
           message: '标签加载失败'
         })
       })
+    },
+    handleSearch: function(){
+      if(this.searchTag.length!==0){
+        this.page.query+="$$"
+        for(let idx in this.searchTag){
+          this.page.query+=this.searchTag[idx]+','
+        } 
+      }
+      this.page.query
+      this.flushProblemList()
+      this.page.query=""
     }
   }
 }
