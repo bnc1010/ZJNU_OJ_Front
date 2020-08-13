@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <section>
+    <el-card>
       <!--工具条-->
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
         <el-form :inline="true" :model="filters">
@@ -34,7 +34,8 @@
           </el-table-column>
         </el-table>
       </template>
-      <!--新增界面-->
+    </el-card>
+    <!--新增界面-->
       <el-dialog title="新增" :visible.sync="addFormVisible" :append-to-body="true">
         <el-form ref="addForm" :model="addForm" label-width="80px">
           <el-form-item label="权限名" prop="pName">
@@ -70,7 +71,6 @@
           <el-button type="primary" :loading="editLoading" @click.native="submitEditPermission">提交</el-button>
         </div>
       </el-dialog>
-    </section>
   </div>
 </template>
 

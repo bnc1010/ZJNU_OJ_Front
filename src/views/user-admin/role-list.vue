@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <section>
+    <el-card>
       <!--工具条-->
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
         <el-form :inline="true" :model="filters">
@@ -36,8 +36,8 @@
           </el-table-column>
         </el-table>
       </template>
-
-      <el-dialog :visible.sync="permissionVisible" :append-to-body="true">
+    </el-card>
+    <el-dialog :visible.sync="permissionVisible" :append-to-body="true">
         <div style="text-align: center">
           <el-transfer
             v-model="value"
@@ -70,7 +70,6 @@
           <el-button type="primary" :loading="addLoading" @click.native="submitAddRole">提交</el-button>
         </div>
       </el-dialog>
-    </section>
   </div>
 </template>
 <script>

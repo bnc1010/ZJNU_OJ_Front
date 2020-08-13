@@ -8,24 +8,13 @@
                     <el-col :span="12">
                         <div class="grid-content bg-purple">
                             <el-input placeholder="搜索题目或题号" v-model="page.query" class="input-with-select">
-                                <el-button slot="append" icon="el-icon-search"></el-button>
+                                <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
                             </el-input>
                         </div>
                     </el-col>
                     <el-col :span="6"><div class="grid-content bg-purple">
                         <el-button type="primary" plain @click="handleAdd">新建题目</el-button>
                     </div></el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-                    <el-col :span="12">
-                        <div class="grid-content bg-purple">
-                            <div v-for="(tag,key) in searchTag" :key="key" class="tagbox">
-                            <el-tag class="tagboard" size="mini" effect="dark" closable :key="key" @close="handleTagClose(tag)">{{tag}}&nbsp;</el-tag>&nbsp;
-                        </div>
-                        </div>
-                    </el-col>
-                    <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
                 </el-row>
             </el-card>
             <el-card class="problemBox">
@@ -57,7 +46,7 @@
                 <el-table-column label="题目名称" width="320">
                     <template slot-scope="scope">
                         <router-link :to="'/problem/detial/' + scope.row.id">
-                            {{scope.row.problem}}
+                            {{scope.row.title}}
                         </router-link>
                     </template>
                 </el-table-column>
@@ -70,8 +59,8 @@
                 </el-table-column>
                 <el-table-column label="通过率" width="120">
                     <template slot-scope="scope">
-                        <el-tooltip class="item" effect="dark" :content="'ac:' + scope.row.acc + ' / submit:' + scope.row.total" placement="top-start">
-                            <el-progress :text-inside="true" :stroke-width="20" :percentage="scope.row.acrate" color="#5cb87a" ></el-progress>
+                        <el-tooltip class="item" effect="dark" :content="'ac:' + scope.row.accepted + ' / submit:' + scope.row.submitted" placement="top-start">
+                            <el-progress :text-inside="true" :stroke-width="20" :percentage="Number(scope.row.ratio.substr(0, scope.row.ratio.length-1))" color="#5cb87a" ></el-progress>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -104,24 +93,11 @@
                 </div>
             </el-card>
         </el-col>
-        <el-col :span="4" :xs="24">
-            <el-card style="margin-bottom:20px;padding:10px;">
-                <div slot="header" class="clearfix">
-                <span>题目标签</span>
-                </div>
-                <div class="tagsbox">
-                    <div class="box-center">
-                        <div v-for="(tag,key) in tags" :key="key" class="tagbox">
-                            <el-tag class="tagboard" size="mini" :color="tagColor(key)" effect="dark" @click="handleAddSearchTag(tag)">{{tag }}&nbsp;</el-tag>&nbsp;
-                        </div>
-                    </div>
-                </div>
-            </el-card>
-        </el-col>
       </el-row>
   </div>
 </template>
 <script>
+import { getProblemList } from '@/api/oj-admin'
 import {getProblems, getTags} from '@/api/problem'
 export default {
     name: "ProblemAdmin",
@@ -137,7 +113,7 @@ export default {
             search:'',
             tableData: [],
             tags:[],
-            searchTag: []
+
         }
     },
     methods:{
@@ -149,32 +125,21 @@ export default {
             this.page.size=val
             this.flushProblemList()
         },
-        tagColor: function(key){
-            let colors = ['#2185d0', '#21ba45', '#f2711c', '#e03997', '#a5673f']
-            return colors[key%colors.length]
-        },
-        handleTagClose :function(tag){
-            this.searchTag.splice(this.searchTag.indexOf(tag), 1)
-            console.log(this.searchTag)
-        },
-        handleAddSearchTag :function(tag){
-            if(this.searchTag.indexOf(tag)===-1){
-                this.searchTag.push(tag)
-            }
-        },
         flushProblemList: function(){
-            getProblems(this.page.index, this.page.size, this.page.query).then(res => {
+            getProblemList(this.page.index, this.page.size, this.page.query).then(res => {
                 this.tableData=res.data.content
-                this.page.total=res.data.pagetotal
+                for(let idx in res.data.content){
+                    for(let jdx in this.tableData[idx].tags){
+                        this.tableData[idx].tags[jdx]=this.tableData[idx].tags[jdx].name
+                    }
+                }
+                this.page.total=res.data.totalPages
             }).catch(err => {
-
-            })
-        },
-        handleTags: function(){
-            getTags().then(res => {
-                this.tags = res.data
-            }).catch(err => {
-
+                console.log(err)
+                this.$message({
+                    type:'error',
+                    message: '加载题目列表失败'
+                })
             })
         },
         handleUpdate: function(problemId){
@@ -186,10 +151,13 @@ export default {
              this.$router.push({
                  path: '/ojAdmin/problem/add'
              })
+        },
+        handleSearch: function(){
+            console.log(this.page)
+            this.flushProblemList()
         }
     },
     mounted(){
-        this.handleTags()
         this.flushProblemList()
     }
 }
