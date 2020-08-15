@@ -46,7 +46,7 @@ export default {
   },
   methods:{
      getTime(){
-       var date1=new Date();
+      var date1=new Date();
       return parseTime(date1,null)
      }
   },

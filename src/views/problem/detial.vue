@@ -128,7 +128,7 @@
                 <el-table-column
                 prop="normalResult"
                 label="结果"
-                width="120">
+                width="220">
                 </el-table-column>
                 <el-table-column
                 prop="time"
@@ -266,7 +266,7 @@ export default {
             if (row.result=='Accepted') {
                 return 'success-row'
             }
-            else{
+            else if(row.result=='Wrong Answer'){
                 return 'error-row'
             }
             return ''
@@ -310,18 +310,19 @@ export default {
                     share: this.submitDetial.share?'公开':'私密'
                 })
             }).catch(err =>{
-
+                console.log(err)
             })
         },
         handleLangChanged: function(value){
             this.cmOptions.mode=this.langOptions[value].value;
         },
         handleSubmitCode: function(){
-            submitCode(this.submitOption.problemId, this.langOptions[this.submitOption.selectedLang].label, this.submitOption.share, this.submitOption.code).then(res =>{
+            submitCode(this.submitOption.problemId, this.langOptions[this.submitOption.selectedLang].key, this.submitOption.share, this.submitOption.code).then(res =>{
                 this.$message({
                     message: '提交成功',
                     type: 'success'
                 });
+                this.$router.push('/status')
             }).catch(err =>{
                 this.$message({
                     message: '提交失败',
@@ -340,6 +341,7 @@ export default {
 .el-table .error-row {
     background: #FDE2E2;
 }
+
 
 .problemHeader{
     text-align: center;

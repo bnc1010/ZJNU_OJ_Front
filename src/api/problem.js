@@ -28,22 +28,23 @@ export function getLastSubmits(id) {
   return request({
     url: BASE_PATH + '/api/status/user/latest/submit/' + id,
     method: 'get',
-    data: { 'token': getToken() }
+    params: { 'token': getToken() }
   })
 }
 
-export function submitCode(id, lang, share, source) {
+export function submitCode(id, language, share, source) {
   return request({
-    url: BASE_PATH + '/api/problem/submit/' + id,
+    url: BASE_PATH + '/api/problems/submit/' + id,
     method: 'post',
-    params: { lang: lang, share: share, source: source }
+    data: { language: language, share: share, source: source, token: getToken() }
   })
 }
 
 export function getStatusBySubmitId(id) {
   return request({
     url: BASE_PATH + '/api/status/view/' + id,
-    method: 'post'
+    method: 'get',
+    params: { 'token': getToken() }
   })
 }
 

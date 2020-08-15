@@ -1,41 +1,47 @@
-const CMOptions={
-    mode: 'text/x-csrc',
-    smartIndent:true,
-    matchBrackets: true,
-    tabSize: 4,
-    theme: 'ttcn',
-    lineNumbers: true,
-    line: true,
+const CMOptions = {
+  mode: 'text/x-csrc',
+  smartIndent: true,
+  matchBrackets: true,
+  tabSize: 4,
+  theme: 'ttcn',
+  lineNumbers: true,
+  line: true
 }
 
-const LangOptions=[
-    {
-        value:'text/x-csrc',
-        label: 'C'
-    },
-    {
-        value:'text/x-c++src',
-        label: 'C++'
-    },
-    {
-        value:'text/x-java',
-        label: 'Java'
-    },
-    {
-        value:'text/x-python',
-        label: 'Python2'
-    },
-    {
-        value:'text/x-python',
-        label: 'Python3'
-    },
-    {
-        value:'text/x-go',
-        label: 'Golang'
-    },
+const LangOptions = [
+  {
+    value: 'text/x-csrc',
+    label: 'C',
+    key: 'c'
+  },
+  {
+    value: 'text/x-c++src',
+    label: 'C++',
+    key: 'cpp'
+  },
+  {
+    value: 'text/x-java',
+    label: 'Java',
+    key: 'java'
+  },
+  {
+    value: 'text/x-python',
+    label: 'Python2',
+    key: 'py2'
+  },
+  {
+    value: 'text/x-python',
+    label: 'Python3',
+    key: 'py3'
+  },
+  {
+    value: 'text/x-go',
+    label: 'Golang',
+    key: 'go'
+  }
 ]
 
-export default{
-    CMOptions,
-    LangOptions
-}　
+export default {
+  CMOptions,
+  LangOptions
+}

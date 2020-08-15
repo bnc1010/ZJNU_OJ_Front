@@ -85,7 +85,7 @@
                 <el-table-column
                 prop="normalResult"
                 label="结果"
-                width="120">
+                width="220">
                 </el-table-column>
                 <el-table-column
                 prop="time"
@@ -189,11 +189,14 @@ export default {
           this.dialogVisible=false
       },
       handleResultColor : function(result){
-        if(result == 'Accept' || result == 'accept'){
+        if(result == 'Accepted' || result == 'accepted'){
           return 'acClass'
         }
         else if(result == 'Wrong Answer' || result == 'wrong answer'){
           return 'waClass'
+        }
+        else if(result == 'Pending' || result == 'pending'){
+          return 'pdClass'
         }
         else{
           return 'otClass'
@@ -259,10 +262,13 @@ export default {
 .waClass{
   color: #F56C6C;
 }
-
+.pdClass{
+  color: #909399;
+}
 .otClass{
   color: #E6A23C;
 }
+
 .StatuShowBox td{
     font-size: 15px;
     text-align: center;
