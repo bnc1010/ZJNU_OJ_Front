@@ -11,6 +11,12 @@
       <el-form-item label="重复密码" prop="password2">
         <el-input type="password" placeholder="请第二次输入密码" v-model="registerForm.password2"/>
       </el-form-item>
+       <el-form-item label="邮箱" prop="email">
+        <el-input type="text" placeholder="请输入邮箱" v-model="registerForm.email"/>
+      </el-form-item>
+       <el-form-item label="姓名" prop="name">
+        <el-input type="text" placeholder="请输入姓名" v-model="registerForm.name"/>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" v-on:click="onSubmit('registerForm')">注册</el-button>
       </el-form-item>
@@ -18,13 +24,21 @@
   </div>
 </template>
 <script>
-import { validUsername } from '@/utils/validate'
+import { validUsername, validEmail } from '@/utils/validate'
+import { register } from '@/api/user'
 export default {
     name: "Register",
     data() {
         const validateUsername = (rule, value, callback) => {
-            if (validUsername(value)) {
+            if (!validUsername(value)) {
                 callback(new Error('请输入合法的用户名'))
+            } else {
+                callback()
+            }
+        }
+        const validateEmail = (rule, value, callback) => {
+            if (!validEmail(value)) {
+                callback(new Error('请输入合法的邮箱'))
             } else {
                 callback()
             }
@@ -43,17 +57,28 @@ export default {
                 callback()
             }
         }
+        const validateName = (rule, value, callback) => {
+            if(value.length>30 && value.length<=0){
+                callback(new Error('姓名长度不合法'))
+            } else {
+                callback()
+            }
+        }
       return {
         registerForm: {
           username: '',
           password: '',
-          password2: ''
+          password2: '',
+          name: '',
+          email: ''
         },
 
         rules: {
           username: [{required: true, trigger: 'blur', validator: validateUsername}],
           password: [{required: true, trigger: 'blur', validator: validatePassword}],
-          password2:[{required:true, trigger: 'blur', validator: validateTwicePassword}]
+          password2:[{required:true, trigger: 'blur', validator: validateTwicePassword}],
+          email:[{required:true, trigger: 'blur', validator: validateEmail}],
+          name:[{required:true, trigger: 'blur', validator: validateName}]
         },
 
       }
@@ -62,10 +87,17 @@ export default {
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            // todo: 需要引入api验证
-            this.$router.push("/login");
+            register(this.registerForm.username, this.registerForm.password, this.registerForm.email, this.registerForm.name).then(res => {
+              this.$message({
+                type:'success',
+                message:'注册成功'
+              })
+              this.$router.push("/login");
+            }).catch( err => {
+              this.$message.error('注册失败');
+            })
           } else {
-            this.$message.error('注册失败');
+            this.$message.error('注册信息不合法');
             return false;
           }
         });

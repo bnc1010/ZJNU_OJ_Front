@@ -101,7 +101,7 @@ export default {
         flushContestList: function(){
             getContests(this.page.index, this.page.size, this.page.query).then(res => {
                 this.tableData=res.data.content
-                this.page.total=res.data.pagetotal
+                this.page.total=res.data.totalElements
             }).catch(err => {
 
             })

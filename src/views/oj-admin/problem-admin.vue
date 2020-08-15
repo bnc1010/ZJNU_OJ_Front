@@ -136,7 +136,7 @@ export default {
             this.tableData[idx].tags[jdx] = this.tableData[idx].tags[jdx].name
           }
         }
-        this.page.total = res.data.totalPages
+        this.page.total = res.data.totalElements
       }).catch(err => {
         console.log(err)
         this.$message({

@@ -290,6 +290,7 @@ export default {
           normalSubmitTime: this.submitDetial.normalSubmitTime,
           share: this.submitDetial.share ? '公开' : '私密'
         })
+        this.submitDetial.shareButton = this.submitDetial.share ? '设为私密' : '设为公开'
       }).catch(err => {
         this.submitDetialVisible = false
       })
@@ -311,6 +312,8 @@ export default {
           normalSubmitTime: this.submitDetial.normalSubmitTime,
           share: this.submitDetial.share ? '公开' : '私密'
         })
+        console.log()
+        this.submitDetial.shareButton = this.submitDetial.share ? '设为私密' : '设为公开'
       }).catch(err => {
         console.log(err)
       })

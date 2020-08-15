@@ -51,6 +51,7 @@ export function getStatusBySubmitId(id) {
 export function setStatuShareBySubmitId(id) {
   return request({
     url: BASE_PATH + '/api/status/share/' + id,
-    method: 'post'
+    method: 'post',
+    data: { 'token': getToken() }
   })
 }

@@ -231,7 +231,7 @@ export default {
       getStatus(this.page.index, this.page.size, this.page.query).then(res => {
         this.tableData = res.data.content
         console.log(this.tableData)
-        this.page.total = res.data.pagetotal
+        this.page.total = res.data.totalElements
       }).catch(err => {
 
       })

@@ -25,3 +25,11 @@ export function logout() {
     data: { 'token': getToken() }
   })
 }
+
+export function register(username, password, email, name) {
+  return request({
+    url: BASE_PATH + '/api/dmz/register',
+    method: 'post',
+    data: { 'username': username, 'password': password, 'email': email, 'name': name }
+  })
+}
