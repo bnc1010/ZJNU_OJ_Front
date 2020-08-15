@@ -168,7 +168,7 @@ export default {
     flushProblemList: function() {
       getProblems(this.page.index, this.page.size, this.page.query).then(res => {
         this.tableData = res.data.content
-        this.page.total = res.data.totalPages
+        this.page.total = res.data.totalElements
         for (const idx in this.tableData) {
           for (const jdx in this.tableData[idx].tags) {
             this.tableData[idx].tags[jdx] = this.tableData[idx].tags[jdx].name
