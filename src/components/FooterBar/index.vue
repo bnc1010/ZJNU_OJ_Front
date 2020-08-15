@@ -3,23 +3,23 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          
-          <div class="timer"> {{date}}</div>
-          <div class="line"></div>
+
+          <div class="timer"> {{ date }}</div>
+          <div class="line" />
           <ul class="legals social">
             <li>
               <a href="http://www.zjnu.edu.cn/" title="浙江师范大学" target="_blank">
-                <svg-icon icon-class="zjnu"></svg-icon>
+                <svg-icon icon-class="zjnu" />
               </a>
             </li>
             <li>
               <a href="mailto:zjnu-acm@outlook.com" title="联系地址">
-                <svg-icon icon-class="email"></svg-icon>
+                <svg-icon icon-class="email" />
               </a>
             </li>
             <li>
               <a href="https://github.com/bnc1010/ZJNU_OJ_Front" title="开源地址" target="_blank">
-                <svg-icon icon-class="github"></svg-icon>
+                <svg-icon icon-class="github" />
               </a>
             </li>
           </ul>
@@ -30,29 +30,29 @@
   </footer>
 </template>
 <script>
-import {parseTime} from '@/utils'
+import { parseTime } from '@/utils'
 export default {
-  name: 'footerBar',
-  data(){
-    return{
-      date:''
+  name: 'FooterBar',
+  data() {
+    return {
+      date: ''
     }
   },
-  mounted(){
-    let _this = this; // 声明一个变量指向Vue实例this，保证作用域一致
+  mounted() {
+    const _this = this // 声明一个变量指向Vue实例this，保证作用域一致
     this.timer = setInterval(() => {
-      _this.date =this.getTime(); // 修改数据date
+      _this.date = this.getTime() // 修改数据date
     }, 1000)
-  },
-  methods:{
-     getTime(){
-       var date1=new Date();
-      return parseTime(date1,null)
-     }
   },
   beforeDestroy() {
     if (this.timer) {
-      clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
+      clearInterval(this.timer) // 在Vue实例销毁前，清除我们的定时器
+    }
+  },
+  methods: {
+    getTime() {
+      var date1 = new Date()
+      return parseTime(date1, null)
     }
   }
 }

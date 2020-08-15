@@ -1,243 +1,247 @@
 <template>
   <div class="app-container">
-      <el-card>
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <div class="grid-content bg-purple">
-              <div class="box">用户名：</div>
-              <div class="box">
-                <el-input v-model="query.searchName" class="input-with-select" width="200"></el-input>
-              </div>
+    <el-card>
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <div class="grid-content bg-purple">
+            <div class="box">用户名：</div>
+            <div class="box">
+              <el-input v-model="query.searchName" class="input-with-select" width="200" />
             </div>
-          </el-col>
-          <el-col :span="6">
-            <div class="grid-content bg-purple">
-              <div class="box">题目编号：</div>
-              <div class="box">
-              <el-input v-model="query.searchID" class="input-with-select" width="200"></el-input>
-              </div>
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple">
+            <div class="box">题目编号：</div>
+            <div class="box">
+              <el-input v-model="query.searchID" class="input-with-select" width="200" />
             </div>
-          </el-col>
-          <el-col :span="6">
-            <div class="grid-content bg-purple">
-                <div class="box">
-                <el-checkbox v-model="query.onlyAccept">仅通过</el-checkbox>
-                </div>
-                <div class="box">
-                <el-button slot="append" icon="el-icon-search"></el-button>
-                </div>
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple">
+            <div class="box">
+              <el-checkbox v-model="query.onlyAccept">仅通过</el-checkbox>
             </div>
-          </el-col>
-          <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-        </el-row>
+            <div class="box">
+              <el-button slot="append" icon="el-icon-search" />
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
+      </el-row>
     </el-card>
     <el-card class="bodybox">
-    <el-table
-      :data="tableData"
-      style="width: 100%;font-size:11px"
-      :fit="true">
-      <el-table-column prop="id" label="RUN ID" align="center"></el-table-column>
-      <el-table-column prop="user.username" label="用户名" align="center"></el-table-column>
-      <el-table-column prop="problem.id" label="题目" align="center">
-        <template slot-scope="scope">
-          <router-link :to="'./problem/detial/' + scope.row.problem.id">{{scope.row.problem.id}}</router-link>
-        </template>
-      </el-table-column>
-      <el-table-column prop="result" label="结果" align="center">
-        <template slot-scope="scope">
-            <el-button type="text" @click="handleShowDetial(scope.row)" style="font-size:10px;font-weight:bold;" :class="handleResultColor(scope.row.result)">{{scope.row.result}}</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column prop="time" label="用时(ms)" align="center"></el-table-column>
-      <el-table-column label="内存" align="center">
-        <template slot-scope="scope">
-          {{getSize(scope.row.memory)}}
-        </template>
-      </el-table-column>
-      <el-table-column prop="length" label="代码长度" align="center"></el-table-column>
-      <el-table-column prop="language" label="语言" align="center"></el-table-column>
-      <el-table-column prop="normalSubmitTime" label="提交时间" align="center"></el-table-column>
-    </el-table>
-    <center>
-      <div class="block">
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
+      <el-table
+        :data="tableData"
+        style="width: 100%;font-size:11px"
+        :fit="true"
+      >
+        <el-table-column prop="id" label="RUN ID" align="center" />
+        <el-table-column prop="user.username" label="用户名" align="center" />
+        <el-table-column prop="problem.id" label="题目" align="center">
+          <template slot-scope="scope">
+            <router-link :to="'./problem/detial/' + scope.row.problem.id">{{ scope.row.problem.id }}</router-link>
+          </template>
+        </el-table-column>
+        <el-table-column prop="result" label="结果" align="center">
+          <template slot-scope="scope">
+            <el-button type="text" style="font-size:10px;font-weight:bold;" :class="handleResultColor(scope.row.result)" @click="handleShowDetial(scope.row)">{{ scope.row.result }}</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column prop="time" label="用时(ms)" align="center" />
+        <el-table-column label="内存" align="center">
+          <template slot-scope="scope">
+            {{ getSize(scope.row.memory) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="length" label="代码长度" align="center" />
+        <el-table-column prop="language" label="语言" align="center" />
+        <el-table-column prop="normalSubmitTime" label="提交时间" align="center" />
+      </el-table>
+      <center>
+        <div class="block">
+          <el-pagination
             :current-page="page.index"
             :page-sizes="[10, 20, 50, 100]"
             :page-size="page.size"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="page.total">
-        </el-pagination>
-      </div>
-    </center>
+            :total="page.total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+        </div>
+      </center>
     </el-card>
     <el-dialog
-        :visible.sync="submitDetialVisible"
-        width="66%"
-        :title="'#'+ submitDetial.id +' 用户名:' + submitDetial.user.username + ' 题目:' + submitDetial.problem.id">
-        <el-card shadow="never" class="StatuShowBox">
-            <el-table
-                :data="submitDetialForm"
-                border
-                :header-cell-style="headClass"
-                style="width: 100%">
-                <el-table-column
-                prop="normalResult"
-                label="结果"
-                width="120">
-                </el-table-column>
-                <el-table-column
-                prop="time"
-                label="用时(ms)"
-                width="100">
-                </el-table-column>
-                <el-table-column
-                prop="memory"
-                label="内存"
-                width="100">
-                </el-table-column>
-                <el-table-column
-                prop="length"
-                label="代码长度"
-                width="100">
-                </el-table-column>
-                <el-table-column
-                prop="normalLanguage"
-                label="语言"
-                width="100">
-                </el-table-column>
-                <el-table-column
-                prop="share"
-                label="公开"
-                width="100">
-                </el-table-column>
-                <el-table-column
-                prop="normalSubmitTime"
-                label="提交时间">
-                </el-table-column>
-            </el-table>
-        </el-card>
-        <el-card>
-            <mavonEditor v-model="submitDetial.source"
-                :ishljs="true"
-                :subfield="false"
-                :boxShadow="false"
-                defaultOpen="preview"
-                :toolbarsFlag="false" 
-                :tabSize="2"
-                ></mavonEditor>
-        </el-card>
-        <span slot="footer" class="dialog-footer">
-            <!-- <el-button  @click="handleSetShareStatu" type="primary" plain>{{submitDetial.shareButton}}</el-button> -->
-            <el-button  @click="submitDetialVisible=false" type="danger" plain>关 闭</el-button>
-        </span>
+      :visible.sync="submitDetialVisible"
+      width="66%"
+      :title="'#'+ submitDetial.id +' 用户名:' + submitDetial.user.username + ' 题目:' + submitDetial.problem.id"
+    >
+      <el-card shadow="never" class="StatuShowBox">
+        <el-table
+          :data="submitDetialForm"
+          border
+          :header-cell-style="headClass"
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="normalResult"
+            label="结果"
+            width="220"
+          />
+          <el-table-column
+            prop="time"
+            label="用时(ms)"
+            width="100"
+          />
+          <el-table-column
+            prop="memory"
+            label="内存"
+            width="100"
+          />
+          <el-table-column
+            prop="length"
+            label="代码长度"
+            width="100"
+          />
+          <el-table-column
+            prop="normalLanguage"
+            label="语言"
+            width="100"
+          />
+          <el-table-column
+            prop="share"
+            label="公开"
+            width="100"
+          />
+          <el-table-column
+            prop="normalSubmitTime"
+            label="提交时间"
+          />
+        </el-table>
+      </el-card>
+      <el-card>
+        <mavonEditor
+          v-model="submitDetial.source"
+          :ishljs="true"
+          :subfield="false"
+          :box-shadow="false"
+          default-open="preview"
+          :toolbars-flag="false"
+          :tab-size="2"
+        />
+      </el-card>
+      <span slot="footer" class="dialog-footer">
+        <!-- <el-button  @click="handleSetShareStatu" type="primary" plain>{{submitDetial.shareButton}}</el-button> -->
+        <el-button type="danger" plain @click="submitDetialVisible=false">关 闭</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import {getStatusBySubmitId} from '@/api/problem'
-import {mavonEditor} from 'mavon-editor'
-import {calSize} from '@/utils'
-import {getStatus} from '@/api/status'
+import { getStatusBySubmitId } from '@/api/problem'
+import { mavonEditor } from 'mavon-editor'
+import { calSize } from '@/utils'
+import { getStatus } from '@/api/status'
 export default {
-  name:"Status",
-  components:{mavonEditor},
+  name: 'Status',
+  components: { mavonEditor },
   data() {
     return {
-        page:{
-            index:1,
-            size:20,
-            total:0,
-            query:''
-            },
-        query:{
-            searchID: "",
-            searchName: "",
-            onlyAccept: false,
-        },
+      page: {
+        index: 1,
+        size: 20,
+        total: 0,
+        query: ''
+      },
+      query: {
+        searchID: '',
+        searchName: '',
+        onlyAccept: false
+      },
       submitDetialVisible: false,
-      tableData:[],
-      submitDetialForm:[],
-      submitDetial:{
-                user:{
-                    username:''
-                },
-                id:-1,
-                problem:{
-                    id:-1
-                },
-                source:'',
-                shareButton:'设为公开'
-            },
-    };
+      tableData: [],
+      submitDetialForm: [],
+      submitDetial: {
+        user: {
+          username: ''
+        },
+        id: -1,
+        problem: {
+          id: -1
+        },
+        source: '',
+        shareButton: '设为公开'
+      }
+    }
+  },
+  mounted() {
+    this.flushStatusList()
   },
   methods: {
-      headClass () {
-            return 'text-align: center;background:#F2F6FC;'
-      },
-      handleSizeChange: function(val){
-            this.page.size=val
-            this.flushStatusList()
-      },
-      handleCurrentChange: function(val){
-          this.page.index=val
-          this.flushStatusList()
-      },
-      handleClose() {
-          this.dialogVisible=false
-      },
-      handleResultColor : function(result){
-        if(result == 'Accept' || result == 'accept'){
-          return 'acClass'
-        }
-        else if(result == 'Wrong Answer' || result == 'wrong answer'){
-          return 'waClass'
-        }
-        else{
-          return 'otClass'
-        }
-      },
-      handleShowDetial:function(row){
-          this.submitDetialVisible=true
-          getStatusBySubmitId(row.id).then(res =>{
-                this.submitDetial=res.data
-                this.submitDetial.source='```' + this.submitDetial.normalLanguage + '\n' + this.submitDetial.source + '\n```\n'
-                this.submitDetial.shareButton=this.submitDetial.share?'设为私密':'设为公开'
-                this.submitDetialForm=[]
-                this.submitDetialForm.push({
-                    normalResult:this.submitDetial.normalResult,
-                    time:this.submitDetial.time,
-                    memory:calSize(this.submitDetial.memory),
-                    length:this.submitDetial.length,
-                    normalLanguage:this.submitDetial.normalLanguage,
-                    normalSubmitTime: this.submitDetial.normalSubmitTime,
-                    share: this.submitDetial.share?'公开':'私密'
-                })
-            }).catch(err =>{
-              console.log(err)
-                this.submitDetialVisible=false
-            })
-      },
-      flushStatusList: function(){
-          getStatus(this.page.index, this.page.size, this.page.query).then(res => {
-              this.tableData = res.data.content
-              console.log(this.tableData)
-              this.page.total = res.data.pagetotal
-          }).catch(err => {
-
-          })
-        },
-        getSize:function(val){
-          console.log(val)
-          return calSize(val)
-        }
+    headClass() {
+      return 'text-align: center;background:#F2F6FC;'
     },
-    mounted(){
-        this.flushStatusList()
+    handleSizeChange: function(val) {
+      this.page.size = val
+      this.flushStatusList()
+    },
+    handleCurrentChange: function(val) {
+      this.page.index = val
+      this.flushStatusList()
+    },
+    handleClose() {
+      this.dialogVisible = false
+    },
+    handleResultColor: function(result) {
+      if (result == 'Accepted' || result == 'accepted') {
+        return 'acClass'
+      } else if (result == 'Wrong Answer' || result == 'wrong answer') {
+        return 'waClass'
+      } else if (result == 'Pending' || result == 'pending') {
+        return 'pdClass'
+      } else {
+        return 'otClass'
+      }
+    },
+    handleShowDetial: function(row) {
+      this.submitDetialVisible = true
+      getStatusBySubmitId(row.id).then(res => {
+        this.submitDetial = res.data
+        this.submitDetial.source = '```' + this.submitDetial.normalLanguage + '\n' + this.submitDetial.source + '\n```\n'
+        this.submitDetial.shareButton = this.submitDetial.share ? '设为私密' : '设为公开'
+        this.submitDetialForm = []
+        this.submitDetialForm.push({
+          normalResult: this.submitDetial.normalResult,
+          time: this.submitDetial.time,
+          memory: calSize(this.submitDetial.memory),
+          length: this.submitDetial.length,
+          normalLanguage: this.submitDetial.normalLanguage,
+          normalSubmitTime: this.submitDetial.normalSubmitTime,
+          share: this.submitDetial.share ? '公开' : '私密'
+        })
+      }).catch(err => {
+        console.log(err)
+        this.submitDetialVisible = false
+      })
+    },
+    flushStatusList: function() {
+      getStatus(this.page.index, this.page.size, this.page.query).then(res => {
+        this.tableData = res.data.content
+        console.log(this.tableData)
+        this.page.total = res.data.pagetotal
+      }).catch(err => {
+
+      })
+    },
+    getSize: function(val) {
+      console.log(val)
+      return calSize(val)
     }
   }
+}
 </script>
 <style>
 .box {
@@ -259,10 +263,13 @@ export default {
 .waClass{
   color: #F56C6C;
 }
-
+.pdClass{
+  color: #909399;
+}
 .otClass{
   color: #E6A23C;
 }
+
 .StatuShowBox td{
     font-size: 15px;
     text-align: center;
