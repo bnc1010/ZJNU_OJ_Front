@@ -8,7 +8,7 @@
             <el-col :span="12">
               <div class="grid-content bg-purple">
                 <el-input v-model="page.query" placeholder="搜索题目或题号" class="input-with-select">
-                  <el-button slot="append" icon="el-icon-search" @click="handleSearch"/>
+                  <el-button slot="append" icon="el-icon-search" @click="handleSearch" />
                 </el-input>
               </div>
             </el-col>
@@ -169,10 +169,10 @@ export default {
       getProblems(this.page.index, this.page.size, this.page.query).then(res => {
         this.tableData = res.data.content
         this.page.total = res.data.totalPages
-        for(let idx in this.tableData){
-            for(let jdx in this.tableData[idx].tags){
-                this.tableData[idx].tags[jdx]=this.tableData[idx].tags[jdx].name
-            }
+        for (const idx in this.tableData) {
+          for (const jdx in this.tableData[idx].tags) {
+            this.tableData[idx].tags[jdx] = this.tableData[idx].tags[jdx].name
+          }
         }
       }).catch(err => {
         console.log(err)
@@ -192,16 +192,16 @@ export default {
         })
       })
     },
-    handleSearch: function(){
-      if(this.searchTag.length!==0){
-        this.page.query+="$$"
-        for(let idx in this.searchTag){
-          this.page.query+=this.searchTag[idx]+','
-        } 
+    handleSearch: function() {
+      if (this.searchTag.length !== 0) {
+        this.page.query += '$$'
+        for (const idx in this.searchTag) {
+          this.page.query += this.searchTag[idx] + ','
+        }
       }
       this.page.query
       this.flushProblemList()
-      this.page.query=""
+      this.page.query = ''
     }
   }
 }
