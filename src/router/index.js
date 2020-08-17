@@ -229,6 +229,20 @@ export const asyncRoutes = [
         component: () => import('@/views/oj-admin/contest-admin.vue'),
         name: 'contestAdmin',
         meta: { title: '比赛管理', noCache: true, roles: ['admin'] }
+      },
+      {
+        path: '/ojAdmin/contest/add',
+        component: () => import('@/views/oj-admin/contest-add.vue'),
+        name: 'contestAdd',
+        hidden: true,
+        meta: { title: '新建比赛', activeMenu: '/ojAdmin/contest', noCache: true, roles: ['admin'] }
+      },
+      {
+        path: '/ojAdmin/contest/edit/:id(\\d+)',
+        component: () => import('@/views/oj-admin/contest-edit.vue'),
+        name: 'contestEdit',
+        hidden: true,
+        meta: { title: '编辑比赛', activeMenu: '/ojAdmin/contest', noCache: true, roles: ['admin'] }
       }
     ]
   },

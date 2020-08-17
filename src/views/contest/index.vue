@@ -1,7 +1,17 @@
 <template>
     <div class="app-container">
         <el-card>
-
+            <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
+                <el-col :span="12">
+                <div class="grid-content bg-purple">
+                    <el-input v-model="page.query" placeholder="搜索比赛" class="input-with-select">
+                    <el-button slot="append" icon="el-icon-search" @click="handleSearch" />
+                    </el-input>
+                </div>
+                </el-col>
+                <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
+            </el-row>
         </el-card>
         <el-card class="bodybox">
             <center>
@@ -141,8 +151,10 @@ export default {
         },
         timeLength: function(time){
             return calTime(Number(time)*60)
+        },
+        handleSearch: function(){
+            this.flushContestList()
         }
-
     },
     computed:{
         
@@ -180,5 +192,8 @@ export default {
 .contestBox .titleFont{
     font-size: 14px;
     font-weight: bold;
+}
+.el-col{
+    border: 1px solid transparent;
 }
 </style>

@@ -400,12 +400,12 @@ export function calTime(sz) {
   tp = Math.floor(tp / 60)
   tmp = tp % 60
   if (tmp !== 0) {
-    res = tmp + '分' + res
+    res = tmp + '分钟' + res
   }
   tp = Math.floor(tp / 60)
   tmp = tp % 24
   if (tmp !== 0) {
-    res = tmp + '时' + res
+    res = tmp + '小时' + res
   }
   tp = Math.floor(tp / 24)
   tmp = tp % 365

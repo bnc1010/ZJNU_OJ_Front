@@ -86,11 +86,11 @@
             <div class="divCardHeaderTitle">
               <div class="titleContent">
                 最近提交
-                <i class="el-icon-refresh-right" />
+                <i class="el-icon-refresh-right" @click="handleflushLastSubmit"></i>
               </div>
             </div>
             <div class="divMore">
-              <router-link :to="'#'">more</router-link>
+              <router-link :to="'/status?pid=' + problem.id + '&username=' + getUsername">more</router-link>
             </div>
           </div>
           <div class="submitShowBox">
@@ -105,7 +105,7 @@
               <el-table-column
                 prop="result"
                 label="提交结果"
-                width="120"
+                width="150"
               />
               <el-table-column
                 prop="normalSubmitTime"
@@ -245,14 +245,7 @@ export default {
         type: 'error'
       })
     })
-    getLastSubmits(paramOfResultfulUrl(window.location.href)).then(res => {
-      this.submits = res.data
-    }).catch(err => {
-      this.$message({
-        message: '最近提交加载失败',
-        type: 'error'
-      })
-    })
+    this.flushLastSubmit()
   },
   methods: {
     headClass() {
@@ -334,6 +327,24 @@ export default {
           type: 'error'
         })
       })
+    },
+    flushLastSubmit: function(){
+      getLastSubmits(paramOfResultfulUrl(window.location.href)).then(res => {
+        this.submits = res.data
+      }).catch(err => {
+        this.$message({
+          message: '最近提交加载失败',
+          type: 'error'
+        })
+      })
+    },
+    handleflushLastSubmit: function(){
+      this.flushLastSubmit()
+    }
+  },
+  computed: {
+    getUsername: function(){
+      return this.$store.state.user.username;
     }
   }
 }

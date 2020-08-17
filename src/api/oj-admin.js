@@ -32,3 +32,12 @@ export function editProblem(problem, pid) {
     data: problem
   })
 }
+
+export function getContests(page, pagesize, search) {
+  return request({
+    url: BASE_PATH + '/api/ojadmin/contest',
+    method: 'get',
+    params: { 'page': page - 1, 'pagesize': pagesize, 'search': search }
+  })
+}
+
