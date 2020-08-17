@@ -55,3 +55,10 @@ export function setStatuShareBySubmitId(id) {
     data: { 'token': getToken() }
   })
 }
+
+export function getProblemName(id) {
+  return request({
+    url: BASE_PATH + '/api/problems/name/' + id,
+    method: 'get'
+  })
+}

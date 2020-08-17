@@ -5,6 +5,6 @@ export function getStatus(page, pagesize, search) {
   return request({
     url: BASE_PATH + '/api/status',
     method: 'get',
-    params: { page: page - 1, pagesize: pagesize }
+    params: { 'page': page - 1, 'pagesize': pagesize, 'user': search.user, 'pid': search.pid, 'AC': search.AC }
   })
 }

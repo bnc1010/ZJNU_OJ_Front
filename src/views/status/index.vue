@@ -6,7 +6,7 @@
           <div class="grid-content bg-purple">
             <div class="box">用户名：</div>
             <div class="box">
-              <el-input v-model="query.searchName" class="input-with-select" width="200" />
+              <el-input v-model="page.query.user" class="input-with-select" width="200" />
             </div>
           </div>
         </el-col>
@@ -14,17 +14,17 @@
           <div class="grid-content bg-purple">
             <div class="box">题目编号：</div>
             <div class="box">
-              <el-input v-model="query.searchID" class="input-with-select" width="200" />
+              <el-input v-model="page.query.pid" class="input-with-select" width="200" />
             </div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="grid-content bg-purple">
             <div class="box">
-              <el-checkbox v-model="query.onlyAccept">仅通过</el-checkbox>
+              <el-checkbox v-model="page.query.AC">仅通过</el-checkbox>
             </div>
             <div class="box">
-              <el-button slot="append" icon="el-icon-search" />
+              <el-button slot="append" icon="el-icon-search" @click="handleSearch"/>
             </div>
           </div>
         </el-col>
@@ -143,7 +143,7 @@
 <script>
 import { getStatusBySubmitId } from '@/api/problem'
 import { mavonEditor } from 'mavon-editor'
-import { calSize } from '@/utils'
+import { calSize, param2Obj } from '@/utils'
 import { getStatus } from '@/api/status'
 export default {
   name: 'Status',
@@ -154,12 +154,11 @@ export default {
         index: 1,
         size: 20,
         total: 0,
-        query: ''
-      },
-      query: {
-        searchID: '',
-        searchName: '',
-        onlyAccept: false
+        query: {
+          user:'',
+          pid: '',
+          AC: false
+        }
       },
       submitDetialVisible: false,
       tableData: [],
@@ -178,9 +177,19 @@ export default {
     }
   },
   mounted() {
+    this.handlePathValue()
     this.flushStatusList()
   },
   methods: {
+    handlePathValue: function(){
+      let ob = param2Obj(window.location.href)
+      if(ob.pid !== null){
+        this.page.query.pid=ob.pid
+      }
+      if(ob.username !== null){
+        this.page.query.user=ob.username
+      }
+    },
     headClass() {
       return 'text-align: center;background:#F2F6FC;'
     },
@@ -239,6 +248,9 @@ export default {
     getSize: function(val) {
       console.log(val)
       return calSize(val)
+    },
+    handleSearch: function(){
+      this.flushStatusList()
     }
   }
 }

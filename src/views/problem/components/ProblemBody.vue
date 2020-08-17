@@ -28,7 +28,16 @@
         :toolbarsFlag="false" 
         ></mavonEditor>
         <el-divider></el-divider>
-        <h2>样例输入</h2>
+        <div class="copyBox">
+            <div>
+            <h2>样例输入</h2>
+            </div>
+            <div class="copyButton">
+                <h3>
+                    <i v-clipboard:copy="problem.sampleInput" v-clipboard:success="clipboardSuccess" type="info" class="el-icon-document"></i>
+                </h3>
+            </div>
+        </div>
         <mavonEditor v-model="problem.sampleInput"
         :ishljs="true"
         :subfield="false"                                    
@@ -37,7 +46,16 @@
         :toolbarsFlag="false" 
         ></mavonEditor>
         <el-divider></el-divider>
-        <h2>样例输出</h2>
+        <div class="copyBox">
+            <div>
+            <h2>样例输出</h2>
+            </div>
+            <div class="copyButton">
+                <h3>
+                    <i v-clipboard:copy="problem.sampleOutput" v-clipboard:success="clipboardSuccess" type="info" class="el-icon-document"></i>
+                </h3>
+            </div>
+        </div>
         <mavonEditor v-model="problem.sampleOutput"
         :ishljs="true"
         :subfield="false"                                    
@@ -58,9 +76,11 @@
 </template>
 <script>
 import {mavonEditor} from 'mavon-editor'
+import clipboard from '@/directive/clipboard/index.js' // use clipboard by v-directive
 export default {
     name:'ProblemBody',
     components:{mavonEditor},
+    directives: {clipboard},
     props:{
         problem:{
             description:'',
@@ -69,6 +89,18 @@ export default {
             sampleInput:'',
             sampleOutput:'',
             hint:''
+        }
+    },
+    methods:{
+        handleCopy(text, event) {
+            clip(text, event)
+        },
+        clipboardSuccess() {
+        this.$message({
+            message: '已复制到剪贴板',
+            type: 'success',
+            duration: 1500
+        })
         }
     }
 }
@@ -80,6 +112,15 @@ export default {
 .problemBody .v-note-wrapper{
     min-height: 50px;
     z-index: auto;
+}
+
+.copyBox{
+    width: 100%;
+    height: 80px;
+}
+
+.copyBox div{
+    float: left;
 }
 
 </style>
