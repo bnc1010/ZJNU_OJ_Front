@@ -56,3 +56,11 @@ export function updateContest(contest, id) {
     data: { 'title': contest.title, 'description': contest.description, 'privilege': contest.privilege, 'password': contest.password, 'startTime': contest.startTime, 'length': contest.length, 'tid': contest.tid, 'problems': contest.problems, 'token': getToken() }
   })
 }
+
+export function contestGate(id) {
+  return request({
+    url: BASE_PATH + '/api/contest/gate/' + id,
+    method: 'get',
+    params: { 'token': getToken() }
+  })
+}

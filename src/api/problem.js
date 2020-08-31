@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 import { BASE_PATH } from './config'
-import { getToken } from '@/utils/auth'
 
 export function getProblemById(id) {
   return request({
@@ -28,7 +27,7 @@ export function getLastSubmits(id) {
   return request({
     url: BASE_PATH + '/api/status/user/latest/submit/' + id,
     method: 'get',
-    params: { 'token': getToken() }
+    params: { }
   })
 }
 
@@ -36,7 +35,7 @@ export function submitCode(id, language, share, source) {
   return request({
     url: BASE_PATH + '/api/problems/submit/' + id,
     method: 'post',
-    data: { language: language, share: share, source: source, token: getToken() }
+    data: { language: language, share: share, source: source }
   })
 }
 
@@ -44,7 +43,7 @@ export function getStatusBySubmitId(id) {
   return request({
     url: BASE_PATH + '/api/status/view/' + id,
     method: 'get',
-    params: { 'token': getToken() }
+    params: { }
   })
 }
 
@@ -52,7 +51,7 @@ export function setStatuShareBySubmitId(id) {
   return request({
     url: BASE_PATH + '/api/status/share/' + id,
     method: 'post',
-    data: { 'token': getToken() }
+    data: { }
   })
 }
 

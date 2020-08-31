@@ -8,7 +8,8 @@ const state = {
   avatar: '',
   introduction: '',
   roles: [],
-  username: ''
+  username: '',
+  email: ''
 }
 
 const mutations = {
@@ -29,6 +30,9 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
   }
 }
 
@@ -43,8 +47,9 @@ const actions = {
         commit('SET_TOKEN', data.token)
         commit('SET_NAME', data.name)
         commit('SET_USERNAME', data.username)
-        // commit('SET_AVATAR', avatar)
+        commit('SET_AVATAR', data.avatar)
         commit('SET_INTRODUCTION', data.intro)
+        commit('SET_EMAIL', data.email)
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -82,11 +87,7 @@ const actions = {
         commit('SET_ROLES', [])
         removeToken()
         resetRouter()
-
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         dispatch('tagsView/delAllViews', null, { root: true })
-
         resolve()
       }).catch(error => {
         reject(error)

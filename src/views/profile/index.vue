@@ -3,13 +3,13 @@
     <div v-if="user">
       <el-row :gutter="20">
         <el-col :span="6" :xs="24">
-          <user-card :user="user" />
+          <user-card :user="user" @changeAvatar="handleChangeAvatar"/>
           <AbilityCard :chartData="chartData" />
         </el-col>
         <el-col :span="18" :xs="24">
           <el-card>
             <el-tabs v-model="activeTab">
-              <el-tab-pane label="用户信息" name="account">
+              <el-tab-pane label="用户信息"  name="account">
                 <account :user="user" />
               </el-tab-pane>
               <el-tab-pane label="做题记录" name="history">
@@ -20,6 +20,18 @@
         </el-col>
       </el-row>
     </div>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose">
+      <SingleImageUpload @imageUrlCallback="handleAvatarCallback"></SingleImageUpload>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleAvatarUpload">确 定</el-button>
+      </span>
+    </el-dialog>
+    
   </div>
 </template>
 
@@ -28,21 +40,31 @@ import UserCard from './components/UserCard'
 import Timeline from './components/Timeline'
 import Account from './components/Account'
 import AbilityCard from './components/AbilityCard'
+import SingleImageUpload from '@/components/Upload/SingleImage'
+import { changeAvatar } from '@/api/user'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Profile',
-  components: { UserCard, Timeline, Account, AbilityCard},
+  components: { UserCard, Timeline, Account, AbilityCard, SingleImageUpload},
   data() {
     return {
-      name:'test',
-      avatar:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-      roles:['admin'],
-      user: {},
-      birthday:'2020-07-29 00:00:00',
       activeTab: 'account',
-      sex:1,
-      chartData:[50, 60, 70, 10, 20, 80]
+      chartData:[50, 60, 70, 10, 20, 80],
+      dialogVisible: false,
+      tmpavatar:'',
+      user:{}
     }
+  },
+  computed: {
+    ...mapGetters([
+      'name',
+      'username',
+      'email',
+      'avatar',
+      'roles',
+      'introduction'
+    ])
   },
   created() {
     this.getUser()
@@ -59,12 +81,45 @@ export default {
         name: this.name,
         roles: isAdmin ? '管理员' : '用户',
         avatar: this.avatar,
-        sex: this.sex,
-        birthday: this.birthday,
+        name: this.name,
+        username: this.username,
+        email: this.email,
+        introduction: this.introduction,
         password: '',
         checkpassword:'',
-        newavatar: ''
       }
+    },
+    handleChangeAvatar: function(){
+      this.dialogVisible=true
+    },
+    handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+    },
+    handleAvatarCallback: function(imageUrl){
+      this.tmpavatar=imageUrl
+      console.log(this.tmpavatar)
+    },
+    handleAvatarUpload: function(){
+      changeAvatar(this.tmpavatar).then(res => {
+        this.$message({
+          type: 'success',
+          message: '头像修改成功'
+        })
+        
+        this.$store.dispatch("user/setAvatar", this.tmpavatar)
+        this.getUser()
+        this.dialogVisible = false
+      }).catch( err=> {
+          console.log(err)
+          this.$message({
+          type: 'error',
+          message: '头像修改失败'
+        })
+      })
     }
   }
 }
