@@ -1,9 +1,15 @@
 <template>
   <el-card style="margin-bottom:20px;">
-    <div slot="header" class="clearfix">
-      <span>我的信息</span>
+    <div slot="header" class="divCardHeader">
+      <div class="divCardHeaderTitle">
+        <div class="titleContent">
+          我的信息
+        </div>
+      </div>
+      <div class="divChangeAvater">
+        <el-button plain size="mini" @click="handleChangeAvater">更换头像</el-button>
+      </div>
     </div>
-
     <div class="user-profile">
       <div class="box-center">
         <pan-thumb :image="user.avatar" :height="'100px'" :width="'100px'">
@@ -11,16 +17,14 @@
         </pan-thumb>
       </div>
       <div class="box-center">
-
-          <div class="user-name text-center">{{ user.name }}
+        <div class="user-name text-center">{{ user.name }}
           <div v-if="user.sex === 0">
-             <svg-icon icon-class="nv" style="fill: #FF69B4"/>
+              <svg-icon icon-class="nv" style="fill: #FF69B4"/>
           </div>
           <div v-else-if="user.sex === 1">
             <svg-icon icon-class="nan" style="fill: #00BFFF"/>
           </div>
         </div>
-        
       </div>
     </div>
   </el-card>
@@ -28,6 +32,7 @@
 
 <script>
 import PanThumb from '@/components/PanThumb'
+import SingleImageUpload from '@/components/Upload/SingleImage'
 
 export default {
   components: { PanThumb },
@@ -45,7 +50,12 @@ export default {
     }
   },
   mounted(){
-    console.log(this.user)
+    // console.log(this.user)
+  },
+  methods:{
+      handleChangeAvater: function() {
+        this.$emit('changeAvatar')
+      }
   }
 }
 </script>
@@ -107,5 +117,22 @@ export default {
       font-weight: bold;
     }
   }
+}
+.divCardHeader{
+    height: 20px;
+}
+
+.divCardHeader .divCardHeaderTitle{
+    float: left;
+    height: 100%;
+    line-height: 100%;
+}
+.divCardHeader .divCardHeaderTitle .titleContent{
+    margin-left: 0;
+    margin-top: auto;
+}
+.divChangeAvater{
+    float: right;
+    font-size: 13px;
 }
 </style>

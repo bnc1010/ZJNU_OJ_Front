@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 import { BASE_PATH } from './config'
-import { getToken } from '@/utils/auth'
 
 export function login(data) {
   return request({
@@ -22,7 +21,7 @@ export function logout() {
   return request({
     url: BASE_PATH + '/api/dmz/logout',
     method: 'post',
-    data: { 'token': getToken() }
+    data: { }
   })
 }
 
@@ -31,5 +30,13 @@ export function register(username, password, email, name) {
     url: BASE_PATH + '/api/dmz/register',
     method: 'post',
     data: { 'username': username, 'password': password, 'email': email, 'name': name }
+  })
+}
+
+export function changeAvatar(imageUrl) {
+  return request({
+    url: BASE_PATH + '/api/user/avatar',
+    method: 'post',
+    data: { 'avatar': imageUrl }
   })
 }

@@ -1,18 +1,19 @@
 <template>
   <div class="upload-container">
     <el-upload
-      :data="dataObj"
-      :multiple="false"
+      :multiple="true"
       :show-file-list="false"
       :on-success="handleImageSuccess"
       class="image-uploader"
       drag
-      action="https://httpbin.org/post"
+      :action="uploadUrl"
+      :headers="{'Access-Token' : token}"
     >
       <i class="el-icon-upload" />
       <div class="el-upload__text">
         将文件拖到此处，或<em>点击上传</em>
       </div>
+      <div class="el-upload__tip" slot="tip">图片应小于10MB</div>
     </el-upload>
     <div class="image-preview">
       <div v-show="imageUrl.length>1" class="image-preview-wrapper">
@@ -24,54 +25,44 @@
     </div>
   </div>
 </template>
-
 <script>
-import { getToken } from '@/api/qiniu'
+import { uploadImage, getUploadUrl } from '@/api/image'
+import { BASE_PATH } from '@/api/config'
+import { getToken } from '@/utils/auth'
 
 export default {
   name: 'SingleImageUpload',
-  props: {
-    value: {
-      type: String,
-      default: ''
-    }
-  },
   data() {
     return {
       tempUrl: '',
-      dataObj: { token: '', key: '' }
     }
   },
   computed: {
     imageUrl() {
-      return this.value
+      return this.tempUrl
+    },
+    token() {
+      return getToken()
+    },
+    uploadUrl() {
+      return getUploadUrl()
     }
   },
   methods: {
     rmImage() {
+      this.tempUrl=''
       this.emitInput('')
     },
+    /*
+    回传图片地址给父组件
+    */
     emitInput(val) {
-      this.$emit('input', val)
+      this.$emit('imageUrlCallback', val)
     },
-    handleImageSuccess() {
+    handleImageSuccess(res) {
+      this.tempUrl = BASE_PATH + res.data
+      console.log(res)
       this.emitInput(this.tempUrl)
-    },
-    beforeUpload() {
-      const _self = this
-      return new Promise((resolve, reject) => {
-        getToken().then(response => {
-          const key = response.data.qiniu_key
-          const token = response.data.qiniu_token
-          _self._data.dataObj.token = token
-          _self._data.dataObj.key = key
-          this.tempUrl = response.data.qiniu_url
-          resolve(true)
-        }).catch(err => {
-          console.log(err)
-          reject(false)
-        })
-      })
     }
   }
 }
@@ -84,7 +75,7 @@ export default {
         position: relative;
         @include clearfix;
         .image-uploader {
-            width: 60%;
+            width: 40%;
             float: left;
         }
         .image-preview {

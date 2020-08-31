@@ -1,20 +1,16 @@
 <template>
   <el-form>
     <el-form-item label="用户名">
-      <el-input v-model.trim="user.name" disabled=""/>
+      <el-input v-model.trim="user.username" disabled=""/>
     </el-form-item>
-    <el-form-item label="性别">
-      <el-radio-group v-model="user.sex">
-        <el-radio class="radio" :label="1">男</el-radio>
-        <el-radio class="radio" :label="0">女</el-radio>
-      </el-radio-group>
+    <el-form-item label="姓名">
+      <el-input v-model.trim="user.name"/>
     </el-form-item>
-    <el-form-item label="生日">
-      <el-date-picker
-        v-model="user.birthday"
-        type="date"
-        placeholder="选择日期">
-        </el-date-picker>
+    <el-form-item label="邮箱">
+      <el-input v-model.trim="user.email"/>
+    </el-form-item>
+    <el-form-item label="留言">
+      <el-input v-model.trim="user.introduction"/>
     </el-form-item>
      <el-form-item label="密码">
       <el-input type="password" v-model.trim="user.password" />

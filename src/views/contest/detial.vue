@@ -100,7 +100,7 @@ import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/theme/ttcn.css'
 import config from '@/utils/config'
 import {calSize, mapAlpha2Num, mapNum2Alpha, paramOfResultfulUrl} from '@/utils'
-import {getDetialContest} from '@/api/contest'
+import {getDetialContest, contestGate} from '@/api/contest'
 import acRate from './components/acRate'
 import contestRanklist from './components/contestRanklist'
 export default {
@@ -130,7 +130,8 @@ export default {
                     name:'wa',
                     value:0
                 }
-            ]
+            ],
+            status:1    //1: ok   2:not start 3:need password && not start 4:need password && running
         }
     },
     methods:{
@@ -179,26 +180,40 @@ export default {
                 name:'wa',
                 value:this.contest.problems[this.getIntChoosedProblemId()].submitted-this.contest.problems[this.getIntChoosedProblemId()].accepted
             })
+        },
+        handleDetialOfContest: function(){
+            contestGate(paramOfResultfulUrl(window.location.href)).then( res => {
+                if(res.message=='success'){
+                    getDetialContest(paramOfResultfulUrl(window.location.href)).then( res => {
+                        this.contest = res.data
+                        var problems = this.contest.problems
+                        for(let x in problems){
+                            this.tableData.push({
+                                id:mapNum2Alpha(problems[x].tempId,1,-1),
+                                title:problems[x].tempTitle
+                            })
+                        }
+                        this.setEchart()
+                    }).catch( err => {
+                        console.log(err);
+                        this.$message({
+                            message: err,
+                            type: 'error'
+                        })
+                    })
+                }
+                
+            }).catch( err => {
+                console.log(err);
+                this.$message({
+                    message: '比赛信息加载失败',
+                    type: 'error'
+                })
+            })
         }
     },
     mounted(){
-        getDetialContest(paramOfResultfulUrl(window.location.href)).then( res => {
-            this.contest = res.data
-            var problems = this.contest.problems
-            for(let x in problems){
-                this.tableData.push({
-                    id:mapNum2Alpha(problems[x].tempId,1,-1),
-                    title:problems[x].tempTitle
-                })
-            }
-            this.setEchart()
-        }).catch( err => {
-            console.log(err);
-            this.$message({
-                message: '比赛信息加载失败',
-                type: 'error'
-            })
-        })
+        this.handleDetialOfContest()
     }
 }
 </script>
