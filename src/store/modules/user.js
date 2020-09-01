@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, updateInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -127,6 +127,11 @@ const actions = {
 
   setAvatar({ commit }, path) {
     commit('SET_AVATAR', path)
+  },
+  updateInfo({ commit }, user) {
+    commit('SET_NAME', user.name)
+    commit('SET_INTRODUCTION', user.intro)
+    commit('SET_EMAIL', user.email)
   }
 }
 

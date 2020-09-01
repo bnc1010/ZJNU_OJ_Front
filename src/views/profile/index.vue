@@ -73,7 +73,7 @@ export default {
     getUser() {
       let isAdmin = false
       for(let i in this.roles){
-        if(this.roles[i] == 'admin'){
+        if(this.roles[i] == 'admin' || this.roles[i] == 'root'){
           isAdmin = true
         }
       }
@@ -84,8 +84,9 @@ export default {
         name: this.name,
         username: this.username,
         email: this.email,
-        introduction: this.introduction,
+        intro: this.introduction,
         password: '',
+        oldpassword: '',
         checkpassword:'',
       }
     },
