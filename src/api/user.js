@@ -48,3 +48,18 @@ export function updateInfo(user) {
     data: { 'name': user.name, 'password': user.password, 'oldpassword': user.oldpassword, 'email': user.email, 'intro': user.intro }
   })
 }
+
+export function getUserRanklist(page, pagesize) {
+  return request({
+    url: BASE_PATH + '/api/user/list',
+    method: 'get',
+    params: { 'page': page - 1, 'pagesize': pagesize }
+  })
+}
+
+export function getPie(id) {
+  return request({
+    url: BASE_PATH + '/api/user/pie/' + id,
+    method: 'get'
+  })
+}

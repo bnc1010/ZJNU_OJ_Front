@@ -36,13 +36,17 @@ export function filterAsyncRoutes(routes, roles) {
 
 const state = {
   routes: [],
-  addRoutes: []
+  addRoutes: [],
+  isFull: false
 }
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
     state.routes = constantRoutes.concat(routes)
+  },
+  SET_IS_FULL: (state, isFull) => {
+    state.isFull = isFull
   }
 }
 
@@ -56,6 +60,7 @@ const actions = {
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
       }
       commit('SET_ROUTES', accessedRoutes)
+      commit('SET_IS_FULL', true)
       resolve(accessedRoutes)
     })
   }

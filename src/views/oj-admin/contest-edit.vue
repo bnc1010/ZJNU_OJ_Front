@@ -10,10 +10,12 @@
                     <el-form-item label='比赛描述' >
                         <mavonEditor
                         v-model="contest.description"
+                        ref="md1"
                         :ishljs="true"
                         :subfield="true"
                         :boxShadow="false"
                         :toolbars="toolbars"
+                        @imgAdd="$imgAdd1"
                         :autofocus="false">
                         </mavonEditor>
                     </el-form-item>
@@ -75,6 +77,8 @@ import {mavonEditor} from 'mavon-editor'
 import {getProblemName} from '@/api/problem'
 import {updateContest, getContestInfo} from '@/api/contest'
 import {paramOfResultfulUrl} from '@/utils'
+import { BASE_PATH } from '@/api/config'
+import { uploadImage } from '@/api/image'
 export default {
     name:"ContestEdit",
     components:{mavonEditor},
@@ -197,7 +201,17 @@ export default {
                     message: '比赛创建失败'
                 })
             })
-        }
+        },
+        $imgAdd1(pos, $file){
+           uploadImage($file).then(res => {
+               this.$refs.md1.$img2Url(pos, BASE_PATH + res.data);
+           }).catch( err => {
+               this.$message({
+                   type: 'error',
+                   message: err
+               })
+           })
+        },
     },
     mounted(){
         getContestInfo(paramOfResultfulUrl(window.location.href)).then(res => {

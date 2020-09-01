@@ -1,4 +1,4 @@
-import { login, logout, getInfo, updateInfo } from '@/api/user'
+import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -9,7 +9,8 @@ const state = {
   introduction: '',
   roles: [],
   username: '',
-  email: ''
+  email: '',
+  id: ''
 }
 
 const mutations = {
@@ -33,6 +34,9 @@ const mutations = {
   },
   SET_EMAIL: (state, email) => {
     state.email = email
+  },
+  SET_ID: (state, id) => {
+    state.id = id
   }
 }
 
@@ -44,6 +48,7 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         console.log(response)
         const { data } = response
+        commit('SET_ID', data.id)
         commit('SET_TOKEN', data.token)
         commit('SET_NAME', data.name)
         commit('SET_USERNAME', data.username)

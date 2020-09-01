@@ -189,6 +189,12 @@ export default {
       if(ob.username !== null){
         this.page.query.user=ob.username
       }
+      if(ob.AC !== null){
+        if (ob.AC === 'true'){
+          this.page.query.AC=true
+        }
+      }
+      console.log(this.page.query)
     },
     headClass() {
       return 'text-align: center;background:#F2F6FC;'

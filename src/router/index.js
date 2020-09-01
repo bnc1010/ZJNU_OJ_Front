@@ -95,6 +95,19 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/userview',
+    component: Layout,
+    children: [
+      {
+        path: '/userview',
+        name: 'OtherProflie',
+        component: () => import('@/views/others-profile'),
+        meta: { title: '用户查看' }
+      }
+    ],
+    hidden: true
+  },
+  {
     path: '/problem',
     component: Layout,
     redirect: '/problem/index',
@@ -258,10 +271,10 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'permissionList2',
-        component: () => import('@/views/user-admin/permission-list.vue'),
-        name: 'permissions2',
-        meta: { title: '系统概览占位', noCache: true, roles: ['root'] }
+        path: '/systemstatus',
+        component: () => import('@/views/system-admin/system-status'),
+        name: 'systemstatus',
+        meta: { title: '系统概览', noCache: true, roles: ['root'] }
       },
       {
         path: 'permissionList',
