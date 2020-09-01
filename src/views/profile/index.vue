@@ -41,7 +41,7 @@ import Timeline from './components/Timeline'
 import Account from './components/Account'
 import AbilityCard from './components/AbilityCard'
 import SingleImageUpload from '@/components/Upload/SingleImage'
-import { changeAvatar } from '@/api/user'
+import { changeAvatar, getPie } from '@/api/user'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -50,14 +50,15 @@ export default {
   data() {
     return {
       activeTab: 'account',
-      chartData:[50, 60, 70, 10, 20, 80],
+      chartData:[0,0,0,0,0,0,0,0],
       dialogVisible: false,
       tmpavatar:'',
-      user:{}
+      user:{},
     }
   },
   computed: {
     ...mapGetters([
+      'userid',
       'name',
       'username',
       'email',
@@ -67,13 +68,14 @@ export default {
     ])
   },
   created() {
+    this.flushPie()
     this.getUser()
   },
   methods: {
     getUser() {
       let isAdmin = false
       for(let i in this.roles){
-        if(this.roles[i] == 'admin'){
+        if(this.roles[i] == 'admin' || this.roles[i] == 'root'){
           isAdmin = true
         }
       }
@@ -84,8 +86,9 @@ export default {
         name: this.name,
         username: this.username,
         email: this.email,
-        introduction: this.introduction,
+        intro: this.introduction,
         password: '',
+        oldpassword: '',
         checkpassword:'',
       }
     },
@@ -119,6 +122,20 @@ export default {
           type: 'error',
           message: '头像修改失败'
         })
+      })
+    },
+    flushPie: function(){
+      getPie(this.userid).then(res => {
+        this.chartData = []
+        this.chartData.push(Math.floor(res.data.radar.dynamic_programming))
+        this.chartData.push(Math.floor(res.data.radar.data_structure))
+        this.chartData.push(Math.floor(res.data.radar.math))
+        this.chartData.push(Math.floor(res.data.radar.geometry))
+        this.chartData.push(Math.floor(res.data.radar.graph_theory))
+        this.chartData.push(Math.floor(res.data.radar.search))
+        this.chartData.push(Math.floor(res.data.radar.probability))
+        this.chartData.push(Math.floor(res.data.radar.string))
+        console.log(this.chartData)
       })
     }
   }

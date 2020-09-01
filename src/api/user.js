@@ -9,11 +9,11 @@ export function login(data) {
   })
 }
 
-export function getInfo(token) {
+export function getInfo() {
   return request({
     url: BASE_PATH + '/api/dmz/userinfo',
     method: 'post',
-    data: { 'token': token }
+    data: { }
   })
 }
 
@@ -38,5 +38,28 @@ export function changeAvatar(imageUrl) {
     url: BASE_PATH + '/api/user/avatar',
     method: 'post',
     data: { 'avatar': imageUrl }
+  })
+}
+
+export function updateInfo(user) {
+  return request({
+    url: BASE_PATH + '/api/user/edit',
+    method: 'post',
+    data: { 'name': user.name, 'password': user.password, 'oldpassword': user.oldpassword, 'email': user.email, 'intro': user.intro }
+  })
+}
+
+export function getUserRanklist(page, pagesize) {
+  return request({
+    url: BASE_PATH + '/api/user/list',
+    method: 'get',
+    params: { 'page': page - 1, 'pagesize': pagesize }
+  })
+}
+
+export function getPie(id) {
+  return request({
+    url: BASE_PATH + '/api/user/pie/' + id,
+    method: 'get'
   })
 }

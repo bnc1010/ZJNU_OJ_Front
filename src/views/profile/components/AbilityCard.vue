@@ -35,7 +35,7 @@ export default {
         },
         chartData: {
             type: Array,
-            default: [0,0,0,0,0,0]
+            default: [0,0,0,0,0,0,0,0]
         }
     },
     data() {
@@ -43,8 +43,27 @@ export default {
             chart: null
         }
     },
+    watch:{
+      chartData:{
+        handler: function(newValue, olderValue){
+          if(this.chart){
+            if(newValue){
+              this.setData(newValue)
+            }
+            else{
+              this.setData(olderValue)
+            }
+          }
+          else{
+            this.initChart()
+          }
+        },
+        deep: true
+      }
+    },
     mounted() {
         this.initChart()
+        this.setData(this.chartData)
     },
     beforeDestroy() {
         if (!this.chart) {
@@ -55,22 +74,26 @@ export default {
     },
     methods: {
         initChart() {
-        this.chart = echarts.init(document.getElementById(this.id))
-        this.chart.setOption({
+          console.log(this.chartData)
+          this.chart = echarts.init(document.getElementById(this.id))
+        },
+        setData(data){
+          this.chart.setOption({
             radar: [
-                {
-                    indicator: [
-                        { text: '动态规划', max: 100 },
-                        { text: '数据结构', max: 100 },
-                        { text: '数论', max: 100 },
-                        { text: '解析几何', max: 100 },
-                        { text: '图论', max: 100 },
-                        { text: '思维', max: 100 }
-                    ],
-                    center: ['50%', '50%'],
-                    radius: '60%',
-                    
-                }
+              {
+                indicator: [
+                  { text: '动态规划', max: 100 },
+                  { text: '数据结构', max: 100 },
+                  { text: '数论', max: 100 },
+                  { text: '几何', max: 100 },
+                  { text: '图论', max: 100 },
+                  { text: '搜索', max: 100 },
+                  { text: '概率', max: 100 },
+                  { text: '字符串', max: 100 }
+                ],
+                center: ['50%', '50%'],
+                radius: '60%',
+              }
             ],
             series: [
                 {
@@ -78,7 +101,7 @@ export default {
                     radarIndex: 0,
                     data: [
                         {
-                            value: this.chartData,
+                            value: data,
                             areaStyle: {
                                 opacity: 0.8,
                                 color: new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
@@ -95,8 +118,7 @@ export default {
                             lineStyle:{
                                 color:['#CBD']
                             },
-                            symbolSize:0
-                            
+                            symbolSize:4
                         }
                     ]
                 }

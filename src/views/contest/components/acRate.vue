@@ -66,6 +66,7 @@ export default {
     },
     mounted() {
         this.initChart()
+        this.setData(this.chartData)
     },
     beforeDestroy() {
         if (!this.chart) {
@@ -76,33 +77,7 @@ export default {
     },
     methods: {
         initChart() {
-        this.chart = echarts.init(document.getElementById(this.id))
-        this.chart.setOption({
-            tooltip: {
-                trigger: 'item',
-                formatter: '{a} <br/>{b} : {c} ({d}%)'
-            },
-            color : [ '#67C23A', '#F56C6C'],
-            series: [
-                {
-                    name: 'Status',
-                    type: 'pie',
-                    radius: '55%',
-                    center: ['50%', '50%'],
-                    data: this.chartData,
-                    label:{
-                        position:'inside'
-                    },
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                }
-        ]
-        })
+            this.chart = echarts.init(document.getElementById(this.id))
         },
         setData(data){
             this.chart.setOption({
