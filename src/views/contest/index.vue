@@ -13,7 +13,7 @@
                 <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
             </el-row>
         </el-card>
-        <el-card class="bodybox">
+        <el-card class="bodybox contestBox">
             <center>
                 <el-pagination
                     @size-change="handleSizeChange"
@@ -37,10 +37,8 @@
                 </el-table-column>
                 <el-table-column label="比赛名称" width="300">
                     <template slot-scope="scope">
-                        <div class="titleFont">
-                            <router-link :to="'./detial/' + scope.row.id">
-                                {{scope.row.title}}
-                            </router-link>
+                        <div class="titleFont" @click="handleNeedPassword(scope.row)">
+                            {{scope.row.title}}
                         </div>
                     </template>
                 </el-table-column>
@@ -81,11 +79,24 @@
                 </el-pagination>
             </center>
         </el-card>
+
+        <el-dialog
+            title="输入比赛密码"
+            :visible.sync="passwordDialogVisible"
+            width="30%">
+            <el-input placeholder="请输入密码" v-model="inputContestPassword" show-password></el-input>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="inputContestPassword = false, inputContestPassword=''">取 消</el-button>
+                <el-button type="primary" @click="handleInputPassword">确 定</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 <script>
-import {getContests} from '@/api/contest'
-import {calTime} from '@/utils'
+import { getContests, contestGate, getDetialContest } from '@/api/contest'
+import { calTime } from '@/utils'
+import { mapGetters } from 'vuex'
 export default {
     name: "Contest",
     data(){
@@ -96,8 +107,16 @@ export default {
                 size:20,
                 total:0,
                 query:''
-            }
+            },
+            passwordDialogVisible: false,
+            inputContestPassword: '',
+            currentContestId: '' 
         }
+    },
+    computed: {
+        ...mapGetters([
+            'currentContestPassword'
+        ])
     },
     methods:{
         handleSizeChange: function(val){
@@ -154,10 +173,48 @@ export default {
         },
         handleSearch: function(){
             this.flushContestList()
+        },
+        handleEnterContest: function(contestId){
+            this.currentContestId = contestId
+            contestGate(contestId, this.currentContestPassword).then( res => {
+                this.$router.push('./detial/' + this.currentContestId)
+            }).catch(err => {
+                if(err.code && err.code == '400'){
+                    if (err.message == 'need password'){
+                        this.passwordDialogVisible = true;
+                        console.log('need password')
+                    }
+                    else if (err.message == 'password error'){
+                        this.$message({
+                            type: "error",
+                            message: "密码错误"
+                        })
+                    }
+                    else if(err.message == 'not started'){
+                        this.$message({
+                            message: '比赛未开始',
+                            type: 'error'
+                        })
+                    }
+                }
+            })
+        },
+        handleInputPassword: function(){
+            this.passwordDialogVisible = false;
+            this.$store.dispatch('user/setCurrentContestPassword', this.inputContestPassword);
+            console.log(this.currentContestPassword)
+            this.handleEnterContest(this.currentContestId)
+            this.inputContestPassword = ''
+        },
+        handleNeedPassword: function(row){
+            if (row.privilege == 'public'){
+                this.handleEnterContest(row.id)
+            }
+            else if (row.privilege == 'private'){
+                this.currentContestId = row.id
+                this.passwordDialogVisible = true
+            }
         }
-    },
-    computed:{
-        
     },
     mounted(){
         this.flushContestList()
@@ -190,8 +247,9 @@ export default {
 }
 
 .contestBox .titleFont{
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
+    cursor: pointer;
 }
 .el-col{
     border: 1px solid transparent;

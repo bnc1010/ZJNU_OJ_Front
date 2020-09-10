@@ -88,7 +88,7 @@
     </div>
 </template>
 <script>
-import {mavonEditor} from 'mavon-editor'
+import { mavonEditor } from 'mavon-editor'
 import ProblemBody from '../problem/components/ProblemBody'
 import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
@@ -99,10 +99,11 @@ import 'codemirror/mode/go/go.js'
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/theme/ttcn.css'
 import config from '@/utils/config'
-import {calSize, mapAlpha2Num, mapNum2Alpha, paramOfResultfulUrl} from '@/utils'
-import {getDetialContest, contestGate} from '@/api/contest'
+import { calSize, mapAlpha2Num, mapNum2Alpha, paramOfResultfulUrl } from '@/utils'
+import { getDetialContest, contestGate, submitProblem } from '@/api/contest'
 import acRate from './components/acRate'
 import contestRanklist from './components/contestRanklist'
+import { mapGetters } from 'vuex'
 export default {
     name:'ContestDetial',
     components:{ProblemBody,mavonEditor,codemirror,acRate,contestRanklist},
@@ -130,25 +131,43 @@ export default {
                     name:'wa',
                     value:0
                 }
-            ],
-            status:1    //1: ok   2:not start 3:need password && not start 4:need password && running
+            ]
         }
+    },
+    computed: {
+        ...mapGetters([
+            'currentContestPassword'
+        ])
     },
     methods:{
         handleLangChanged: function(value){
             this.cmOptions.mode=this.langOptions[value].value;
         },
         handleSubmitCode: function(){
-            submitCode(this.submitOption.problemId, this.submitOption.selectedLang, this.submitOption.share, this.submitOption.code).then(res =>{
+            submitProblem(paramOfResultfulUrl(window.location.href), this.submitOption.problemId, this.submitOption.selectedLang, this.submitOption.code).then(res =>{
                 this.$message({
                     message: '提交成功',
                     type: 'success'
                 });
             }).catch(err =>{
-                this.$message({
-                    message: '提交失败',
-                    type: 'error'
-                });
+                if (err.message == 'Need attendance!'){
+                    this.$message({
+                        type: "error",
+                        message: "未参加该比赛"
+                    })
+                }
+                if (err.message == 'The contest is not Running!'){
+                    this.$message({
+                        type: "error",
+                        message: "比赛未在进行中"
+                    })
+                }
+                if (err.message == 'Problem Not Exist'){
+                    this.$message({
+                        type: "error",
+                        message: "题目不存在"
+                    })
+                }
             })
         },
         getMemery: function(sz){
@@ -182,16 +201,20 @@ export default {
             })
         },
         handleDetialOfContest: function(){
-            contestGate(paramOfResultfulUrl(window.location.href)).then( res => {
-                if(res.message=='success'){
-                    getDetialContest(paramOfResultfulUrl(window.location.href)).then( res => {
+            contestGate(paramOfResultfulUrl(window.location.href), this.currentContestPassword).then( res => {
+                if(res.code=='200'){
+                    getDetialContest(paramOfResultfulUrl(window.location.href), this.currentContestPassword).then( res => {
                         this.contest = res.data
+                        console.log(this.contest)
                         var problems = this.contest.problems
                         for(let x in problems){
                             this.tableData.push({
                                 id:mapNum2Alpha(problems[x].tempId,1,-1),
                                 title:problems[x].tempTitle
                             })
+                        }
+                        if (problems.length > 0){
+                            this.submitOption.problemId = problems[0].id
                         }
                         this.setEchart()
                     }).catch( err => {
@@ -206,7 +229,7 @@ export default {
             }).catch( err => {
                 console.log(err);
                 this.$message({
-                    message: '比赛信息加载失败',
+                    message: err.message,
                     type: 'error'
                 })
             })
