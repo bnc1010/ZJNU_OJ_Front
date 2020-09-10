@@ -104,7 +104,6 @@ export default {
     },
     handleAvatarCallback: function(imageUrl){
       this.tmpavatar=imageUrl
-      console.log(this.tmpavatar)
     },
     handleAvatarUpload: function(){
       changeAvatar(this.tmpavatar).then(res => {
@@ -127,15 +126,14 @@ export default {
     flushPie: function(){
       getPie(this.userid).then(res => {
         this.chartData = []
-        this.chartData.push(Math.floor(res.data.radar.dynamic_programming))
-        this.chartData.push(Math.floor(res.data.radar.data_structure))
-        this.chartData.push(Math.floor(res.data.radar.math))
-        this.chartData.push(Math.floor(res.data.radar.geometry))
-        this.chartData.push(Math.floor(res.data.radar.graph_theory))
-        this.chartData.push(Math.floor(res.data.radar.search))
-        this.chartData.push(Math.floor(res.data.radar.probability))
-        this.chartData.push(Math.floor(res.data.radar.string))
-        console.log(this.chartData)
+        this.chartData.push(res.data.radar.dynamic_programming)
+        this.chartData.push(res.data.radar.data_structure)
+        this.chartData.push(res.data.radar.math)
+        this.chartData.push(res.data.radar.geometry)
+        this.chartData.push(res.data.radar.graph_theory)
+        this.chartData.push(res.data.radar.search)
+        this.chartData.push(res.data.radar.probability)
+        this.chartData.push(res.data.radar.string)
       })
     }
   }

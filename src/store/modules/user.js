@@ -10,7 +10,8 @@ const state = {
   roles: [],
   username: '',
   email: '',
-  id: ''
+  id: '',
+  currentContestPassword: ''
 }
 
 const mutations = {
@@ -37,6 +38,9 @@ const mutations = {
   },
   SET_ID: (state, id) => {
     state.id = id
+  },
+  SET_CURRENT_CONTEST_PASSWORD: (state, currentContestPassword) => {
+    state.currentContestPassword = currentContestPassword
   }
 }
 
@@ -55,6 +59,7 @@ const actions = {
         commit('SET_AVATAR', data.avatar)
         commit('SET_INTRODUCTION', data.intro)
         commit('SET_EMAIL', data.email)
+        commit('SET_CURRENT_CONTEST_PASSWORD', '')
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -90,6 +95,13 @@ const actions = {
       logout(state.token).then(() => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
+        commit('SET_ID', '')
+        commit('SET_NAME', '')
+        commit('SET_USERNAME', '')
+        commit('SET_AVATAR', '')
+        commit('SET_INTRODUCTION', '')
+        commit('SET_EMAIL', '')
+        commit('SET_CURRENT_CONTEST_PASSWORD', '')
         removeToken()
         resetRouter()
         dispatch('tagsView/delAllViews', null, { root: true })
@@ -137,6 +149,9 @@ const actions = {
     commit('SET_NAME', user.name)
     commit('SET_INTRODUCTION', user.intro)
     commit('SET_EMAIL', user.email)
+  },
+  setCurrentContestPassword({ commit }, password) {
+    commit('SET_CURRENT_CONTEST_PASSWORD', password)
   }
 }
 

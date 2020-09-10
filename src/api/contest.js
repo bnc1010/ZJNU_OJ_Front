@@ -10,18 +10,18 @@ export function getContests(page, pagesize, search) {
   })
 }
 
-export function getDetialContest(id) {
+export function getDetialContest(id, password) {
   return request({
-    url: BASE_PATH + '/api/contest/problem/' + id,
-    method: 'get'
+    url: BASE_PATH + '/api/contest/' + id,
+    method: 'post',
+    data: { 'password': password }
   })
 }
 
 export function checkGate(id) {
   return request({
     url: BASE_PATH + '/api/contest/gate/' + id,
-    method: 'get',
-    params: { 'token': getToken() }
+    method: 'get'
   })
 }
 
@@ -36,16 +36,14 @@ export function creatContest(contest) {
 export function getContestInfo(id) {
   return request({
     url: BASE_PATH + '/api/contest/background/' + id,
-    method: 'get',
-    params: { 'token': getToken() }
+    method: 'get'
   })
 }
 
 export function updateContestInfo(id) {
   return request({
     url: BASE_PATH + '/api/contest/background/' + id,
-    method: 'get',
-    params: { 'token': getToken() }
+    method: 'get'
   })
 }
 
@@ -57,10 +55,18 @@ export function updateContest(contest, id) {
   })
 }
 
-export function contestGate(id) {
+export function contestGate(id, password) {
   return request({
     url: BASE_PATH + '/api/contest/gate/' + id,
-    method: 'get',
-    params: { 'token': getToken() }
+    method: 'post',
+    data: { 'password': password }
+  })
+}
+
+export function submitProblem(cid, pid, language, source) {
+  return request({
+    url: BASE_PATH + '/api/contest/submit/' + pid + '/' + cid,
+    method: 'post',
+    data: { language: language, source: source }
   })
 }
