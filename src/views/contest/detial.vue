@@ -78,7 +78,7 @@
             </el-row>
         </el-tab-pane>
         <el-tab-pane label="排行榜">
-            <contestRanklist/>
+            <contestRanklist :cid="cid"/>
         </el-tab-pane>
         <el-tab-pane label="A&Q">
 
@@ -100,7 +100,7 @@ import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/theme/ttcn.css'
 import config from '@/utils/config'
 import { calSize, mapAlpha2Num, mapNum2Alpha, paramOfResultfulUrl } from '@/utils'
-import { getDetialContest, contestGate, submitProblem } from '@/api/contest'
+import { getDetialContest, contestGate, submitProblem, getRanklist } from '@/api/contest'
 import acRate from './components/acRate'
 import contestRanklist from './components/contestRanklist'
 import { mapGetters } from 'vuex'
@@ -112,7 +112,7 @@ export default {
             cmOptions:config.CMOptions,
             langOptions:config.LangOptions,
             submitOption:{
-                selectedLang:'C',
+                selectedLang:0,
                 share:false,
                 code:'',
                 problemId: -1
@@ -131,7 +131,9 @@ export default {
                     name:'wa',
                     value:0
                 }
-            ]
+            ],
+            langOptions: config.LangOptions,
+            cid: -1
         }
     },
     computed: {
@@ -144,7 +146,7 @@ export default {
             this.cmOptions.mode=this.langOptions[value].value;
         },
         handleSubmitCode: function(){
-            submitProblem(paramOfResultfulUrl(window.location.href), this.submitOption.problemId, this.submitOption.selectedLang, this.submitOption.code).then(res =>{
+            submitProblem(this.cid, this.submitOption.problemId, this.langOptions[this.submitOption.selectedLang].key, this.submitOption.code).then(res =>{
                 this.$message({
                     message: '提交成功',
                     type: 'success'
@@ -201,11 +203,10 @@ export default {
             })
         },
         handleDetialOfContest: function(){
-            contestGate(paramOfResultfulUrl(window.location.href), this.currentContestPassword).then( res => {
+            contestGate(this.cid, this.currentContestPassword).then( res => {
                 if(res.code=='200'){
-                    getDetialContest(paramOfResultfulUrl(window.location.href), this.currentContestPassword).then( res => {
+                    getDetialContest(this.cid, this.currentContestPassword).then( res => {
                         this.contest = res.data
-                        console.log(this.contest)
                         var problems = this.contest.problems
                         for(let x in problems){
                             this.tableData.push({
@@ -214,7 +215,7 @@ export default {
                             })
                         }
                         if (problems.length > 0){
-                            this.submitOption.problemId = problems[0].id
+                            this.submitOption.problemId = problems[0].tempId
                         }
                         this.setEchart()
                     }).catch( err => {
@@ -235,7 +236,8 @@ export default {
             })
         }
     },
-    mounted(){
+    created(){
+        this.cid = paramOfResultfulUrl(window.location.href)
         this.handleDetialOfContest()
     }
 }

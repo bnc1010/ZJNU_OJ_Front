@@ -70,3 +70,10 @@ export function submitProblem(cid, pid, language, source) {
     data: { language: language, source: source }
   })
 }
+
+export function getRanklist(cid) {
+  return request({
+    url: BASE_PATH + '/api/contest/ranklist/' + cid,
+    method: 'get'
+  })
+}

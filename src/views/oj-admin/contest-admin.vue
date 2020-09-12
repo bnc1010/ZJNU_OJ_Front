@@ -43,9 +43,7 @@
                 <el-table-column label="比赛名称" width="300">
                     <template slot-scope="scope">
                         <div class="titleFont">
-                            <router-link :to="'./detial/' + scope.row.id">
-                                {{scope.row.title}}
-                            </router-link>
+                            {{scope.row.title}}
                         </div>
                     </template>
                 </el-table-column>
@@ -214,5 +212,10 @@ export default {
 }
 .el-col{
     border: 1px solid transparent;
+}
+.titleFont{
+    font-size: 16px;
+    font-weight: bold;
+    cursor:default;
 }
 </style>
