@@ -81,9 +81,16 @@
     </div>
 </template>
 <script>
-import {seconds2Clock} from '@/utils'
+import {seconds2Clock, mapNum2Alpha} from '@/utils'
+import { getRanklist } from '@/api/contest'
 export default {
     name:"ContestRankList",
+    props:{
+        cid:{
+            type: String,
+            default: '-1'
+        }
+    },
     data() {
       return {
         page:{
@@ -110,75 +117,9 @@ export default {
                 prop:'total',
                 label:'成绩',
                 width:100
-            },
-            {
-                prop:'A',
-                label:'A',
-                width:100
-            },
-            {
-                prop:'B',
-                label:'B',
-                width:100
-            },
-            {
-                prop:'C',
-                label:'C',
-                width:100
-            },
+            }
         ],
-        tableData: [{
-          username: '王小虎',
-          rank:1,
-          total: {
-              acceptCount:2,
-              totalTime:3720
-          },
-          A:{
-              isAccept:true,
-              try:3,
-              firstTime:120,
-              isFirst:false
-          },
-          B:{
-              isAccept:true,
-              try:1,
-              firstTime:3600,
-              isFirst:true
-          },
-          C:{
-              isAccept:false,
-              try:1,
-              firstTime:0,
-              isFirst:false
-          },
-        },
-        {
-          username: '张三',
-          rank:2,
-          total: {
-              acceptCount:1,
-              totalTime:7260
-          },
-          A:{
-              isAccept:true,
-              try:3,
-              firstTime:60,
-              isFirst:true
-          },
-          B:{
-              isAccept:true,
-              try:2,
-              firstTime:7200,
-              isFirst:false
-          },
-          C:{
-              isAccept:false,
-              try:4,
-              firstTime:0,
-              isFirst:false
-          },
-        }]
+        tableData: [],
       }
     },
     methods:{
@@ -248,7 +189,61 @@ export default {
                 else{
                     return 'center'
                 }
-            }
+        },
+
+
+        // {
+        //   username: '张三',
+        //   rank:2,
+        //   total: {
+        //       acceptCount:1,
+        //       totalTime:7260
+        //   },
+        //   A:{
+        //       isAccept:true,
+        //       try:3,
+        //       firstTime:60,
+        //       isFirst:true
+        //   }
+        // }
+        flushRanklist: function() {
+            getRanklist(this.cid).then( res => {
+                console.log(res)
+                for(let x = 0; x <res.data.problemsNumber; x++){
+                    this.columns.push({
+                        prop: mapNum2Alpha(x, true),
+                        label: mapNum2Alpha(x, true),
+                        width:100
+                    })
+                }
+                this.tableData = []
+                console.log('debug1')
+                for(let x in res.data.rows){
+                    let rowTemp = {}
+                    rowTemp['username'] = res.data.rows[x].user.username
+                    rowTemp['rank'] = res.data.rows[x].order
+                    rowTemp['total'] = {
+                        acceptCount: res.data.rows[x].solved,
+                        totalTime: res.data.rows[x].penalty
+                    }
+                    console.log('debug2')
+                    for(let y=0; y < res.data.rows[x].boxes.length; y++){                        
+                        rowTemp[mapNum2Alpha(y, true)] = {
+                            isAccept: res.data.rows[x].boxes[y].accepted,
+                            try: res.data.rows[x].boxes[y].submit,
+                            firstTime: res.data.rows[x].boxes[y].time,
+                            isFirst: res.data.rows[x].boxes[y].first
+                        }
+                        console.log(rowTemp)
+                    }
+                    this.tableData.push(rowTemp)
+                }
+                
+                console.log(this.tableData1)
+            }).catch( err => {
+                
+            })
+        }
     },
     computed:{
         getTableWidth: function() {
@@ -261,6 +256,7 @@ export default {
     },
     mounted(){
         this.page.total=2
+        this.flushRanklist()
     }
 }
 </script>
