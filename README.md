@@ -16,6 +16,6 @@ npm run dev
 
 This will automatically open http://localhost:9527
 
-online dome : http://101.132.160.250:9527/
+online dome : http://101.132.160.250
 
 后端地址：https://github.com/bnc1010/ZJNU_OJ_Back/

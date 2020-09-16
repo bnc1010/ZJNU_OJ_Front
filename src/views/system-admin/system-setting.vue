@@ -225,6 +225,9 @@ export default {
             }
         }
     },
+    mounted(){
+        this.getConfigs()
+    },
     methods:{
         getConfigs: function(){
             getConfig().then( res => {
@@ -269,9 +272,7 @@ export default {
             })
         }
     },
-    mounted(){
-        this.getConfigs()
-    }
+    
 }
 </script>
 <style scoped>
