@@ -85,6 +85,7 @@ export default {
                 trigger: 'item',
                 formatter: '{a} <br/>{b} : {c} ({d}%)'
             },
+            color : ['green', 'red'],
             series: [
                 {
                     name: 'Status',

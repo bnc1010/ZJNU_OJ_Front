@@ -280,7 +280,19 @@ export const asyncRoutes = [
         path: 'permissionList',
         component: () => import('@/views/user-admin/permission-list.vue'),
         name: 'permissions',
-        meta: { title: '权限', noCache: true, roles: ['root'] }
+        meta: { title: '权限管理', noCache: true, roles: ['root'] }
+      },
+      {
+        path: 'adminlogs',
+        component: () => import('@/views/system-admin/logs.vue'),
+        name: 'syatemlogs',
+        meta: { title: '管理日志', noCache: true, roles: ['root'] }
+      },
+      {
+        path: 'setting',
+        component: () => import('@/views/system-admin/system-setting.vue'),
+        name: 'systemsetting',
+        meta: { title: '系统设置', noCache: true, roles: ['root'] }
       }
     ]
   },
