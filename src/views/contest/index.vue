@@ -182,7 +182,6 @@ export default {
                 if(err.code && err.code == '400'){
                     if (err.message == 'need password'){
                         this.passwordDialogVisible = true;
-                        console.log('need password')
                     }
                     else if (err.message == 'password error'){
                         this.$message({
@@ -202,7 +201,6 @@ export default {
         handleInputPassword: function(){
             this.passwordDialogVisible = false;
             this.$store.dispatch('user/setCurrentContestPassword', this.inputContestPassword);
-            console.log(this.currentContestPassword)
             this.handleEnterContest(this.currentContestId)
             this.inputContestPassword = ''
         },

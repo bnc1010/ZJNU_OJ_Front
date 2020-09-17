@@ -219,16 +219,14 @@ export default {
                         }
                         this.setEchart()
                     }).catch( err => {
-                        console.log(err);
                         this.$message({
-                            message: err,
+                            message: err.message,
                             type: 'error'
                         })
                     })
                 }
                 
             }).catch( err => {
-                console.log(err);
                 this.$message({
                     message: err.message,
                     type: 'error'
