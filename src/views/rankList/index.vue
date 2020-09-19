@@ -31,10 +31,10 @@
         </el-table>
       </center>
       <center>
-        <div class="block">
+        <div class="block" style="margin: 1rem">
           <el-pagination
             :current-page="page.index"
-            :page-sizes="[10, 20, 50, 100]"
+            :page-sizes="[5, 10, 20, 50, 100]"
             :page-size="page.size"
             layout="total, sizes, prev, pager, next, jumper"
             :total="page.total"
@@ -78,7 +78,9 @@ export default {
     flushUserList: function() {
       getUserRanklist(this.page.index, this.page.size).then(res => {
         this.tableData = res.data.page.content
-        this.tableData.unshift(res.data.userself)
+        if (!this.tableData.find(item => item.id === res.data.userself.id)) {
+          this.tableData.unshift(res.data.userself)
+        }
         this.page.total = res.data.page.totalElements
       }).catch(() => {
         this.$message({
