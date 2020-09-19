@@ -106,6 +106,6 @@ export default {
 }
 
 .ranklist .el-table .self-row {
-  background: #d6e9ca;
+  background: rgb(245, 247, 250);
 }
 </style>
