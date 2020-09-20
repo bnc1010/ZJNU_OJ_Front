@@ -194,7 +194,6 @@ export default {
           this.page.query.AC=true
         }
       }
-      console.log(this.page.query)
     },
     headClass() {
       return 'text-align: center;background:#F2F6FC;'
@@ -238,21 +237,25 @@ export default {
           share: this.submitDetial.share ? '公开' : '私密'
         })
       }).catch(err => {
-        console.log(err)
+        this.$message({
+          type: 'error',
+          message: err.message
+        })
         this.submitDetialVisible = false
       })
     },
     flushStatusList: function() {
       getStatus(this.page.index, this.page.size, this.page.query).then(res => {
         this.tableData = res.data.content
-        console.log(this.tableData)
         this.page.total = res.data.totalElements
       }).catch(err => {
-
+          this.$message({
+          type: 'error',
+          message: err.message
+        })
       })
     },
     getSize: function(val) {
-      console.log(val)
       return calSize(val)
     },
     handleSearch: function(){

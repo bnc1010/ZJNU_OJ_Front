@@ -152,6 +152,28 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/team',
+    redirect: '/team/myteam',
+    meta: { title: '队伍', icon: 'team' },
+    component: Layout,
+    children: [
+      {
+        path: '/team/myteam',
+        component: () => import('@/views/team/myteam'),
+        name: 'myteam',
+        hidden: true,
+        meta: { title: '我的队伍', activeMenu: '/team', noCache: true }
+      },
+      {
+        path: '/team/all',
+        hidden: true,
+        component: () => import('@/views/team/allteam'),
+        name: 'allteam',
+        meta: { title: '所有队伍', activeMenu: '/team', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/status',
     component: Layout,
     children: [
@@ -159,7 +181,7 @@ export const constantRoutes = [
         path: '/status',
         component: () => import('@/views/status'),
         name: 'status',
-        meta: { title: '评测姬', icon: 'status' }
+        meta: { title: '评测器', icon: 'status' }
       }
     ]
   },
