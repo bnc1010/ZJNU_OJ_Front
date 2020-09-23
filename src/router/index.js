@@ -297,6 +297,13 @@ export const asyncRoutes = [
         component: () => import('@/views/oj-admin/team-admin.vue'),
         name: 'teamAdmin',
         meta: { title: '队伍管理', noCache: true, roles: ['admin'] }
+      },
+      {
+        path: '/ojAdmin/teamedit',
+        component: () => import('@/views/oj-admin/team-edit.vue'),
+        name: 'teamEdit',
+        hidden: true,
+        meta: { title: '队伍编辑', noCache: true, roles: ['admin'] }
       }
     ]
   },

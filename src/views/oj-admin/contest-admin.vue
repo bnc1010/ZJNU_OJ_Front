@@ -18,7 +18,6 @@
             </el-row>
         </el-card>
         <el-card class="bodybox">
-            
             <center>
                 <el-pagination
                     @size-change="handleSizeChange"

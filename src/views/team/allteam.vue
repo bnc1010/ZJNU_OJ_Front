@@ -1,6 +1,5 @@
 <template>
     <div class="app-container teamBox">
-        
         <el-card>
             <el-row :gutter="20">
                 <el-col :span="6"><div class="grid-content bg-purple" ><router-link :to="'/team/myteam'">我的队伍</router-link></div></el-col>
@@ -78,21 +77,7 @@ export default {
     name: 'AllTeam',
     data(){
         return{
-            tableData: [{
-                attend: "private",
-                createTime: "2020-07-30T12:45:33Z",
-                creator: {id: 50, username: "bnc1010", name: "bnc", userProfile: {id: 50, score: 5, accepted: 1, submitted: 3}},
-                description: "这是一个测试队伍",
-                id: 2,
-                name: "testTeam",
-                normalCreateTime: "2020-07-30 20:45",
-                teammates: [
-                {
-                    id: 14,
-                    level: 0,
-                    user: {id: 50, username: "bnc1010", name: "bnc", userProfile: {id: 50, score: 5, accepted: 1, submitted: 3}}
-                }]
-            }],
+            tableData: [],
             page:{
                 index:1,
                 size:20,
@@ -102,20 +87,21 @@ export default {
         }
     },
     mounted(){
-        this.flushMyTeam()
+        this.flushTeam()
     },
     methods:{
         handleSizeChange: function(val){
             this.page.size=val
-            // this.flushContestList()
+            this.flushTeam()
         },
         handleCurrentChange: function(val){
             this.page.index=val
-            // this.flushContestList()
+            this.flushTeam()
         },
-        flushMyTeam: function(){
+        flushTeam: function(){
             getTeams(this.page.index, this.page.size).then( res => {
-                console.log(res)
+                this.tableData = res.data.content
+                this.page.total = res.data.totalElements
             }).catch( err => {
                 this.$message({
                     type: 'error',
