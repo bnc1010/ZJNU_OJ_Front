@@ -35,7 +35,7 @@
                 <el-table-column label="队伍名" width="200">
                     <template slot-scope="scope">
                         <div class="titleFont">
-                            {{scope.row.name}}
+                            <router-link :to="'./' + scope.row.id">{{scope.row.name}}</router-link>
                         </div>
                     </template>
                 </el-table-column>
@@ -109,7 +109,7 @@ export default {
         },
         flushMyTeam: function(){
             getMyTeams(this.page.index, this.page.size).then( res => {
-                console.log(res)
+                this.tableData = res.data.teams
             }).catch( err => {
                 this.$message({
                     type: 'error',

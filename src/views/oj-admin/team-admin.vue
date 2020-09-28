@@ -2,18 +2,17 @@
     <div class="app-container teamBox">
         <el-card>
             <el-row :gutter="20">
-                <el-col :span="6">
-                    <div class="grid-content bg-purple" >
-                        <router-link :to="'/team/myteam'">我的队伍</router-link>
-                        <el-button plain size="mini" @click="joinDialogVisible = true">加入队伍</el-button>
-                    </div>
-                </el-col>
+                <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
                 <el-col :span="12">
                 <div class="grid-content bg-purple">
-                    <center><h1>队伍列表</h1></center>
+                    <el-input v-model="page.query" placeholder="搜索队伍" class="input-with-select">
+                    <el-button slot="append" icon="el-icon-search" @click="handleSearch" />
+                    </el-input>
                 </div>
                 </el-col>
-                <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+              <el-button type="primary" plain @click="handleAdd">新建队伍</el-button>
+            </div></el-col>
             </el-row>
         </el-card>
         <el-card class="bodybox contestBox">
@@ -58,9 +57,9 @@
                         {{ scope.row.creator.username }}
                     </template>
                 </el-table-column>
-                <el-table-column  width="150">
+                <el-table-column width="150">
                     <template slot-scope="scope">
-                        <el-button  @click="handleApply(scope.row.id)" :disabled="scope.row.attend == 'private'">申请加入</el-button>
+                        <el-button type="warning" plain size="small" @click="handleUpdate(scope.row.id)">管理</el-button>
                     </template>
                 </el-table-column>
                 </el-table>
@@ -79,36 +78,48 @@
             </center>
         </el-card>
 
-        <el-dialog
-            title="加入队伍"
-            :visible.sync="joinDialogVisible"
-            width="30%">
-            <span>
-                <el-input v-model="inviteCode" placeholder="请输入队伍邀请码"></el-input>
-            </span>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="joinDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="handleJoinTeam">确 定</el-button>
-            </span>
-        </el-dialog>
+        <el-dialog title="新建队伍" :visible.sync="addFormVisible" :append-to-body="true">
+        <el-form ref="addForm" :model="addForm" label-width="80px">
+          <el-form-item label="队伍名" prop="name">
+            <el-input v-model="addForm.name" auto-complete="off" />
+          </el-form-item>
+          <el-form-item label="简介" prop="level">
+            <el-input v-model="addForm.description" auto-complete="off" />
+          </el-form-item>
+          <el-form-item label="类型" prop="attend">
+            <el-select v-model="addForm.attend" placeholder="请选择">
+                <el-option label="private" value="private"></el-option>
+                <el-option label="public" value="public"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click.native="addFormVisible = false, addLoading = false">取消</el-button>
+          <el-button type="primary" :loading="addLoading" @click.native="submitAddTeam">提交</el-button>
+        </div>
+      </el-dialog>
     </div>
 </template>
 <script>
-import { getTeams, joinTeamByCode, applyTeam } from '@/api/team'
-
+import { getTeams, createTeam } from '@/api/team'
 export default {
-    name: 'AllTeam',
+    name: 'TeamAdmin',
     data(){
         return{
-            tableData: [],
             page:{
                 index:1,
                 size:20,
                 total:0,
                 query:''
             },
-            joinDialogVisible: false,
-            inviteCode: ''
+            tableData:[],
+            addFormVisible: false,
+            addLoading: false,
+            addForm:{
+                name: '',
+                description: '',
+                attend: ''
+            }
         }
     },
     mounted(){
@@ -122,6 +133,12 @@ export default {
         handleCurrentChange: function(val){
             this.page.index=val
             this.flushTeam()
+        },
+        handleSearch: function(){
+
+        },
+        handleAdd: function() {
+            this.addFormVisible = true
         },
         flushTeam: function(){
             getTeams(this.page.index, this.page.size).then( res => {
@@ -145,33 +162,41 @@ export default {
                 return '#409EFF'
             }
         },
-        handleJoinTeam: function(){
-            joinTeamByCode(this.inviteCode).then( res => {
+        submitAddTeam: function(){
+            if(this.addForm.name.length<1 || this.addForm.description.length<1){
+                this.$message({
+                    type: 'error',
+                    message: '队伍名或简介未填写'
+                })
+                return
+            }
+            if(this.addForm.attend != 'private' && this.addForm.attend != 'public'){
+                this.$message({
+                    type: 'error',
+                    message: '队伍类型未选择'
+                })
+                return
+            }
+            this.addLoading = true
+            createTeam(this.addForm).then( res => {
+                this.addLoading = false
                 this.$message({
                     type: 'success',
-                    message: '加入成功'
+                    message: '新建成功'
                 })
-                // 跳转到刚加入的比赛详情页
+                this.addFormVisible = false
+                this.flushTeam()
+
             }).catch( err => {
+                this.addLoading = false
                 this.$message({
                     type: 'error',
                     message: err.message
                 })
             })
-            this.joinDialogVisible = false
         },
-        handleApply: function(teamId) {
-            applyTeam(teamId).then( res => {
-                this.$message({
-                    type: 'success',
-                    message: '申请成功'
-                })
-            }).catch( err => {
-                this.$message({
-                    type: 'error',
-                    message: err.message
-                })
-            })
+        handleUpdate: function(teamId){
+            this.$router.push('./teamedit?teamId=' + teamId)
         }
     }
 }
@@ -185,5 +210,8 @@ export default {
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
+}
+.el-col{
+    border: 1px solid transparent;
 }
 </style>
