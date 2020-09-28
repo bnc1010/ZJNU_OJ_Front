@@ -172,7 +172,7 @@ export const constantRoutes = [
         meta: { title: '所有队伍', activeMenu: '/team', noCache: true }
       },
       {
-        path: '/team/:id(\\d+)',
+        path: '/team/detail',
         hidden: true,
         component: () => import('@/views/team/teamdetial'),
         name: 'teamdetial',
@@ -304,6 +304,13 @@ export const asyncRoutes = [
         name: 'teamEdit',
         hidden: true,
         meta: { title: '队伍编辑', noCache: true, roles: ['admin'] }
+      },
+      {
+        path: '/ojAdmin/teamcontest/add',
+        component: () => import('@/views/oj-admin/team-contest-add.vue'),
+        name: 'teamContestAdd',
+        hidden: true,
+        meta: { title: '新建训练', noCache: true, roles: ['admin'] }
       }
     ]
   },

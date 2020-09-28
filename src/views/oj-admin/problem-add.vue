@@ -203,7 +203,6 @@ export default {
             if(this.problem.tags.indexOf(tag)===-1){
                 this.problem.tags.push(tag)
             }
-            console.log(this.problem.tags)
         },
         handleTagClose :function(tag){
             this.problem.tags.splice(this.problem.tags.indexOf(tag), 1)
