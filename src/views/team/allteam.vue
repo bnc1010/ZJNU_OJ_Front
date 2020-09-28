@@ -2,7 +2,12 @@
     <div class="app-container teamBox">
         <el-card>
             <el-row :gutter="20">
-                <el-col :span="6"><div class="grid-content bg-purple" ><router-link :to="'/team/myteam'">我的队伍</router-link></div></el-col>
+                <el-col :span="6">
+                    <div class="grid-content bg-purple" >
+                        <router-link :to="'/team/myteam'">我的队伍</router-link>
+                        <el-button plain size="mini" @click="joinDialogVisible = true">加入队伍</el-button>
+                    </div>
+                </el-col>
                 <el-col :span="12">
                 <div class="grid-content bg-purple">
                     <center><h1>队伍列表</h1></center>
@@ -53,6 +58,11 @@
                         {{ scope.row.creator.username }}
                     </template>
                 </el-table-column>
+                <el-table-column  width="150">
+                    <template slot-scope="scope">
+                        <el-button  @click="handleApply(scope.row.id)" :disabled="scope.row.attend == 'private'">申请加入</el-button>
+                    </template>
+                </el-table-column>
                 </el-table>
             </center>
             <el-divider></el-divider>
@@ -68,10 +78,23 @@
                 </el-pagination>
             </center>
         </el-card>
+
+        <el-dialog
+            title="加入队伍"
+            :visible.sync="joinDialogVisible"
+            width="30%">
+            <span>
+                <el-input v-model="inviteCode" placeholder="请输入队伍邀请码"></el-input>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="joinDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleJoinTeam">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
-import { getTeams } from '@/api/team'
+import { getTeams, joinTeamByCode, applyTeam } from '@/api/team'
 
 export default {
     name: 'AllTeam',
@@ -84,6 +107,8 @@ export default {
                 total:0,
                 query:''
             },
+            joinDialogVisible: false,
+            inviteCode: ''
         }
     },
     mounted(){
@@ -120,6 +145,34 @@ export default {
                 return '#409EFF'
             }
         },
+        handleJoinTeam: function(){
+            joinTeamByCode(this.inviteCode).then( res => {
+                this.$message({
+                    type: 'success',
+                    message: '加入成功'
+                })
+                // 跳转到刚加入的比赛详情页
+            }).catch( err => {
+                this.$message({
+                    type: 'error',
+                    message: err.message
+                })
+            })
+            this.joinDialogVisible = false
+        },
+        handleApply: function(teamId) {
+            applyTeam(teamId).then( res => {
+                this.$message({
+                    type: 'success',
+                    message: '申请成功'
+                })
+            }).catch( err => {
+                this.$message({
+                    type: 'error',
+                    message: err.message
+                })
+            })
+        }
     }
 }
 </script>

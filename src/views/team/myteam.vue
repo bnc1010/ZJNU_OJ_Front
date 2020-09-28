@@ -109,7 +109,7 @@ export default {
         },
         flushMyTeam: function(){
             getMyTeams(this.page.index, this.page.size).then( res => {
-                console.log(res)
+                this.tableData = res.data.teams
             }).catch( err => {
                 this.$message({
                     type: 'error',
