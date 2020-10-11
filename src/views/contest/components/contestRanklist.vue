@@ -8,6 +8,7 @@
                         <el-input placeholder="搜索排名或用户名" v-model="page.query" class="input-with-select">
                             <el-button slot="append" icon="el-icon-search"></el-button>
                         </el-input>
+                        <el-button @click="flushRanklist">刷新</el-button>
                     </div>
                 </el-col>
                 <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
@@ -81,7 +82,7 @@
     </div>
 </template>
 <script>
-import {seconds2Clock, mapNum2Alpha} from '@/utils'
+import {seconds2Clock, mapNum2Alpha, deepClone } from '@/utils'
 import { getRanklist } from '@/api/contest'
 export default {
     name:"ContestRankList",
@@ -99,7 +100,7 @@ export default {
             total:0,
             query:''
         },
-        columns:[
+        tpcolumns:[
             {
 
             },
@@ -119,6 +120,7 @@ export default {
                 width:100
             }
         ],
+        columns: [],
         tableData: [],
       }
     },
@@ -208,7 +210,7 @@ export default {
         // }
         flushRanklist: function() {
             getRanklist(this.cid).then( res => {
-                console.log(res)
+                this.columns = deepClone(this.tpcolumns)
                 for(let x = 0; x <res.data.problemsNumber; x++){
                     this.columns.push({
                         prop: mapNum2Alpha(x, true),
@@ -216,8 +218,7 @@ export default {
                         width:100
                     })
                 }
-                this.tableData = []
-                console.log('debug1')
+                this.tableData.length = 0
                 for(let x in res.data.rows){
                     let rowTemp = {}
                     rowTemp['username'] = res.data.rows[x].user.username
@@ -226,20 +227,16 @@ export default {
                         acceptCount: res.data.rows[x].solved,
                         totalTime: res.data.rows[x].penalty
                     }
-                    console.log('debug2')
-                    for(let y=0; y < res.data.rows[x].boxes.length; y++){                        
+                    for(let y=0; y < res.data.rows[x].boxes.length; y++){                 
                         rowTemp[mapNum2Alpha(y, true)] = {
                             isAccept: res.data.rows[x].boxes[y].accepted,
                             try: res.data.rows[x].boxes[y].submit,
                             firstTime: res.data.rows[x].boxes[y].time,
                             isFirst: res.data.rows[x].boxes[y].first
                         }
-                        console.log(rowTemp)
                     }
                     this.tableData.push(rowTemp)
                 }
-                
-                console.log(this.tableData1)
             }).catch( err => {
                 
             })

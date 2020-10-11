@@ -35,7 +35,7 @@
                 <el-table-column label="队伍名" width="200">
                     <template slot-scope="scope">
                         <div class="titleFont">
-                            <router-link :to="'./' + scope.row.id">{{scope.row.name}}</router-link>
+                            <router-link :to="'./detail?teamId=' + scope.row.id">{{scope.row.name}}</router-link>
                         </div>
                     </template>
                 </el-table-column>

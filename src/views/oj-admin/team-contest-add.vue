@@ -27,9 +27,6 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="密码">
-                        <el-input v-model="contest.password" :disabled="isPasswordNeeded" style="width:250px"></el-input>
-                    </el-form-item>
                     <el-form-item label="开始时间">
                         <el-date-picker
                             v-model="contest.startTime"
@@ -74,6 +71,7 @@ import 'mavon-editor/dist/css/index.css'
 import {mavonEditor} from 'mavon-editor'
 import {getProblemName} from '@/api/problem'
 import {creatContest} from '@/api/contest'
+import { param2Obj } from '@/utils'
 export default {
     name:"ContestAdd",
     components:{mavonEditor},
@@ -88,16 +86,12 @@ export default {
                 startTime: "",
                 length: 300,
                 password: "",
-                tid: "0"
+                tid: "-1"
             },
             privilegeOptions:[
                 {
-                    label:"public",
+                    label:"team",
                     value:0
-                },
-                {
-                    label:"private",
-                    value:1
                 }
             ],
             optionValue: 0,
@@ -138,10 +132,16 @@ export default {
             }
         }
     },
-    computed:{
-        isPasswordNeeded: function(){
-            return this.optionValue == 0
+    mounted(){
+        let obj = param2Obj(window.location.href)
+        if(obj == null || obj.teamId == null){
+            this.$message({
+                type:'error',
+                message: '非法进入管理页面'
+            })
+            return
         }
+        this.contest.tid = obj.teamId
     },
     methods:{
         getProblemName: function(pid, ind){
@@ -186,7 +186,7 @@ export default {
                     type: 'success',
                     message: '比赛创建成功'
                 })
-                this.$router.push('/ojAdmin/contest')
+                this.$router.go(-1)
             }).catch( err => {
                 this.$message({
                     type: 'error',

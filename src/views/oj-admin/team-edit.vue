@@ -6,7 +6,44 @@
         <el-row :gutter="20" class="bodybox">
             <el-col :span="18" :xs="24">
                 <el-card>
-
+                    <h2>训练:</h2>
+                    <router-link :to="'teamcontest/add?teamId=' + teamId">添加训练</router-link>
+            <el-divider></el-divider>
+            <center>
+                <el-table :data="team.contests" style="width: 100%">
+                <el-table-column label="状态" width="100">
+                    <template slot-scope="scope">
+                        <div :class='statuClass(scope.row.runStatu)'>
+                            {{scope.row.runStatu}}
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="比赛名称" width="300">
+                    <template slot-scope="scope">
+                        <div class="titleFont">
+                            {{scope.row.title}}
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="时长" width="150">
+                    <template slot-scope="scope">
+                        <div class="timeFont">
+                            {{timeLength(scope.row.length)}}
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="起止时间" width="300">
+                    <template slot-scope="scope">
+                        <el-tag effect="plain" type="info" size="medium">{{ scope.row.normalStartTime + '--' + scope.row.normalEndTime }}</el-tag>
+                    </template>
+                </el-table-column>
+               <el-table-column align="right">
+                    <template slot-scope="scope">
+                    <el-button type="warning" plain size="small" @click="handleUpdate(scope.row.id)">update</el-button>
+                    </template>
+              </el-table-column>
+                </el-table>
+            </center>
                 </el-card>
             </el-col>
             <el-col :span="6" :xs="24">
@@ -40,7 +77,7 @@
                                 <el-tag effect="plain" size="mini" type="warning">master</el-tag>
                             </div>
                             <div v-else class="teammatetag">
-                                <el-button size="mini" @click="handleMoveOut(item.id)" type="danger" plain>移出队伍</el-button>
+                                <el-tag size="mini" type="danger" @click="handleMoveOut(item.id)">移出队伍</el-tag>
                             </div>
                             <br/>
                         </div>
@@ -91,7 +128,7 @@
     </div>
 </template>
 <script>
-import { param2Obj } from '@/utils'
+import { param2Obj, calTime } from '@/utils'
 import { getTeamById, updateTeamAttend, getInviteCode, moveoutTeammate, showapply, agreeApply, disagreeApply } from '@/api/team'
 export default {
     name: 'TeamEdit',
@@ -190,7 +227,7 @@ export default {
                 this.activeapply = []
                 this.disactiveapply = []
                 for(let i = 0; i < res.data.length; i++) {
-                    if(res.data[i].active == 'true'){
+                    if(res.data[i].active == true){
                         this.activeapply.push(res.data[i])
                     }
                     else{
@@ -230,6 +267,23 @@ export default {
                     message: err.message
                 })
             })
+        },
+        statuClass: function(statu){
+            if(statu=='已结束'){
+                return 'statuFont statuEndFont'
+            }
+            else if(statu=='进行中'){
+                return 'statuFont statuRunningFont'
+            }
+            else{
+                return 'statuFont statuWaitingFont'
+            }
+        },
+        timeLength: function(time){
+            return calTime(Number(time)*60)
+        },
+        handleUpdate: function(id){
+            this.$router.push('/ojAdmin/contest/edit/' + id)
         }
 
     },
