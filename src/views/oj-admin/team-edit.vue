@@ -227,7 +227,7 @@ export default {
                 this.activeapply = []
                 this.disactiveapply = []
                 for(let i = 0; i < res.data.length; i++) {
-                    if(res.data[i].active == 'true'){
+                    if(res.data[i].active == true){
                         this.activeapply.push(res.data[i])
                     }
                     else{

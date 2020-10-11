@@ -126,6 +126,20 @@ export const constantRoutes = [
         component: () => import('@/views/problem/detial'),
         name: 'problemDetial',
         meta: { title: '题目', activeMenu: '/problem', noCache: true, roles: ['editor'] }
+      },
+      {
+        path: 'problemSet',
+        hidden: true,
+        component: () => import('@/views/problem-set'),
+        name: 'problemSet',
+        meta: { title: '题单', activeMenu: '/problem', noCache: true, roles: ['editor'] }
+      },
+      {
+        path: 'problemSetDetail/:id(\\d+)',
+        hidden: true,
+        component: () => import('@/views/problem-set/detail'),
+        name: 'problemSetDetail',
+        meta: { title: '题单详情', activeMenu: '/problem', noCache: true, roles: ['editor'] }
       }
     ]
   },
@@ -311,6 +325,12 @@ export const asyncRoutes = [
         name: 'teamContestAdd',
         hidden: true,
         meta: { title: '新建训练', noCache: true, roles: ['admin'] }
+      },
+      {
+        path: '/ojAdmin/problemSet',
+        component: () => import('@/views/oj-admin/problemSet-admin.vue'),
+        name: 'problemSetAdmin',
+        meta: { title: '题单管理', noCache: true, roles: ['admin'] }
       }
     ]
   },

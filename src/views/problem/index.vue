@@ -111,12 +111,32 @@
             </div>
           </div>
         </el-card>
+
+        <el-card style="margin-bottom:20px;padding:10px;">
+          <div slot="header" class="clearfix">
+            <span>
+              <el-tooltip class="item" effect="dark" content="点击查看更多题单" placement="right">
+                <router-link :to="'./problemSet'" >题单</router-link>
+              </el-tooltip>
+            </span>
+          </div>
+          <div>
+            <ul class="problemSet-ul">
+              <router-link v-for="(problemset, id) in problemSet" :key="id" :to="'problemSetDetail/' + problemset.id">
+                <li>
+                  {{ problemset.title }}
+                </li>
+              </router-link>
+            </ul>
+          </div>
+        </el-card>
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
 import { getProblems, getTags } from '@/api/problem'
+import { getProblemSetList } from '@/api/problemSet'
 export default {
   name: 'Problem',
   components: {},
@@ -131,11 +151,13 @@ export default {
       search: '',
       tableData: [],
       tags: [],
-      searchTag: []
+      searchTag: [],
+      problemSet: []
     }
   },
   mounted() {
     this.handleTags()
+    this.handleProblemSet()
     this.flushProblemList()
   },
   methods: {
@@ -192,16 +214,26 @@ export default {
         })
       })
     },
+    handleProblemSet: function() {
+      getProblemSetList(1,5, '').then( res => {
+        this.problemSet = res.data.content
+      }).catch( err => {
+        this.$message({
+          type: 'error',
+          message: err.message
+        })
+      })
+    },
     handleSearch: function() {
+      let temp = this.page.query
       if (this.searchTag.length !== 0) {
         this.page.query += '$$'
         for (const idx in this.searchTag) {
           this.page.query += this.searchTag[idx] + ','
         }
       }
-      this.page.query
       this.flushProblemList()
-      this.page.query = ''
+      this.page.query = temp
     }
   }
 }
@@ -250,5 +282,17 @@ export default {
 
 .problemBox{
     margin-top: 20px;
+}
+
+.problemSet-ul{
+  list-style: none;
+  padding: 0;
+}
+
+.problemSet-ul li{
+  height: 30px;
+  font-weight: 120%;
+  line-height: 30px;
+  font-size: 15px;
 }
 </style>
