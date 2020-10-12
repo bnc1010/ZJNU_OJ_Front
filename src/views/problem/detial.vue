@@ -5,40 +5,18 @@
         <el-card class="problemHeader">
           <el-row>
             <h1>{{ problem.title }}</h1>
-            <el-table
-              :data="problemData"
-              border
-              :cell-style="rowClass"
-              :header-cell-style="headClass"
-              style="width: 100%"
-            >
-              <el-table-column
-                prop="timeLimit"
-                label="Time Limit"
-                width="180"
-              />
-              <el-table-column
-                prop="memoryLimit"
-                label="Memory Limit"
-                width="180"
-              />
-              <el-table-column
-                prop="submitted"
-                label="Submitted"
-              />
-              <el-table-column
-                prop="accepted"
-                label="Accepted"
-              />
-              <el-table-column
-                prop="score"
-                label="积分"
-              />
-              <el-table-column
-                prop="source"
-                label="来源"
-              />
-            </el-table>
+            <div class="tag-group">
+              <el-tag
+                v-for="(item, key) in problemData[0]"
+                :key="key"
+                :hit="false"
+                type="info"
+                style="margin: .2rem .2rem"
+                effect="light"
+              >
+                {{ key }} : {{ item }}
+              </el-tag>
+            </div>
           </el-row>
         </el-card>
         <problemBody :problem="problem" />
@@ -87,7 +65,7 @@
             <div class="divCardHeaderTitle">
               <div class="titleContent">
                 最近提交
-                <i class="el-icon-refresh-right" @click="handleflushLastSubmit"></i>
+                <i class="el-icon-refresh-right" @click="handleflushLastSubmit" />
               </div>
             </div>
             <div class="divMore">
@@ -117,7 +95,6 @@
         </el-card>
       </el-col>
     </el-row>
-
     <el-dialog
       :visible.sync="submitDetialVisible"
       width="66%"
@@ -231,6 +208,11 @@ export default {
       // monacoEditor: {},
     }
   },
+  computed: {
+    getUsername: function() {
+      return this.$store.state.user.username
+    }
+  },
   mounted() {
     getProblemById(paramOfResultfulUrl(window.location.href)).then(res => {
       this.problem = res.data
@@ -250,6 +232,7 @@ export default {
       })
     })
     this.flushLastSubmit()
+    console.log(this.problemData[0])
   },
   methods: {
     headClass() {
@@ -332,7 +315,7 @@ export default {
         })
       })
     },
-    flushLastSubmit: function(){
+    flushLastSubmit: function() {
       getLastSubmits(paramOfResultfulUrl(window.location.href)).then(res => {
         this.submits = res.data
       }).catch(err => {
@@ -342,7 +325,7 @@ export default {
         })
       })
     },
-    handleflushLastSubmit: function(){
+    handleflushLastSubmit: function() {
       this.flushLastSubmit()
     },
   },
