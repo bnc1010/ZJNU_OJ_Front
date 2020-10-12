@@ -67,6 +67,7 @@
           <el-divider />
           <el-button type="primary" @click="handleSubmitCode">提交</el-button>
         </el-card>
+        <!-- <el-card><div ref="container" style="height: 360px;width: 100%;"></div></el-card> -->
       </el-col>
       <el-col :span="6" :xs="24">
         <el-card style="margin-bottom:20px;">
@@ -180,6 +181,7 @@
         <el-button type="primary" plain @click="handleSetShareStatu">{{ submitDetial.shareButton }}</el-button>
         <el-button type="danger" plain @click="submitDetialVisible = false">关 闭</el-button>
       </span>
+      
     </el-dialog>
   </div>
 </template>
@@ -197,6 +199,29 @@ import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/theme/ttcn.css'
 import config from '@/utils/config'
 import { mavonEditor } from 'mavon-editor'
+
+
+// import * as monaco from 'monaco-editor';
+ 
+// self.MonacoEnvironment = {
+//   getWorkerUrl: function (moduleId, label) {
+//     if (label === 'json') {
+//       return './json.worker.bundle.js';
+//     }
+//     if (label === 'css') {
+//       return './css.worker.bundle.js';
+//     }
+//     if (label === 'html') {
+//       return './html.worker.bundle.js';
+//     }
+//     if (label === 'typescript' || label === 'javascript') {
+//       return './ts.worker.bundle.js';
+//     }
+//     return './editor.worker.bundle.js';
+//   }
+// }
+
+
 export default {
   components: { codemirror, problemBody, mavonEditor },
   data() {
@@ -224,7 +249,8 @@ export default {
         share: true,
         code: '',
         problemId: -1
-      }
+      },
+      // monacoEditor: {},
     }
   },
   mounted() {
@@ -246,6 +272,12 @@ export default {
       })
     })
     this.flushLastSubmit()
+    // this.monacoEditor = monaco.editor.create(this.$refs.container, {
+    //     value: '内容',
+    //     readOnly: false,
+    //     language: 'html',
+    //     theme: 'vs'
+    // });
   },
   methods: {
     headClass() {
@@ -340,7 +372,14 @@ export default {
     },
     handleflushLastSubmit: function(){
       this.flushLastSubmit()
-    }
+    },
+    // changeEditor() { // 更改editor内容
+    //     this.monacoEditor.setValue(submitDetial.source);
+    //     this.monacoEditor.getAction('editor.action.formatDocument')._run();
+    // },
+    // destroyEditor() { // 销毁编辑器
+    //     this.monacoEditor.dispose();
+    // },
   },
   computed: {
     getUsername: function(){
