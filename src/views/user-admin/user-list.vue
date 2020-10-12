@@ -6,10 +6,9 @@
         <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
         <el-col :span="6">
           <div class="grid-content bg-purple">
-            <el-input v-model="page.query" placeholder="搜索用户名或ID" class="input-with-select">
-              <el-button slot="append" icon="el-icon-search" />
+            <el-input v-model="page.query" placeholder="搜索用户名" class="input-with-select">
+              <el-button slot="append" icon="el-icon-search" @click="handleSearch"/>
             </el-input>
-
           </div>
         </el-col>
         <el-col :span="6"><div class="grid-content bg-purple"><el-button type="primary" plain @click="handleAdd">新建用户</el-button></div></el-col>
@@ -53,17 +52,19 @@
       <!--工具条-->
       <el-col :span="24" class="toolbar">
         <el-button type="danger" :disabled="this.sels.length===0" @click="batchRemove">批量删除</el-button>
-        <center>
-          <el-pagination
-            :current-page="page.index"
-            :page-sizes="[20, 50, 100]"
-            :page-size="page.size"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="page.total"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
-        </center>
+        <div class="pagebar">
+          <center>
+            <el-pagination
+                :current-page="page.index"
+                :page-sizes="[20, 50, 100]"
+                :page-size="page.size"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="page.total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+            />
+          </center>
+        </div>
       </el-col>
     </el-card>
     <!--编辑界面-->
@@ -193,26 +194,13 @@ export default {
     this.getRoles()
   },
   methods: {
-    handleCurrentChange: function(val) {
-      this.page.index = val
-      this.getUsers()
-      // this.flushProblemList()
-      console.log(val)
-    },
-    handleSizeChange: function(val) {
-      this.page.size = val
-      // this.flushProblemList()
-      console.log(val)
-    },
     // 获取用户列表
     getUsers() {
-      const pageNum = this.page.index
-      const pageSize = this.page.size
       this.listLoading = true
       // NProgress.start();
-      getUserList(pageNum, pageSize).then(res => {
-        this.page.total = res.pagetotal
-        this.users = res.data
+      getUserList(this.page.index, this.page.size, this.page.query).then(res => {
+        this.page.total = res.data.totalElements
+        this.users = res.data.content
         this.listLoading = false
         // console.log( res.etxra);
         // NProgress.done();
@@ -303,7 +291,7 @@ export default {
       this.roleValue = []
     },
     getRoles: function() {
-      getRoleList().then(res => {
+      getRoleList(-1, -1, 'no page').then(res => {
         this.roles = res.data
       })
     },
@@ -462,7 +450,18 @@ export default {
           this.listLoading = false
         })
         .catch(() => {})
-    }
+    },
+    handleSearch: function() {
+      this.getUsers()
+    },
+    handleCurrentChange: function(val) {
+        this.page.index = val
+        this.getUsers()
+    },
+    handleSizeChange: function(val) {
+        this.page.size = val
+        this.getUsers()
+    },
   }
 }
 </script>

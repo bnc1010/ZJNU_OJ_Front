@@ -87,7 +87,7 @@
         </el-col>
         </el-row>
         <el-dialog
-        title="提示"
+        title="新建题单"
         :visible.sync="addDialogVisible"
         width="50%"
         :before-close="handleClose">

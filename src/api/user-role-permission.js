@@ -1,19 +1,19 @@
 import request from '@/utils/request'
 import { BASE_PATH } from './config'
 
-export function getUserList(pageNum, pageSize) {
+export function getUserList(page, pagesize, search) {
   return request({
     url: BASE_PATH + '/api/usermanager/user/all',
-    method: 'post',
-    data: { 'pageNum': pageNum, 'pageSize': pageSize }
+    method: 'get',
+    params: { page: page - 1, pagesize: pagesize, search: search }
   })
 }
 
-export function getRoleList() {
+export function getRoleList(page, pagesize, search) {
   return request({
     url: BASE_PATH + '/api/usermanager/role/all',
-    method: 'post',
-    data: {}
+    method: 'get',
+    params: { page: page - 1, pagesize: pagesize, search: search }
   })
 }
 

@@ -2,26 +2,24 @@
   <div class="app-container">
     <el-card>
       <!--工具条-->
-      <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-        <el-form :inline="true" :model="filters">
-          <el-form-item>
-            <el-input v-model="filters.name" placeholder="角色名" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary">查询</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="handleAdd()">新增</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-
-      <!--列表-->
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple">
+            <el-input v-model="page.query" placeholder="搜索角色" class="input-with-select">
+              <el-button slot="append" icon="el-icon-search" @click="handleSearch"/>
+            </el-input>
+          </div>
+        </el-col>
+        <el-col :span="6"><div class="grid-content bg-purple"><el-button type="primary" plain @click="handleAdd">新建角色</el-button></div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
+      </el-row>
+    </el-card>
+    <el-card class="Box">
       <template>
         <el-table v-loading="loading" :data="roles" highlight-current-row style="width: 100%;">
-          <el-table-column type="index" width="60" />
           <el-table-column prop="id" label="ID" width="120" sortable />
-          <el-table-column prop="name" label="角色名" sortable />
+          <el-table-column prop="name" label="角色名" />
           <el-table-column prop="level" label="等级" sortable />
           <el-table-column prop="type" label="类型(r:root,a:admin,c:common)" />
           <el-table-column label="操作">
@@ -36,6 +34,20 @@
           </el-table-column>
         </el-table>
       </template>
+      <el-divider></el-divider>
+      <div class="pagebar">
+          <center>
+            <el-pagination
+                :current-page="page.index"
+                :page-sizes="[20, 50, 100]"
+                :page-size="page.size"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="page.total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+            />
+          </center>
+        </div>
     </el-card>
     <el-dialog :visible.sync="permissionVisible" :append-to-body="true">
         <div style="text-align: center">
@@ -86,6 +98,12 @@ import {
 export default {
   data() {
     return {
+      page: {
+        index: 1,
+        total: 0,
+        size: 20,
+        query: ''
+      },
       filters: {
         name: ''
       },
@@ -119,9 +137,10 @@ export default {
         name: this.filters.name
       }
       this.loading = true
-      getRoleList()
+      getRoleList(this.page.index, this.page.size, this.page.query)
         .then(res => {
-          this.roles = res.data
+          this.roles = res.data.content
+          this.page.total = res.data.totalElements
           this.loading = false
         })
         .catch(err => {
@@ -321,10 +340,27 @@ export default {
         this.addFormVisible = false
         this.getRole()
       })
-    }
+    },
+    handleSearch: function() {
+      this.getRole()
+    },
+    handleCurrentChange: function(val) {
+        this.page.index = val
+        this.getRole()
+    },
+    handleSizeChange: function(val) {
+        this.page.size = val
+        this.getRole()
+    },
   }
 }
 </script>
 
 <style scoped>
+.Box{
+  margin-top: 20px;
+}
+.el-col{
+    border: 1px solid transparent;
+}
 </style>
