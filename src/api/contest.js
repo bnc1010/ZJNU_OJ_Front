@@ -71,9 +71,10 @@ export function submitProblem(cid, pid, language, source) {
   })
 }
 
-export function getRanklist(cid) {
+export function getRanklist(cid, page, pagesize) {
   return request({
     url: BASE_PATH + '/api/contest/ranklist/' + cid,
-    method: 'get'
+    method: 'get',
+    params: { page: page - 1, pagesize: pagesize }
   })
 }

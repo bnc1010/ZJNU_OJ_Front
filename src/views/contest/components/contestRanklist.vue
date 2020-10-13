@@ -124,6 +124,9 @@ export default {
         tableData: [],
       }
     },
+    mounted(){
+        this.flushRanklist()
+    },
     methods:{
         handleCurrentChange: function(val){
             // this.page.index=val
@@ -209,7 +212,8 @@ export default {
         //   }
         // }
         flushRanklist: function() {
-            getRanklist(this.cid).then( res => {
+            getRanklist(this.cid, this.page.index, this.page.size).then( res => {
+                this.page.total = res.data.rows.totalElements
                 this.columns = deepClone(this.tpcolumns)
                 for(let x = 0; x <res.data.problemsNumber; x++){
                     this.columns.push({
@@ -219,20 +223,20 @@ export default {
                     })
                 }
                 this.tableData.length = 0
-                for(let x in res.data.rows){
+                for(let x in res.data.rows.content){
                     let rowTemp = {}
-                    rowTemp['username'] = res.data.rows[x].user.username
-                    rowTemp['rank'] = res.data.rows[x].order
+                    rowTemp['username'] = res.data.rows.content[x].user.username
+                    rowTemp['rank'] = res.data.rows.content[x].order
                     rowTemp['total'] = {
-                        acceptCount: res.data.rows[x].solved,
-                        totalTime: res.data.rows[x].penalty
+                        acceptCount: res.data.rows.content[x].solved,
+                        totalTime: res.data.rows.content[x].penalty
                     }
-                    for(let y=0; y < res.data.rows[x].boxes.length; y++){                 
+                    for(let y=0; y < res.data.rows.content[x].boxes.length; y++){                 
                         rowTemp[mapNum2Alpha(y, true)] = {
-                            isAccept: res.data.rows[x].boxes[y].accepted,
-                            try: res.data.rows[x].boxes[y].submit,
-                            firstTime: res.data.rows[x].boxes[y].time,
-                            isFirst: res.data.rows[x].boxes[y].first
+                            isAccept: res.data.rows.content[x].boxes[y].accepted,
+                            try: res.data.rows.content[x].boxes[y].submit,
+                            firstTime: res.data.rows.content[x].boxes[y].time,
+                            isFirst: res.data.rows.content[x].boxes[y].first
                         }
                     }
                     this.tableData.push(rowTemp)
@@ -250,10 +254,6 @@ export default {
             }
             return width
         }
-    },
-    mounted(){
-        this.page.total=2
-        this.flushRanklist()
     }
 }
 </script>
