@@ -65,6 +65,14 @@ export function dropPermissionFromRole(rId, pIds) {
   })
 }
 
+export function getUserById(id) {
+  return request({
+    url: BASE_PATH + '/api/usermanager/user/get',
+    method: 'post',
+    data: { id: id }
+  })
+}
+
 export function grantRoleToUser(uId, rIds) {
   return request({
     url: BASE_PATH + '/api/usermanager/user/grant',
@@ -144,4 +152,3 @@ export function editPermission(permission) {
     data: permission
   })
 }
-
