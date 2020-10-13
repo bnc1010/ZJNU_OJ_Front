@@ -78,15 +78,7 @@ export default {
     name: 'Myteam',
     data(){
         return{
-            tableData: [{
-                attend: "private",
-                createTime: "2020-07-30T12:45:33Z",
-                creator: {id: 50, username: "bnc1010", name: "bnc", userProfile: {id: 50, score: 5, accepted: 1, submitted: 3}},
-                description: "这是一个测试队伍",
-                id: 2,
-                name: "testTeam",
-                normalCreateTime: "2020-07-30 20:45"
-            }],
+            tableData: [],
             page:{
                 index:1,
                 size:20,
