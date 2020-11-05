@@ -140,6 +140,13 @@ export const constantRoutes = [
         component: () => import('@/views/problem-set/detail'),
         name: 'problemSetDetail',
         meta: { title: '题单详情', activeMenu: '/problem', noCache: true, roles: ['editor'] }
+      },
+      {
+        path: 'analysis',
+        hidden: true,
+        component: () => import('@/views/problem/analysis'),
+        name: 'analysis',
+        meta: { title: '题解', activeMenu: '/problem', noCache: true, roles: ['editor'] }
       }
     ]
   },

@@ -61,3 +61,40 @@ export function getProblemName(id) {
     method: 'get'
   })
 }
+
+export function getAnalysis(pid) {
+  return request({
+    url: BASE_PATH + '/api/problems/analysis/' + pid,
+    method: 'get'
+  })
+}
+
+export function addAnalysis(pid, analysis) {
+  return request({
+    url: BASE_PATH + '/api/problems/analysis/post/' + pid,
+    method: 'post',
+    data: { text: analysis }
+  })
+}
+
+export function getAnalysisById(id) {
+  return request({
+    url: BASE_PATH + '/api/problems/analysis/get/' + id,
+    method: 'get'
+  })
+}
+
+export function getEditAnalysis(id) {
+  return request({
+    url: BASE_PATH + '/api/problems/analysis/edit/' + id,
+    method: 'get'
+  })
+}
+
+export function editAnalysis(id, analysis) {
+  return request({
+    url: BASE_PATH + '/api/problems/analysis/edit/' + id,
+    method: 'post',
+    data: { text: analysis }
+  })
+}
