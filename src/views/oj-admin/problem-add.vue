@@ -36,31 +36,37 @@
                     </el-form-item>
                     <el-form-item label='题目描述' >
                         <mavonEditor
+                        ref=md1
                         v-model="problem.description"
                         :ishljs="true"
                         :subfield="true"
                         :boxShadow="false"
                         :toolbars="toolbars"
+                        @imgAdd="$imgAdd1"
                         :autofocus="false">
                         </mavonEditor>
                     </el-form-item>
                     <el-form-item label='输入' >
                         <mavonEditor
+                        ref=md2
                         v-model="problem.input"
                         :ishljs="true"
                         :subfield="true"
                         :boxShadow="false"
                         :toolbars="toolbars"
+                        @imgAdd="$imgAdd2"
                         :autofocus="false">
                         </mavonEditor>
                     </el-form-item>
                     <el-form-item label='输出' >
                         <mavonEditor
                         v-model="problem.output"
+                        ref=md3
                         :ishljs="true"
                         :subfield="true"
                         :boxShadow="false"
                         :toolbars="toolbars"
+                        @imgAdd="$imgAdd3"
                         :autofocus="false">
                         </mavonEditor>
                     </el-form-item>
@@ -82,11 +88,13 @@
                     </el-form-item>
                     <el-form-item label='提示' >
                         <mavonEditor
+                        ref=md4
                         v-model="problem.hint"
                         :ishljs="true"
                         :subfield="true"
                         :boxShadow="false"
                         :toolbars="toolbars"
+                        @imgAdd="$imgAdd4"
                         :autofocus="false">
                         </mavonEditor>
                     </el-form-item>
@@ -121,6 +129,8 @@ import 'mavon-editor/dist/css/index.css'
 import {getProblems, getTags} from '@/api/problem'
 import {mavonEditor} from 'mavon-editor'
 import { insertProblem } from '@/api/oj-admin'
+import { uploadImage } from '@/api/image'
+import { BASE_PATH } from '@/api/config'
 export default {
     name:"ProblemAdd",
     components:{mavonEditor},
@@ -184,6 +194,9 @@ export default {
             }
         }
     },
+    mounted(){
+        this.handleTags()
+    },
     methods:{
         tagColor: function(key){
             let colors = ['#2185d0', '#21ba45', '#f2711c', '#e03997', '#a5673f']
@@ -226,13 +239,50 @@ export default {
                     type:'success',
                     message:'添加成功'
                 })
-            }).catch( err = {
+            }).catch( err => {
 
             })
+        },
+        $imgAdd1(pos, $file){
+           uploadImage($file).then(res => {
+               this.$refs.md1.$img2Url(pos, BASE_PATH + res.data);
+           }).catch( err => {
+               this.$message({
+                   type: 'error',
+                   message: err.message
+               })
+           })
+        },
+        $imgAdd2(pos, $file){
+           uploadImage($file).then(res => {
+               this.$refs.md2.$img2Url(pos, BASE_PATH + res.data);
+           }).catch( err => {
+               this.$message({
+                   type: 'error',
+                   message: err.message
+               })
+           })
+        },
+        $imgAdd3(pos, $file){
+           uploadImage($file).then(res => {
+               this.$refs.md3.$img2Url(pos, BASE_PATH + res.data);
+           }).catch( err => {
+               this.$message({
+                   type: 'error',
+                   message: err.message
+               })
+           })
+        },
+        $imgAdd4(pos, $file){
+           uploadImage($file).then(res => {
+               this.$refs.md4.$img2Url(pos, BASE_PATH + res.data);
+           }).catch( err => {
+               this.$message({
+                   type: 'error',
+                   message: err.message
+               })
+           })
         }
-    },
-    mounted(){
-        this.handleTags()
     }
 }
 </script>

@@ -195,6 +195,10 @@ export default {
             }
         }
     },
+    mounted(){
+        this.handleTags()
+        this.handleLoadProblem()
+    },
     methods:{
         tagColor: function(key){
             let colors = ['#2185d0', '#21ba45', '#f2711c', '#e03997', '#a5673f']
@@ -237,7 +241,7 @@ export default {
                     this.problem.tags[jdx]=this.problem.tags[jdx].name
                 }
             }).catch(err => {
-                console.log(err)
+                console.log(err.message)
             })
         },
         handleProblemAddTag: function(tag){
@@ -281,7 +285,7 @@ export default {
            }).catch( err => {
                this.$message({
                    type: 'error',
-                   message: err
+                   message: err.message
                })
            })
         },
@@ -291,7 +295,7 @@ export default {
            }).catch( err => {
                this.$message({
                    type: 'error',
-                   message: err
+                   message: err.message
                })
            })
         },
@@ -301,7 +305,7 @@ export default {
            }).catch( err => {
                this.$message({
                    type: 'error',
-                   message: err
+                   message: err.message
                })
            })
         },
@@ -311,15 +315,12 @@ export default {
            }).catch( err => {
                this.$message({
                    type: 'error',
-                   message: err
+                   message: err.message
                })
            })
         }
     },
-    mounted(){
-        this.handleTags()
-        this.handleLoadProblem()
-    }
+   
 }
 </script>
 <style>

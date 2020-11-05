@@ -45,7 +45,6 @@
           <el-divider />
           <el-button type="primary" @click="handleSubmitCode">提交</el-button>
         </el-card>
-        <!-- <el-card><div ref="container" style="height: 360px;width: 100%;"></div></el-card> -->
       </el-col>
       <el-col :span="6" :xs="24">
         <el-card style="margin-bottom:20px;">
@@ -91,6 +90,42 @@
                 label="提交时间"
               />
             </el-table>
+          </div>
+        </el-card>
+        <el-card style="margin-bottom:20px;">
+          <div slot="header" class="divCardHeader">
+            <div class="divCardHeaderTitle">
+              <div class="titleContent">
+                题解
+              </div>
+            </div>
+            <div class="divMore">
+              <svg-icon icon-class="form" @click="handleShowAnalysisAddForm"/>
+            </div>
+          </div>
+          <div v-if="permissionOfAnalysis == false">
+            通过后可查看题解
+          </div>
+          <div v-else>
+            <div class="submitShowBox">
+            <el-table
+              :data="analysises"
+              border
+              :header-cell-style="headClass"
+              style="width: 100%"
+              @row-click="handleAnalysisRowClick"
+            >
+              <el-table-column
+                prop="user.username"
+                label="作者"
+                width="100"
+              />
+              <el-table-column
+                prop="normalPostTime"
+                label="发表时间"
+              />
+            </el-table>
+          </div>
           </div>
         </el-card>
       </el-col>
@@ -160,12 +195,35 @@
       </span>
       
     </el-dialog>
+
+    <el-dialog
+      :visible.sync="addAnalysisVisible"
+      width="75%"
+    >
+      <el-card shadow="never">
+        <mavonEditor
+        ref=md1
+        v-model="addAnalysis"
+        :ishljs="true"
+        :subfield="true"
+        :boxShadow="false"
+        :toolbars="toolbars"
+        @imgAdd="$imgAdd"
+        :autofocus="false">
+        </mavonEditor>
+      </el-card>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" plain @click="handleSubmitAnalysis">发 表</el-button>
+        <el-button type="danger" plain @click="addAnalysisVisible = false">取 消</el-button>
+      </span>
+      
+    </el-dialog>
   </div>
 </template>
 <script>
 import { calSize, paramOfResultfulUrl } from '@/utils'
 import problemBody from './components/ProblemBody'
-import { getStatusBySubmitId, setStatuShareBySubmitId, submitCode, getProblemById, getLastSubmits } from '@/api/problem'
+import { getStatusBySubmitId, setStatuShareBySubmitId, submitCode, getProblemById, getLastSubmits, getAnalysis, addAnalysis } from '@/api/problem'
 import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
@@ -176,6 +234,8 @@ import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/theme/ttcn.css'
 import config from '@/utils/config'
 import { mavonEditor } from 'mavon-editor'
+import { uploadImage } from '@/api/image'
+import { BASE_PATH } from '@/api/config'
 
 export default {
   components: { codemirror, problemBody, mavonEditor },
@@ -205,7 +265,45 @@ export default {
         code: '',
         problemId: -1
       },
-      // monacoEditor: {},
+      addAnalysisVisible: false,
+      addAnalysis: '',
+      permissionOfAnalysis: false,
+      analysises:[],
+      toolbars: {
+                bold: true, // 粗体
+                italic: true, // 斜体
+                header: true, // 标题
+                underline: true, // 下划线
+                strikethrough: true, // 中划线
+                mark: true, // 标记
+                superscript: true, // 上角标
+                subscript: true, // 下角标
+                quote: true, // 引用
+                ol: true, // 有序列表
+                ul: true, // 无序列表
+                link: true, // 链接
+                imagelink: true, // 图片链接
+                code: true, // code
+                table: true, // 表格
+                fullscreen: true, // 全屏编辑
+                readmodel: true, // 沉浸式阅读
+                htmlcode: true, // 展示html源码
+                help: true, // 帮助
+                /* 1.3.5 */
+                undo: true, // 上一步
+                redo: true, // 下一步
+                trash: true, // 清空
+                save: false, // 保存（触发events中的save事件）
+                /* 1.4.2 */
+                navigation: true, // 导航目录
+                /* 2.1.8 */
+                alignleft: true, // 左对齐
+                aligncenter: true, // 居中
+                alignright: true, // 右对齐
+                /* 2.2.1 */
+                subfield: true, // 单双栏模式
+                preview: true, // 预览
+            }
     }
   },
   computed: {
@@ -232,7 +330,7 @@ export default {
       })
     })
     this.flushLastSubmit()
-    console.log(this.problemData[0])
+    this.flushAnalysis()
   },
   methods: {
     headClass() {
@@ -325,9 +423,63 @@ export default {
         })
       })
     },
+    flushAnalysis: function() {
+      getAnalysis(paramOfResultfulUrl(window.location.href)).then( res => {
+        this.permissionOfAnalysis = true
+        this.analysises = res.data
+      }).catch( err => {
+
+      })
+    },
     handleflushLastSubmit: function() {
       this.flushLastSubmit()
     },
+    $imgAdd(pos, $file){
+        uploadImage($file).then(res => {
+            this.$refs.md1.$img2Url(pos, BASE_PATH + res.data);
+        }).catch( err => {
+            this.$message({
+                type: 'error',
+                message: err
+            })
+        })
+    },
+    handleShowAnalysisAddForm: function() {
+      if(this.permissionOfAnalysis == false){
+        this.$message({
+          type: 'error',
+          message: '通过后才能发表题解'
+        })
+        return
+      }
+      this.addAnalysisVisible = true
+    },
+    handleSubmitAnalysis: function() {
+      if(this.addAnalysis.length<10 || this.addAnalysis.length>5000){
+        this.$message({
+          type: 'error',
+          message: '单篇题解字数在10-5000范围内'
+        })
+        return
+      }
+      addAnalysis(this.problem.id, this.addAnalysis).then( res => {
+        this.$message({
+          type: 'success',
+          message: '发表成功'
+        })
+        this.addAnalysis = ''
+        this.addAnalysisVisible = false
+        this.flushAnalysis()
+      }).catch( err => {
+        this.$message({
+          type: 'error',
+          message: err.message
+        })
+      })
+    },
+    handleAnalysisRowClick: function(row) {
+      this.$router.push('/problem/analysis?id=' + row.id)
+    }
   },
   computed: {
     getUsername: function(){
@@ -409,5 +561,6 @@ export default {
 .divMore{
     float: right;
     font-size: 13px;
+    cursor: pointer;
 }
 </style>
