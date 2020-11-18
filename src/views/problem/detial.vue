@@ -28,7 +28,7 @@
                   v-for="(item,key) in langOptions"
                   :key="key"
                   :label="item.label"
-                  :value="key"
+                  :value="item.id"
                 />
               </el-select>
             </el-form-item>
@@ -331,6 +331,19 @@ export default {
     })
     this.flushLastSubmit()
     this.flushAnalysis()
+
+    let _activeName = sessionStorage.getItem('contest' + this.cid)
+        if(_activeName && _activeName.length > 0){
+            this.activeName = _activeName
+        }
+        let _submitLang = sessionStorage.getItem('submitLang')
+        if(_submitLang && _submitLang.length > 0){
+            this.cmOptions.mode = this.langOptions[_submitLang].value;
+            this.submitOption.selectedLang = _submitLang
+        }
+        else {
+          this.submitOption.selectedLang = '0'
+        }
   },
   methods: {
     headClass() {
@@ -390,7 +403,7 @@ export default {
           normalSubmitTime: this.submitDetial.normalSubmitTime,
           share: this.submitDetial.share ? '公开' : '私密'
         })
-        console.log()
+        
         this.submitDetial.shareButton = this.submitDetial.share ? '设为私密' : '设为公开'
       }).catch(err => {
         console.log(err)
@@ -398,6 +411,7 @@ export default {
     },
     handleLangChanged: function(value) {
       this.cmOptions.mode = this.langOptions[value].value
+      sessionStorage.setItem('submitLang', value)
     },
     handleSubmitCode: function() {
       submitCode(this.submitOption.problemId, this.langOptions[this.submitOption.selectedLang].key, this.submitOption.share, this.submitOption.code).then(res => {
