@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
-    <el-tabs tab-position="top">
-        <el-tab-pane label="比赛说明">
+    <el-tabs tab-position="top" v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="比赛说明" name="description">
             <el-card>
                 <mavonEditor v-model="contest.description"
                 :ishljs="true"
@@ -13,7 +13,7 @@
                 ></mavonEditor>
             </el-card>
         </el-tab-pane>
-        <el-tab-pane label="题目">
+        <el-tab-pane label="题目" name="problems">
             <el-row :gutter="20">
                 <el-col :span="18" :xs="24">
                     <el-card class="problemHeader">
@@ -35,7 +35,7 @@
                                         v-for="(item,key) in langOptions"
                                         :key="key"
                                         :label="item.label"
-                                        :value="key">
+                                        :value="item.id">
                                     </el-option>
                                 </el-select>
                             </el-form-item>
@@ -77,10 +77,10 @@
                 </el-col>
             </el-row>
         </el-tab-pane>
-        <el-tab-pane label="排行榜">
+        <el-tab-pane label="排行榜" name="ranklist">
             <contestRanklist :cid="cid"/>
         </el-tab-pane>
-        <el-tab-pane label="A&Q">
+        <el-tab-pane label="A&Q" name="aq">
 
         </el-tab-pane>
     </el-tabs>
@@ -133,7 +133,8 @@ export default {
                 }
             ],
             langOptions: config.LangOptions,
-            cid: -1
+            cid: -1,
+            activeName: 'description'
         }
     },
     computed: {
@@ -141,9 +142,28 @@ export default {
             'currentContestPassword'
         ])
     },
+    created(){
+        this.cid = paramOfResultfulUrl(window.location.href)
+        this.handleDetialOfContest()
+    },
+    mounted(){
+        let _activeName = sessionStorage.getItem('contest' + this.cid)
+        if(_activeName && _activeName.length > 0){
+            this.activeName = _activeName
+        }
+        let _submitLang = sessionStorage.getItem('submitLang')
+        if(_submitLang && _submitLang.length > 0){
+            this.cmOptions.mode = this.langOptions[_submitLang].value;
+            this.submitOption.selectedLang = _submitLang
+        }
+        else {
+          this.submitOption.selectedLang = '0'
+        }
+    },
     methods:{
         handleLangChanged: function(value){
             this.cmOptions.mode=this.langOptions[value].value;
+            sessionStorage.setItem('submitLang', value)
         },
         handleSubmitCode: function(){
             submitProblem(this.cid, this.submitOption.problemId, this.langOptions[this.submitOption.selectedLang].key, this.submitOption.code).then(res =>{
@@ -232,11 +252,13 @@ export default {
                     type: 'error'
                 })
             })
+        },
+        updatePage: function(value) {
+            sessionStorage.setItem('contest' + this.cid, value)
+        },
+        handleClick(tab, event) {
+            this.updatePage(tab.name)
         }
-    },
-    created(){
-        this.cid = paramOfResultfulUrl(window.location.href)
-        this.handleDetialOfContest()
     }
 }
 </script>
