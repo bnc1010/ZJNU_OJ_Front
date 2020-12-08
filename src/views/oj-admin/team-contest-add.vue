@@ -41,6 +41,7 @@
                     </el-form-item>
                     <el-form-item label="题目" class="problemForm">
                         <el-button type="primary" size="mini" @click="handleProblem(1)">添加</el-button>
+                        <el-button type="primary" size="mini" @click="handleAddProblemSet()">添加题目集</el-button>
                         <el-button type="danger" size="mini" @click="handleProblem(-1)">删除</el-button>
                         <div v-for="(problem, id) in contest.problems" :key="id">
                             <el-form :inline="true" class="problemRow">
@@ -64,14 +65,41 @@
         </el-col>
         <el-col :span="4" :xs="24"></el-col>
       </el-row>
+      <el-dialog :visible.sync="problemSetVisible" title="添加题目集">
+          <span>
+              <div>
+                <el-checkbox-group v-model="checkedProblemSet" @change="handleCheckedProblemSetChange">
+                    <el-checkbox v-for="(ps, ind) in problemSets" :label="ps" :key="ind">{{ps}}</el-checkbox>
+                </el-checkbox-group>
+              </div>
+              <div class="transferBox">
+                <el-transfer
+                    filterable
+                    :filter-method="filterMethod"
+                    filter-placeholder="搜索题目集"
+                    v-model="selectedOfProblemSet"
+                    :data="availableProblemSets"
+                    :titles="['可用题目集', '已选题目集']"
+                    style="text-align: left; display: inline-block">
+                </el-transfer>
+              </div>
+               
+          </span>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="problemSetVisible = false">取 消</el-button>
+            <el-button type="primary" @click="handleGetProblemsFromProblemSet()">确 定</el-button>
+        </span>
+
+      </el-dialog>
     </div>
 </template>
 <script>
 import 'mavon-editor/dist/css/index.css'
-import {mavonEditor} from 'mavon-editor'
-import {getProblemName} from '@/api/problem'
-import {creatContest} from '@/api/contest'
-import { param2Obj } from '@/utils'
+import { mavonEditor } from 'mavon-editor'
+import { getProblemName } from '@/api/problem'
+import { creatContest, getContestInfo, updateContest } from '@/api/contest'
+import { param2Obj, deepClone } from '@/utils'
+import { getAvaliableProblemSet } from '@/api/problemSet'
 export default {
     name:"ContestAdd",
     components:{mavonEditor},
@@ -86,7 +114,8 @@ export default {
                 startTime: "",
                 length: 300,
                 password: "",
-                tid: "-1"
+                tid: "-1",
+                id: "-1"
             },
             privilegeOptions:[
                 {
@@ -94,7 +123,14 @@ export default {
                     value:0
                 }
             ],
+            problemSetVisible: false,
             optionValue: 0,
+            availableProblemSets: [],
+            selectedOfProblemSet: [],
+            problemSets: ['个人题目集', '公共题目集'],
+            checkedProblemSet:[],
+            allProblemSets: [],
+            isCreate: true,
             toolbars: {
                 bold: true, // 粗体
                 italic: true, // 斜体
@@ -129,6 +165,9 @@ export default {
                 /* 2.2.1 */
                 subfield: true, // 单双栏模式
                 preview: true, // 预览
+            },
+            filterMethod(query, item) {
+                return item.label.indexOf(query) > -1;
             }
         }
     },
@@ -142,6 +181,23 @@ export default {
             return
         }
         this.contest.tid = obj.teamId
+        if(obj.contestId != null){
+            this.contest.id = obj.contestId
+            this.isCreate = false
+            getContestInfo(obj.contestId).then(res => {
+                this.contest = res.data
+                for(let idx in this.contest.problems){
+                    this.contest.problems[idx].id = this.contest.problems[idx].problem.id
+                    this.contest.problems[idx].name = this.contest.problems[idx].problem.title
+                    this.contest.startTime = this.contest.normalStartTime
+                }
+            }).catch(err => {
+                this.$message({
+                    type: 'error',
+                    message: err.message
+                })
+            })
+        }
     },
     methods:{
         getProblemName: function(pid, ind){
@@ -180,19 +236,93 @@ export default {
             }
         },
         handleSubmit: function(){
-            this.contest.privilege = this.privilegeOptions[this.optionValue].label
-            creatContest(this.contest).then( res => {
-                this.$message({
-                    type: 'success',
-                    message: '比赛创建成功'
+            if(this.isCreate){
+                this.contest.privilege = this.privilegeOptions[this.optionValue].label
+                creatContest(this.contest).then( res => {
+                    this.$message({
+                        type: 'success',
+                        message: '训练创建成功'
+                    })
+                    this.$router.go(-1)
+                }).catch( err => {
+                    this.$message({
+                        type: 'error',
+                        message: '训练创建失败'
+                    })
                 })
-                this.$router.go(-1)
+            }
+            else{
+                updateContest(this.contest, this.contest.id).then( res => {
+                    this.$message({
+                        type: 'success',
+                        message: '训练更新成功'
+                    })
+                }).catch( res => {
+                    this.$message({
+                        type: 'error',
+                        message: '训练更新失败'
+                    })
+                })
+            }
+        },
+        handleAddProblemSet: function() {
+            this.availableProblemSets = []
+            this.selectedOfProblemSet = []
+            this.checkedProblemSet = []
+            this.problemSetVisible = true
+        },
+        handleCheckedProblemSetChange(value) {
+            this.availableProblemSets = []
+            this.selectedOfProblemSet = []
+            let type = 0
+            for(let ind in value){
+                if(value[ind] == '个人题目集'){
+                    type |= 1
+                }
+                else if(value[ind] == '公共题目集'){
+                    type |= 2
+                }
+            }
+            if(type == 0){
+                return;
+            }
+            getAvaliableProblemSet(type).then( res => {
+                let ps = res.data
+                this.allProblemSets = deepClone(ps)
+                this.availableProblemSets = []
+                this.selectedOfProblemSet = []
+                ps.forEach((_ps, ind) => {
+                    this.availableProblemSets.push({
+                        label: _ps.title,
+                        key: ind,
+                    })
+                })
             }).catch( err => {
                 this.$message({
                     type: 'error',
-                    message: '比赛创建失败'
+                    message: err.message
                 })
             })
+        },
+        handleGetProblemsFromProblemSet: function() {
+            var map = new Map();
+            for(let ind in this.contest.problems){
+                map.set(this.contest.problems[ind].id, true)
+            }
+            for(let ind in this.selectedOfProblemSet){
+                for(let _ind in this.allProblemSets[this.selectedOfProblemSet[ind]].problems){
+                    if(map.get(this.allProblemSets[this.selectedOfProblemSet[ind]].problems[_ind].id) == null){
+                        this.contest.problems.push({
+                            id: this.allProblemSets[this.selectedOfProblemSet[ind]].problems[_ind].id,
+                            name: "",
+                            tempTitle: ""
+                        })
+                        this.getProblemName(this.allProblemSets[this.selectedOfProblemSet[ind]].problems[_ind].id, this.contest.problems.length - 1)
+                        map.set(this.allProblemSets[this.selectedOfProblemSet[ind]].problems[_ind].id, true)
+                    }
+                }
+            }
+            this.problemSetVisible = false
         }
     }
 }
@@ -204,5 +334,10 @@ export default {
 }
 .problemForm .problemIdBox{
     width: 100px
+}
+.transferBox{
+    margin-top: 50px;
+    width: 100%;
+    text-align: center;
 }
 </style>

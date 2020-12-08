@@ -69,7 +69,7 @@
               </el-table-column>
               <el-table-column label="通过率" width="120">
                 <template slot-scope="scope">
-                  <el-tooltip class="item" effect="dark" :content="'ac:' + scope.row.accepted + ' / submit:' + scope.row.submitted" placement="top-start">
+                  <el-tooltip class="item" effect="dark" :content="'accept:' + scope.row.accepted + ' / submit:' + scope.row.submitted" placement="top-start">
                     <el-progress :show-text="false" :stroke-width="10" :percentage="Number(scope.row.ratio.substr(0, scope.row.ratio.length-1))" color="#5cb87a" />
                   </el-tooltip>
                 </template>

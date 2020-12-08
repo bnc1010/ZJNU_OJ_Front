@@ -17,7 +17,7 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column label="比赛名称" width="300">
+                <el-table-column label="训练名称" width="300">
                     <template slot-scope="scope">
                         <div class="titleFont" @click="handleEnterContest(scope.row.id)">
                             {{scope.row.title}}

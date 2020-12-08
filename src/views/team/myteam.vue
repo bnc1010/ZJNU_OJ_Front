@@ -1,29 +1,21 @@
 <template>
     <div class="app-container teamBox">
-        
         <el-card>
             <el-row :gutter="20">
-                <el-col :span="6"><div class="grid-content bg-purple" ><router-link :to="'/team/all'">所有队伍</router-link></div></el-col>
-                <el-col :span="12">
+                <el-col :span="9"><div class="grid-content bg-purple" /></el-col>
+                <el-col :span="4">
                 <div class="grid-content bg-purple">
-                    <center><h1>我的队伍</h1></center>
+                    <center><h1>我加入的学生组</h1></center>
                 </div>
                 </el-col>
-                <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
+                <el-col :span="6">
+                    <div class="grid-content bg-purple" style="margin-top:20px">
+                        <el-button plain size="mini" @click="joinDialogVisible = true">加入队伍</el-button>
+                    </div>
+                </el-col>
             </el-row>
         </el-card>
         <el-card class="bodybox contestBox">
-            <center>
-                <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="page.index"
-                    :page-sizes="[20, 50, 100]"
-                    :page-size="page.size"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="page.total">
-                </el-pagination>
-            </center>
             <el-divider></el-divider>
             <center>
                 <el-table :data="tableData" style="width: 100%">
@@ -32,7 +24,7 @@
                         {{scope.row.id}}
                     </template>
                 </el-table-column>
-                <el-table-column label="队伍名" width="200">
+                <el-table-column label="学生组名" width="200">
                     <template slot-scope="scope">
                         <div class="titleFont">
                             <router-link :to="'./detail?teamId=' + scope.row.id">{{scope.row.name}}</router-link>
@@ -69,10 +61,22 @@
                 </el-pagination>
             </center>
         </el-card>
+        <el-dialog
+            title="加入队伍"
+            :visible.sync="joinDialogVisible"
+            width="30%">
+            <span>
+                <el-input v-model="inviteCode" placeholder="请输入队伍邀请码"></el-input>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="joinDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleJoinTeam">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
-import { getMyTeams } from '@/api/team'
+import { getMyTeams, joinTeamByCode } from '@/api/team'
 
 export default {
     name: 'Myteam',
@@ -85,6 +89,8 @@ export default {
                 total:0,
                 query:''
             },
+            joinDialogVisible: false,
+            inviteCode: ''
         }
     },
     mounted(){
@@ -102,6 +108,7 @@ export default {
         flushMyTeam: function(){
             getMyTeams(this.page.index, this.page.size).then( res => {
                 this.tableData = res.data.teams
+                this.page.total = res.data.totalElements
             }).catch( err => {
                 this.$message({
                     type: 'error',
@@ -120,6 +127,21 @@ export default {
                 return '#409EFF'
             }
         },
+        handleJoinTeam: function(){
+            joinTeamByCode(this.inviteCode).then( res => {
+                this.$message({
+                    type: 'success',
+                    message: '加入成功'
+                })
+                this.$router.push('./detail?teamId=' + res.data)
+            }).catch( err => {
+                this.$message({
+                    type: 'error',
+                    message: err.message
+                })
+            })
+            this.joinDialogVisible = false
+        },
     }
 }
 </script>
@@ -132,5 +154,8 @@ export default {
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
+}
+.el-col{
+    border: 1px solid transparent;
 }
 </style>

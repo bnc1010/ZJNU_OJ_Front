@@ -59,11 +59,16 @@
                     </router-link>
                     </template>
                 </el-table-column>
-                <el-table-column label="标签" width="320">
+                <el-table-column label="标签" width="350">
                     <template slot-scope="scope">
                     <div v-for="(tag,key) in scope.row.tags" :key="key" class="tagbox">
                         <el-tag size="mini">{{ tag.name }}&nbsp;</el-tag>&nbsp;
                     </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="创建者" width="200">
+                    <template slot-scope="scope">
+                        {{ scope.row.creator.username }}
                     </template>
                 </el-table-column>
                 </el-table>
@@ -139,6 +144,7 @@ export default {
         flushList: function(){
             getProblemSetList(this.page.index, this.page.size, this.page.query).then( res => {
                 this.tableData = res.data.content
+                this.page.total = res.data.totalElements
             }).catch( err => {
                 this.$message({
                     type: 'error',

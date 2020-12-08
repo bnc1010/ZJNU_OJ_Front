@@ -7,7 +7,7 @@
             <el-col :span="18" :xs="24">
                 <el-card>
                     <h2>训练:</h2>
-                    <router-link :to="'teamcontest/add?teamId=' + teamId">添加训练</router-link>
+                    <router-link :to="'teamcontest/edit?teamId=' + teamId">添加训练</router-link>
             <el-divider></el-divider>
             <center>
                 <el-table :data="team.contests" style="width: 100%">
@@ -182,8 +182,6 @@ export default {
             })
             return
         })
-        
-
     },
     methods: {
         handleMoveOut: function(teammateId){
@@ -283,7 +281,7 @@ export default {
             return calTime(Number(time)*60)
         },
         handleUpdate: function(id){
-            this.$router.push('/ojAdmin/contest/edit/' + id)
+            this.$router.push('./teamcontest/edit?teamId=' + this.teamId + '&contestId=' + id)
         }
 
     },
