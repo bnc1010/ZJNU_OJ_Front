@@ -59,6 +59,7 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" plain @click="handleSubmit">提交</el-button>
+                        <el-button type="success" plain @click="cloneVisiable = true">克隆</el-button>
                     </el-form-item>
                 </el-form>
             </el-card>
@@ -89,15 +90,26 @@
             <el-button @click="problemSetVisible = false">取 消</el-button>
             <el-button type="primary" @click="handleGetProblemsFromProblemSet()">确 定</el-button>
         </span>
-
       </el-dialog>
+      <el-dialog
+            title="克隆比赛"
+            :visible.sync="cloneVisiable"
+            width="30%">
+            <span>
+                <el-input v-model="cloneId" placeholder="请输入比赛id"></el-input>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="cloneVisiable = false">取 消</el-button>
+                <el-button type="primary" @click="handleCloneContest(cloneId)">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
 import 'mavon-editor/dist/css/index.css'
 import { mavonEditor } from 'mavon-editor'
 import { getProblemName } from '@/api/problem'
-import { creatContest, getContestInfo, updateContest } from '@/api/contest'
+import { creatContest, getContestInfo, updateContest, cloneContest } from '@/api/contest'
 import { param2Obj, deepClone } from '@/utils'
 import { getAvaliableProblemSet } from '@/api/problemSet'
 export default {
@@ -131,6 +143,8 @@ export default {
             checkedProblemSet:[],
             allProblemSets: [],
             isCreate: true,
+            cloneId: '',
+            cloneVisiable: false,
             toolbars: {
                 bold: true, // 粗体
                 italic: true, // 斜体
@@ -323,6 +337,38 @@ export default {
                 }
             }
             this.problemSetVisible = false
+        },
+        handleCloneContest: function(cloneId) {
+            if(cloneId == ''){
+                this.$message({
+                    type: 'error',
+                    message: '请输入比赛id'
+                })
+                return;
+            }
+            cloneContest(cloneId).then( res => {
+                this.contest.title = res.data.title
+                this.contest.description = res.data.description
+                this.contest.length = res.data.length
+                this.contest.problems = []
+                for(let ind in res.data.problems){
+                    this.contest.problems.push({
+                        id: res.data.problems[ind].problem.id,
+                        name: res.data.problems[ind].problem.title,
+                        tempTitle: res.data.problems[ind].tempTitle
+                    })
+                }
+                this.$message({
+                    type: 'success',
+                    message: '克隆成功'
+                })
+                this.cloneVisiable = false
+            }).catch( err => {
+                this.$message({
+                    type: 'error',
+                    message: err.message
+                })
+            })
         }
     }
 }

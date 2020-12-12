@@ -133,7 +133,7 @@
         />
       </el-card>
       <span slot="footer" class="dialog-footer">
-        <!-- <el-button  @click="handleSetShareStatu" type="primary" plain>{{submitDetial.shareButton}}</el-button> -->
+        <el-button  @click="handleSetShareStatu" type="primary" plain v-if="userid == submitDetial.user.id">{{submitDetial.shareButton}}</el-button>
         <el-button type="danger" plain @click="submitDetialVisible=false">关 闭</el-button>
       </span>
     </el-dialog>
@@ -141,10 +141,13 @@
 </template>
 
 <script>
-import { getStatusBySubmitId } from '@/api/problem'
+import { getStatusBySubmitId, setStatuShareBySubmitId } from '@/api/problem'
 import { mavonEditor } from 'mavon-editor'
 import { calSize, param2Obj } from '@/utils'
 import { getStatus } from '@/api/status'
+import { mapGetters } from 'vuex'
+
+
 export default {
   name: 'Status',
   components: { mavonEditor },
@@ -175,6 +178,11 @@ export default {
         shareButton: '设为公开'
       }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userid'
+    ])
   },
   mounted() {
     this.handlePathValue()
@@ -260,7 +268,30 @@ export default {
     },
     handleSearch: function(){
       this.flushStatusList()
-    }
+    },
+    handleSetShareStatu: function() {
+      setStatuShareBySubmitId(this.submitDetial.id).then(res => {
+        this.$message({
+          message: '设置成功',
+          type: 'success'
+        })
+        this.submitDetial.share = !this.submitDetial.share
+        this.submitDetialForm = []
+        this.submitDetialForm.push({
+          normalResult: this.submitDetial.normalResult,
+          time: this.submitDetial.time,
+          memory: calSize(this.submitDetial.memory),
+          length: this.submitDetial.length,
+          normalLanguage: this.submitDetial.normalLanguage,
+          normalSubmitTime: this.submitDetial.normalSubmitTime,
+          share: this.submitDetial.share ? '公开' : '私密'
+        })
+        
+        this.submitDetial.shareButton = this.submitDetial.share ? '设为私密' : '设为公开'
+      }).catch(err => {
+        console.log(err)
+      })
+    },
   }
 }
 </script>

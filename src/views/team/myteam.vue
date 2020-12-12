@@ -5,12 +5,12 @@
                 <el-col :span="9"><div class="grid-content bg-purple" /></el-col>
                 <el-col :span="4">
                 <div class="grid-content bg-purple">
-                    <center><h1>我加入的学生组</h1></center>
+                    <center><h1>我的学生组</h1></center>
                 </div>
                 </el-col>
                 <el-col :span="6">
                     <div class="grid-content bg-purple" style="margin-top:20px">
-                        <el-button plain size="mini" @click="joinDialogVisible = true">加入队伍</el-button>
+                        <el-button plain size="mini" @click="joinDialogVisible = true">加入学生组</el-button>
                     </div>
                 </el-col>
             </el-row>
@@ -62,11 +62,11 @@
             </center>
         </el-card>
         <el-dialog
-            title="加入队伍"
+            title="加入学生组"
             :visible.sync="joinDialogVisible"
             width="30%">
             <span>
-                <el-input v-model="inviteCode" placeholder="请输入队伍邀请码"></el-input>
+                <el-input v-model="inviteCode" placeholder="请输入学生组邀请码"></el-input>
             </span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="joinDialogVisible = false">取 消</el-button>

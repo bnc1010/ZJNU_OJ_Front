@@ -18,6 +18,11 @@
                         </div>
                     </template>
                 </el-table-column>
+                <el-table-column label="id" width="80">
+                    <template slot-scope="scope">
+                            {{scope.row.id}}
+                    </template>
+                </el-table-column>
                 <el-table-column label="比赛名称" width="300">
                     <template slot-scope="scope">
                         <div class="titleFont">
