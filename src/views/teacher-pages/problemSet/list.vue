@@ -227,11 +227,11 @@
 <script>
 import 'mavon-editor/dist/css/index.css'
 import {mavonEditor} from 'mavon-editor'
-import { getAllProblemSet, addProblemSet, updateProblemSet } from '@/api/problemSet'
+import { getProblemSet, addProblemSet, updateProblemSet } from '@/api/teacher'
 import { getTags, getProblemName } from '@/api/problem'
 import { deepClone } from '@/utils'
 export default {
-    name: 'ProblemSetAdmin',
+    name: 'TeacherProblemSet',
     components:{mavonEditor},
     data(){
         return {
@@ -251,7 +251,7 @@ export default {
                 active: false,
                 problems: [],
                 tags: [],
-                isPrivate: false
+                isPrivate: true
             },
             editProblemSet:{
                 title: '',
@@ -259,7 +259,7 @@ export default {
                 active: false,
                 problems: [],
                 tags: [],
-                isPrivate: false
+                isPrivate: true
             },
             showProblem:[],
             toolbars: {
@@ -329,6 +329,7 @@ export default {
                     type: 'success',
                     message: '新建成功'
                 })
+                this.flushList()
             }).catch( err => {
                 this.$message({
                     type: 'error',
@@ -336,7 +337,6 @@ export default {
                 })
             })
             this.handleClose()
-            this.flushList()
         },
         handleUpdateEvent: function(problemSet) {
             this.editProblemSet = deepClone(problemSet)
@@ -361,13 +361,14 @@ export default {
                     type: 'success',
                     message: '修改成功'
                 })
+                this.flushList()
             }).catch( err => {
                 this.$message({
                     type: 'error',
                     message: err.message
                 })
             })
-            this.flushList()
+
             this.handleClose()
         },
         handleClose: function(){
@@ -379,13 +380,13 @@ export default {
                 active: false,
                 problems: [],
                 tags: [],
-                isPrivate: false
+                isPrivate: true
             }
             this.editProblemSet = {}
             this.showProblem = []
         },
         flushList: function() {
-            getAllProblemSet(this.page.index, this.page.size, this.page.query).then( res => {
+            getProblemSet(this.page.index, this.page.size, this.page.query).then( res => {
                 this.page.total = res.data.totalElements
                 this.tableData = res.data.content
             }).catch( err => {

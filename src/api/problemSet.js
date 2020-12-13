@@ -39,3 +39,11 @@ export function updateProblemSet(problemSet) {
     data: problemSet
   })
 }
+
+export function getAvaliableProblemSet(type) { // 1: 个人题目集 2: 公共题目集 3: 个人题目集&公共题目集
+  return request({
+    url: BASE_PATH + '/api/problems/problemset/available',
+    method: 'get',
+    params: { 'type': type }
+  })
+}

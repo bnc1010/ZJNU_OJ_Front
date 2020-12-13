@@ -175,7 +175,7 @@ export const constantRoutes = [
   {
     path: '/team',
     redirect: '/team/myteam',
-    meta: { title: '队伍', icon: 'team' },
+    meta: { title: '学生组', icon: 'team' },
     component: Layout,
     children: [
       {
@@ -183,21 +183,14 @@ export const constantRoutes = [
         component: () => import('@/views/team/myteam'),
         name: 'myteam',
         hidden: true,
-        meta: { title: '我的队伍', activeMenu: '/team', noCache: true }
-      },
-      {
-        path: '/team/all',
-        hidden: true,
-        component: () => import('@/views/team/allteam'),
-        name: 'allteam',
-        meta: { title: '所有队伍', activeMenu: '/team', noCache: true }
+        meta: { title: '我的学生组', activeMenu: '/team', noCache: true }
       },
       {
         path: '/team/detail',
         hidden: true,
         component: () => import('@/views/team/teamdetial'),
         name: 'teamdetial',
-        meta: { title: '队伍详情', activeMenu: '/team', noCache: true }
+        meta: { title: '学生组详情', activeMenu: '/team', noCache: true }
       }
     ]
   },
@@ -317,21 +310,21 @@ export const asyncRoutes = [
         path: '/ojAdmin/team',
         component: () => import('@/views/oj-admin/team-admin.vue'),
         name: 'teamAdmin',
-        meta: { title: '队伍管理', noCache: true, roles: ['admin'] }
+        meta: { title: '学生组管理', noCache: true, roles: ['admin'] }
       },
       {
         path: '/ojAdmin/teamedit',
         component: () => import('@/views/oj-admin/team-edit.vue'),
         name: 'teamEdit',
         hidden: true,
-        meta: { title: '队伍编辑', noCache: true, roles: ['admin'] }
+        meta: { title: '学生组编辑', noCache: true, roles: ['admin'] }
       },
       {
-        path: '/ojAdmin/teamcontest/add',
+        path: '/ojAdmin/teamcontest/edit',
         component: () => import('@/views/oj-admin/team-contest-add.vue'),
         name: 'teamContestAdd',
         hidden: true,
-        meta: { title: '新建训练', noCache: true, roles: ['admin'] }
+        meta: { title: '编辑训练', noCache: true, roles: ['admin'] }
       },
       {
         path: '/ojAdmin/problemSet',
@@ -375,6 +368,45 @@ export const asyncRoutes = [
         component: () => import('@/views/system-admin/system-setting.vue'),
         name: 'systemsetting',
         meta: { title: '系统设置', noCache: true, roles: ['root'] }
+      }
+    ]
+  },
+  {
+    path: '/teacherCenter',
+    component: Layout,
+    name: 'TeacherCenter',
+    redirect: '/teacherCenter/studentGroupList',
+    meta: {
+      roles: ['teacher'],
+      title: '教师端',
+      icon: 'useradmin'
+    },
+    children: [
+      {
+        path: '/teacherCenter/studentGroupList',
+        component: () => import('@/views/teacher-pages/studentGroup/list.vue'),
+        name: 'StudentGroup',
+        meta: { title: '学生组', noCache: true, roles: ['teacher'] }
+      },
+      {
+        path: '/teacherCenter/problemSetList',
+        component: () => import('@/views/teacher-pages/problemSet/list.vue'),
+        name: 'TeacherProblemSet',
+        meta: { title: '个人题目集', noCache: true, roles: ['teacher'] }
+      },
+      {
+        path: '/teacherCenter/teamedit',
+        component: () => import('@/views/oj-admin/team-edit.vue'),
+        name: 'teamEdit',
+        hidden: true,
+        meta: { title: '学生组编辑', noCache: true, roles: ['teacher'] }
+      },
+      {
+        path: '/teacherCenter/teamcontest/edit',
+        component: () => import('@/views/oj-admin/team-contest-add.vue'),
+        name: 'teamContestAdd',
+        hidden: true,
+        meta: { title: '编辑训练', noCache: true, roles: ['teacher'] }
       }
     ]
   },

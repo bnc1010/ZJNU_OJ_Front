@@ -98,14 +98,13 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+
+
 .bodybox {
   margin-top: 20px;
 }
 
-.el-col {
-  border: 1px solid transparent;
-}
 
 .ranklist .el-table .self-row {
   background: rgb(245, 247, 250);

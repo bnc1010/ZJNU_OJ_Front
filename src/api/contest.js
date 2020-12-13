@@ -78,3 +78,10 @@ export function getRanklist(cid, page, pagesize) {
     params: { page: page - 1, pagesize: pagesize }
   })
 }
+
+export function cloneContest(id) {
+  return request({
+    url: BASE_PATH + '/api/contest/clone/' + id,
+    method: 'get'
+  })
+}

@@ -74,14 +74,18 @@ export default {
   methods: {
     getUser() {
       let isAdmin = false
+      let isTeacher = false
       for(let i in this.roles){
         if(this.roles[i] == 'admin' || this.roles[i] == 'root'){
           isAdmin = true
         }
+        if(this.roles[i] == 'teacher'){
+          isTeacher = true
+        }
       }
       this.user = {
         name: this.name,
-        roles: isAdmin ? '管理员' : '用户',
+        roles: isAdmin ? '管理员' : (isTeacher ? '教师' : "学生"),
         avatar: this.avatar,
         name: this.name,
         username: this.username,
