@@ -11,7 +11,12 @@
             </el-input>
           </div>
         </el-col>
-        <el-col :span="6"><div class="grid-content bg-purple"><el-button type="primary" plain @click="handleAdd">新建用户</el-button></div></el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple">
+            <el-button type="primary" plain @click="handleAdd">新建用户</el-button>
+            <el-button type="primary" plain @click="batchRegisterVisiable = true">批量新建</el-button>
+          </div>
+        </el-col>
         <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
       </el-row>
     </el-card>
@@ -125,6 +130,67 @@
         <el-button type="primary" @click="handleUpdateRole();">提 交</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="批量新建用户" :visible.sync="batchRegisterVisiable" :append-to-body="true">
+      <el-dialog
+        width="80%"
+        title="新建结果"
+        :visible.sync="batchUsersShowResult"
+        append-to-body>
+        <el-progress :percentage="batchUsersProgress"></el-progress>
+        <el-input
+          type="textarea"
+          :rows="20"
+          v-model="batchUsersLog"
+          :readonly="true">
+        </el-input>
+      </el-dialog>
+      <el-checkbox-group v-model="checkList">
+        <el-form :inline="true" class="demo-form-inline">
+          <el-form-item>
+            <el-checkbox label="前缀"></el-checkbox>
+            <div style="width:250px;">
+              <el-input v-model="inputFront" placeholder="请输入内容" size="medium"></el-input>
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <el-checkbox label="数值区补齐长度"></el-checkbox>
+            <div style="width:250px;">
+              <el-input v-model="inputLength" placeholder="请输入内容" size="medium"></el-input>
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <el-checkbox label="后缀"></el-checkbox>
+            <div style="width:250px;">
+              <el-input v-model="inputBack" placeholder="请输入内容" size="medium"></el-input>
+            </div>
+          </el-form-item>
+        </el-form>
+      </el-checkbox-group>
+      <el-form :inline="true" class="demo-form-inline">
+        <el-form-item label="数值区范围:">
+            <el-input v-model="inputFrom" placeholder="请输入内容" size="medium"></el-input>
+        </el-form-item>
+        <el-form-item label="~">
+            <el-input v-model="inputTo" placeholder="请输入内容" size="medium"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="handleAutoGenerate">自动生成</el-button>
+        </el-form-item>
+      </el-form>
+      <div style="text-align: center">
+        <el-input
+          type="textarea"
+          :rows="20"
+          placeholder="格式:username,name,参考示例:testuser,testuser   多个用户请换行,一行一个"
+          v-model="batchUsers">
+        </el-input>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="batchRegisterVisiable = false">取 消</el-button>
+        <el-button type="primary" @click="handleBatchRegister" :loading="batchUsersLoading">提 交</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -141,6 +207,7 @@ import {
   grantRoleToUser,
   dropRoleFromUser
 } from '@/api/user-role-permission'
+import { register } from '../../api/user'
 export default {
   data() {
     return {
@@ -186,7 +253,20 @@ export default {
       roleData: [],
       roleValue: [],
       roles: [],
-      perRoleValue: []
+      perRoleValue: [],
+      batchRegisterVisiable: false,
+      batchUsers:'',
+      batchUsersProgress:0,
+      batchUsersLoading: false,
+      batchUsersShowResult: false,
+      batchUsersLog: '',
+      checkList: [],
+      inputFront:'',
+      inputBack:'',
+      inputLength: 0,
+      inputFrom:0,
+      inputTo:0
+
     }
   },
   mounted() {
@@ -221,7 +301,7 @@ export default {
           this.listLoading = true
           // NProgress.start();
           // console.log(row)
-          removeUser([row.uId])
+          removeUser([row.id])
             .then(res => {
               this.listLoading = false
               // NProgress.done();
@@ -428,7 +508,7 @@ export default {
     },
     // 批量删除
     batchRemove: function() {
-      var ids = this.sels.map(item => item.uId)
+      var ids = this.sels.map(item => item.id)
       this.$confirm('确认删除选中记录吗？', '提示', {
         type: 'warning'
       })
@@ -462,6 +542,131 @@ export default {
         this.page.size = val
         this.getUsers()
     },
+    handleBatchRegister: function() {
+      var log = ''
+      var users = this.batchUsers.split('\n')
+      this.batchUsersProgress = 0
+      var total = users.length
+      var now = 0
+      var sc = 0
+      this.batchUsersShowResult = true
+      this.batchUsersLoading = true
+      if(total == 0){
+        this.$message({
+          type: 'warning',
+          message: '请输入用户基本信息'
+        })
+        return;
+      }
+
+      for(let ind in users) {
+        if(users[ind].length == 0 || users[ind].indexOf(',') == -1){
+          total--;
+          if(now == total){
+            this.batchUsersLog += '共' + total + '人,成功注册' + sc + '人\n'
+            this.batchUsersLoading = false
+            this.getUsers()
+          }
+          continue;
+        }
+        let p_user = users[ind].split(',')
+        let _user = []
+        _user.push(p_user[0].trim())
+        _user.push(p_user[1].trim())
+        if(_user.length!=2){
+          log += 'user' + _user[0] + ' 格式错误,跳过注册\n'
+          this.batchUsersLog = log;
+          now = now + 1
+          this.batchUsersProgress = Math.floor(now / total) * 100
+          if(now == total){
+            this.batchUsersLog += '共' + total + '人,成功注册' + sc + '人\n'
+            this.batchUsersLoading = false
+            this.getUsers() 
+          }
+          continue
+        }
+        else if(_user[0].length<6){
+          log += 'user' + _user[0] + ' username小于6位,跳过注册\n'
+          this.batchUsersLog = log;
+          now = now + 1
+          this.batchUsersProgress = Math.floor(now / total) * 100
+          if(now == total){
+            this.batchUsersLog += '共' + total + '人,成功注册' + sc + '人\n'
+            this.batchUsersLoading = false
+            this.getUsers() 
+          }
+          continue
+        }
+        addUser({
+          username: _user[0],
+          name: _user[1],
+          email: 'example@example.com',
+          password: '123456',
+          level:1000
+        }).then( res =>{
+          log += 'user' + _user[0] + ' 注册成功\n'
+          now = now + 1
+          sc = sc + 1
+          this.batchUsersProgress = Math.floor(now / total) * 100
+          this.batchUsersLog = log
+          if(now == total){
+            this.batchUsersLog += '共' + total + '人,成功注册' + sc + '人\n'
+            this.batchUsersLoading = false
+            this.getUsers()
+          }
+        }).catch( err =>{
+          log += 'user' + _user[0] + ' ' + err.message + '\n'
+          now = now + 1
+          this.batchUsersProgress = Math.floor(now / total) * 100
+          this.batchUsersLog = log
+          if(now == total){
+            this.batchUsersLog += '共' + total + '人,成功注册' + sc + '人\n'
+            this.batchUsersLoading = false
+            this.getUsers() 
+          }
+        })
+      }
+    },
+    handleAutoGenerate:function() {
+      this.batchUsers = ''
+      var haveFront = false
+      var haveBack = false
+      var haveLength = false
+      for(let ind in this.checkList){
+        if(this.checkList[ind] == '前缀'){
+          haveFront = true
+        }
+        if(this.checkList[ind] == '后缀'){
+          haveBack = true
+        }
+        if(this.checkList[ind] == '数值区补齐长度'){
+          haveLength = true
+          let realLength = this.inputTo.toString().length
+          if(realLength > parseInt(this.inputLength)){
+            this.$message({
+              type: 'error',
+              message: '补齐长度小于实际长度,请重新输入'
+            })
+            return;
+          }
+        }
+      }
+      for(let ind = this.inputFrom; ind <= this.inputTo; ind++){
+        var _tp = ind.toString()
+        if(haveLength){
+          while(_tp.length < this.inputLength){
+            _tp = '0' + _tp
+          }
+        }
+        if(haveFront){
+          _tp = this.inputFront + _tp
+        }
+        if(haveBack){
+          _tp = _tp + this.inputBack
+        }
+        this.batchUsers += _tp + ',' + _tp + (ind == this.inputTo ? '' : '\n')
+      }
+    }
   }
 }
 </script>

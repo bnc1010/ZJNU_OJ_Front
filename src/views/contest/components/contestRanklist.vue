@@ -5,9 +5,9 @@
                 <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
                 <el-col :span="12">
                     <div class="grid-content bg-purple">
-                        <el-input placeholder="搜索排名或用户名" v-model="page.query" class="input-with-select">
-                            <el-button slot="append" icon="el-icon-search"></el-button>
-                        </el-input>
+                        <!-- <el-input placeholder="搜索用户名" v-model="page.query" class="input-with-select">
+                            <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
+                        </el-input> -->
                         <el-button @click="flushRanklist">刷新</el-button>
                     </div>
                 </el-col>
@@ -129,12 +129,15 @@ export default {
     },
     methods:{
         handleCurrentChange: function(val){
-            // this.page.index=val
-            console.log(val)
+            this.page.index=val
+            this.flushRanklist()
         },
         handleSizeChange: function(val){
-            // this.page.size=val
-            console.log(val)
+            this.page.size=val
+            this.flushRanklist()
+        },
+        handleSearch: function(){
+            this.flushRanklist()
         },
         getTypeOfColumn: function(prop){
             if(!prop){

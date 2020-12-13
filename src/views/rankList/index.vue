@@ -11,7 +11,7 @@
           <el-table-column prop="rank" label="排名" width="160" align="center" />
           <el-table-column label="用户名" width="200" align="center">
             <template slot-scope="scope">
-              <router-link :to="'/userview?username=' + scope.row.username">{{ scope.row.username }}</router-link>
+              <router-link :to="'/userview?username=' + scope.row.username">{{ scope.row.name }}</router-link>
             </template>
           </el-table-column>
           <el-table-column label="提交数" width="160" align="center">

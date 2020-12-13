@@ -89,3 +89,10 @@ export function disagreeApply(applyId) {
   })
 }
 
+export function batchInvite(teamId, username) {
+  return request({
+    url: BASE_PATH + '/api/team/batch/' + teamId,
+    method: 'get',
+    params: { username: username }
+  })
+}
