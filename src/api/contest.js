@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 import { BASE_PATH } from './config'
 import { getToken } from '@/utils/auth'
+import user from '@/store/modules/user';
 
 export function getContests(page, pagesize, search) {
   return request({
@@ -85,3 +86,4 @@ export function cloneContest(id) {
     method: 'get'
   })
 }
+

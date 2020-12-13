@@ -101,7 +101,7 @@ export function removeUser(uIds) {
   return request({
     url: BASE_PATH + '/api/usermanager/user/delete',
     method: 'post',
-    data: { 'uids': uIds }
+    data: { 'userIds': uIds }
   })
 }
 

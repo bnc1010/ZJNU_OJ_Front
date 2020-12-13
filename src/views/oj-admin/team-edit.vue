@@ -66,6 +66,8 @@
                         </el-switch>
                         <br/><br/>
                         <div>邀请码: {{ inviteCode }}</div>
+                        <br/>
+                        <el-button type="primary" size="mini" @click="batchUsersVisiable = true">批量导入</el-button>
                     </div>
                 </el-card>
                 <!-- 显示成员 -->
@@ -130,11 +132,42 @@
                 </el-card>
             </el-col>
         </el-row>
+        <el-dialog 
+            title="批量导入"
+            :visible.sync="batchUsersVisiable"
+            >
+            <el-dialog
+                width="80%"
+                title="导入结果"
+                :visible.sync="batchUsersShowResult"
+                append-to-body>
+                <el-progress :percentage="batchUsersProgress"></el-progress>
+                <el-input
+                type="textarea"
+                :rows="20"
+                v-model="batchUsersLog"
+                :readonly="true">
+                </el-input>
+            </el-dialog>
+            <div style="text-align: center">
+                <el-input
+                type="textarea"
+                :rows="20"
+                placeholder="格式:username 参考示例: testuser   多个用户请换行,一行一个"
+                v-model="batchUsers">
+                </el-input>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="batchUsersVisiable = false">取 消</el-button>
+                <el-button type="primary" @click="handleBatchImport" :loading="batchUsersLoading">提 交</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
 import { param2Obj, calTime } from '@/utils'
-import { getTeamById, updateTeamAttend, getInviteCode, moveoutTeammate, showapply, agreeApply, disagreeApply } from '@/api/team'
+import { getTeamById, updateTeamAttend, getInviteCode, moveoutTeammate, showapply, agreeApply, disagreeApply, batchInvite } from '@/api/team'
+import user from '../../store/modules/user'
 export default {
     name: 'TeamEdit',
     data(){
@@ -145,7 +178,13 @@ export default {
             inviteCode: '',
             activeapply: [],
             disactiveapply: [],
-            onlyShowActive: true
+            onlyShowActive: true,
+            batchUsersVisiable: false,
+            batchUsersShowResult: false,
+            batchUsersLoading: false,
+            batchUsersProgress: 0,
+            batchUsersLog: '',
+            batchUsers: ''
         }
     },
     computed:{
@@ -167,28 +206,32 @@ export default {
             })
             return
         }
-        getTeamById(obj.teamId).then( res => {
-            this.teamId = obj.teamId
-            this.team = res.data
-            this.ispublic = this.team.attend == 'public'
-            getInviteCode(this.teamId).then( res => {
-                this.inviteCode = res.data
-            }).catch( err => {
+        this.teamId = obj.teamId
+        this.flushTeam()
+    },
+    methods: {
+        flushTeam: function(){
+            getTeamById(this.teamId).then( res => {
+                
+                this.team = res.data
+                this.ispublic = this.team.attend == 'public'
+                getInviteCode(this.teamId).then( res => {
+                    this.inviteCode = res.data
+                }).catch( err => {
+                    this.$message({
+                        type:'error',
+                        message: err.message
+                    })
+                })
+                this.flushApply()
+            }).catch(err => {
                 this.$message({
                     type:'error',
                     message: err.message
                 })
+                return
             })
-            this.flushApply()
-        }).catch(err => {
-            this.$message({
-                type:'error',
-                message: err.message
-            })
-            return
-        })
-    },
-    methods: {
+        },
         handleMoveOut: function(teammateId){
             moveoutTeammate(teammateId).then( res => {
                 this.$message({
@@ -287,6 +330,65 @@ export default {
         },
         handleUpdate: function(id){
             this.$router.push('./teamcontest/edit?teamId=' + this.teamId + '&contestId=' + id)
+        },
+        handleBatchImport: function() {
+            this.batchUsersShowResult = true
+            let users = this.batchUsers.split('\n');
+            console.log(users)
+            let total = users.length
+            let now = 0
+            this.batchUsersProgress = 0
+            let sc = 0
+            if(total == 0){
+                this.$message({
+                type: 'warning',
+                message: '请输入用户名'
+                })
+                return;
+            }
+            for(let ind in users){
+                if(users[ind] == null || users[ind].length == 0 || users[ind].trim().length == 0){
+                    total--
+                    if(now == total){
+                        this.batchUsersLog += '共' + total + '人,成功导入' + sc + '人\n'
+                        this.batchUsersLoading = false
+                        this.flushTeam()
+                    }
+                    continue;
+                }
+                let _user = users[ind].trim()
+                if(_user.length<6){
+                    this.batchUsersLog += 'user:' + _user + ' username小于6位,存在错误,跳过导入\n'
+                    now = now + 1
+                    this.batchUsersProgress = Math.floor(now / total) * 100
+                    if(now == total){
+                        this.batchUsersLog += '共' + total + '人,成功导入' + sc + '人\n'
+                        this.batchUsersLoading = false
+                        this.flushTeam()
+                    }
+                    continue
+                }
+                batchInvite(this.teamId, _user).then( res =>{
+                    this.batchUsersLog += 'user:' + _user + '导入成功\n'
+                    now = now + 1
+                    sc = sc + 1
+                    this.batchUsersProgress = Math.floor(now / total) * 100
+                    if(now == total){
+                        this.batchUsersLog += '共' + total + '人,成功导入' + sc + '人\n'
+                        this.batchUsersLoading = false
+                        this.flushTeam()
+                    }
+                }).catch( err =>{
+                    this.batchUsersLog += 'user:' + _user + '导入失败\n'
+                    now = now + 1
+                    this.batchUsersProgress = Math.floor(now / total) * 100
+                    if(now == total){
+                        this.batchUsersLog += '共' + total + '人,成功导入' + sc + '人\n'
+                        this.batchUsersLoading = false
+                        this.flushTeam()
+                    }
+                })
+            }
         }
 
     },

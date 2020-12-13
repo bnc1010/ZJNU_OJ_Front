@@ -182,7 +182,7 @@
         <el-input
           type="textarea"
           :rows="20"
-          placeholder="格式:username:name,参考示例:testuser,testuser   多个用户请换行,一行一个"
+          placeholder="格式:username,name,参考示例:testuser,testuser   多个用户请换行,一行一个"
           v-model="batchUsers">
         </el-input>
       </div>
@@ -301,7 +301,7 @@ export default {
           this.listLoading = true
           // NProgress.start();
           // console.log(row)
-          removeUser([row.uId])
+          removeUser([row.id])
             .then(res => {
               this.listLoading = false
               // NProgress.done();
@@ -508,7 +508,7 @@ export default {
     },
     // 批量删除
     batchRemove: function() {
-      var ids = this.sels.map(item => item.uId)
+      var ids = this.sels.map(item => item.id)
       this.$confirm('确认删除选中记录吗？', '提示', {
         type: 'warning'
       })
@@ -575,9 +575,27 @@ export default {
         _user.push(p_user[1].trim())
         if(_user.length!=2){
           log += 'user' + _user[0] + ' 格式错误,跳过注册\n'
+          this.batchUsersLog = log;
+          now = now + 1
+          this.batchUsersProgress = Math.floor(now / total) * 100
+          if(now == total){
+            this.batchUsersLog += '共' + total + '人,成功注册' + sc + '人\n'
+            this.batchUsersLoading = false
+            this.getUsers() 
+          }
+          continue
         }
         else if(_user[0].length<6){
-          log += 'user' + _user[0] + ' username小于6位,跳过注\n'
+          log += 'user' + _user[0] + ' username小于6位,跳过注册\n'
+          this.batchUsersLog = log;
+          now = now + 1
+          this.batchUsersProgress = Math.floor(now / total) * 100
+          if(now == total){
+            this.batchUsersLog += '共' + total + '人,成功注册' + sc + '人\n'
+            this.batchUsersLoading = false
+            this.getUsers() 
+          }
+          continue
         }
         addUser({
           username: _user[0],
@@ -623,8 +641,8 @@ export default {
         }
         if(this.checkList[ind] == '数值区补齐长度'){
           haveLength = true
-          let realLength = this.inputTo.toString()
-          if(realLength > this.inputLength){
+          let realLength = this.inputTo.toString().length
+          if(realLength > parseInt(this.inputLength)){
             this.$message({
               type: 'error',
               message: '补齐长度小于实际长度,请重新输入'
