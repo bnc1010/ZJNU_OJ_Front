@@ -236,6 +236,7 @@ import config from '@/utils/config'
 import { mavonEditor } from 'mavon-editor'
 import { uploadImage } from '@/api/image'
 import { BASE_PATH } from '@/api/config'
+import { sn_language } from '@/utils/sessionStorgeName'
 
 export default {
   components: { codemirror, problemBody, mavonEditor },
@@ -332,18 +333,14 @@ export default {
     this.flushLastSubmit()
     this.flushAnalysis()
 
-    let _activeName = sessionStorage.getItem('contest' + this.cid)
-        if(_activeName && _activeName.length > 0){
-            this.activeName = _activeName
-        }
-        let _submitLang = sessionStorage.getItem('submitLang')
-        if(_submitLang && _submitLang.length > 0){
-            this.cmOptions.mode = this.langOptions[_submitLang].value;
-            this.submitOption.selectedLang = _submitLang
-        }
-        else {
-          this.submitOption.selectedLang = '0'
-        }
+    let _submitLang = sessionStorage.getItem(sn_language)
+    if(_submitLang && _submitLang.length > 0){
+        this.cmOptions.mode = this.langOptions[_submitLang].value;
+        this.submitOption.selectedLang = _submitLang
+    }
+    else {
+      this.submitOption.selectedLang = '0'
+    }
   },
   methods: {
     headClass() {
@@ -411,7 +408,7 @@ export default {
     },
     handleLangChanged: function(value) {
       this.cmOptions.mode = this.langOptions[value].value
-      sessionStorage.setItem('submitLang', value)
+      sessionStorage.setItem(sn_language, value)
     },
     handleSubmitCode: function() {
       submitCode(this.submitOption.problemId, this.langOptions[this.submitOption.selectedLang].key, this.submitOption.share, this.submitOption.code).then(res => {

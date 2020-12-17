@@ -99,6 +99,7 @@
 <script>
 import { getProblemList } from '@/api/oj-admin'
 import { getProblems, getTags } from '@/api/problem'
+import { sn_problemPage } from '@/utils/sessionStorgeName'
 export default {
   name: 'ProblemAdmin',
   components: {},
@@ -117,18 +118,19 @@ export default {
     }
   },
   mounted() {
-    this.flushProblemList()
+    this.flushProblemList(true)
   },
   methods: {
     handleCurrentChange: function(val) {
       this.page.index = val
+      sessionStorage.setItem(sn_problemPage, val)
       this.flushProblemList()
     },
     handleSizeChange: function(val) {
       this.page.size = val
       this.flushProblemList()
     },
-    flushProblemList: function() {
+    flushProblemList: function(needLoad) {
       getProblemList(this.page.index, this.page.size, this.page.query).then(res => {
         this.tableData = res.data.content
         for (const idx in res.data.content) {
@@ -137,6 +139,12 @@ export default {
           }
         }
         this.page.total = res.data.totalElements
+        if(needLoad) {
+          let _pageid = sessionStorage.getItem(sn_problemPage)
+            if(_pageid && _pageid.length > 0){
+              this.handleCurrentChange(parseInt(_pageid))
+          }
+        }
       }).catch(err => {
         console.log(err)
         this.$message({

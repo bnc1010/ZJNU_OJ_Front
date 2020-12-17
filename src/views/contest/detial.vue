@@ -104,6 +104,7 @@ import { getDetialContest, contestGate, submitProblem, getRanklist } from '@/api
 import acRate from './components/acRate'
 import contestRanklist from './components/contestRanklist'
 import { mapGetters } from 'vuex'
+import { sn_contest, sn_language } from '@/utils/sessionStorgeName'
 export default {
     name:'ContestDetial',
     components:{ProblemBody,mavonEditor,codemirror,acRate,contestRanklist},
@@ -147,11 +148,11 @@ export default {
         this.handleDetialOfContest()
     },
     mounted(){
-        let _activeName = sessionStorage.getItem('contest' + this.cid)
+        let _activeName = sessionStorage.getItem(sn_contest + this.cid)
         if(_activeName && _activeName.length > 0){
             this.activeName = _activeName
         }
-        let _submitLang = sessionStorage.getItem('submitLang')
+        let _submitLang = sessionStorage.getItem(sn_language)
         if(_submitLang && _submitLang.length > 0){
             this.cmOptions.mode = this.langOptions[_submitLang].value;
             this.submitOption.selectedLang = _submitLang
@@ -163,7 +164,7 @@ export default {
     methods:{
         handleLangChanged: function(value){
             this.cmOptions.mode=this.langOptions[value].value;
-            sessionStorage.setItem('submitLang', value)
+            sessionStorage.setItem(sn_language, value)
         },
         handleSubmitCode: function(){
             submitProblem(this.cid, this.submitOption.problemId, this.langOptions[this.submitOption.selectedLang].key, this.submitOption.code).then(res =>{
@@ -254,7 +255,7 @@ export default {
             })
         },
         updatePage: function(value) {
-            sessionStorage.setItem('contest' + this.cid, value)
+            sessionStorage.setItem(sn_contest + this.cid, value)
         },
         handleClick(tab, event) {
             this.updatePage(tab.name)
