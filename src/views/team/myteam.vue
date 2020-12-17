@@ -9,8 +9,8 @@
                 </div>
                 </el-col>
                 <el-col :span="6">
-                    <div class="grid-content bg-purple" style="margin-top:20px">
-                        <el-button plain size="mini" @click="joinDialogVisible = true">加入学生组</el-button>
+                    <div class="grid-content bg-purple" style="margin-top:25px">
+                        <el-button type="primary" plain size="mini" @click="joinDialogVisible = true">加入学生组</el-button>
                     </div>
                 </el-col>
             </el-row>

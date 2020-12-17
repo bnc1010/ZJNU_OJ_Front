@@ -6,8 +6,12 @@
         <el-row :gutter="20" class="bodybox">
             <el-col :span="18" :xs="24">
                 <el-card>
-                    <h2>训练:</h2>
-                    <router-link :to="'teamcontest/edit?teamId=' + teamId">添加训练</router-link>
+                    <h2>训练列表:</h2>
+                    <div class="addBtnBox">
+                        <div class="addBtn">
+                            <el-button @click="$router.push('teamcontest/edit?teamId=' + teamId)" type="primary">添加训练</el-button>
+                        </div>
+                    </div>
             <el-divider></el-divider>
             <center>
                 <el-table :data="team.contests" style="width: 100%">
@@ -44,7 +48,7 @@
                 </el-table-column>
                <el-table-column align="right">
                     <template slot-scope="scope">
-                    <el-button type="warning" plain size="small" @click="handleUpdate(scope.row.id)">update</el-button>
+                    <el-button type="primary" plain size="small" @click="handleUpdate(scope.row.id)">编辑</el-button>
                     </template>
               </el-table-column>
                 </el-table>
@@ -420,6 +424,13 @@ export default {
 
 .teamedit .teammatetag span{
     margin-left: 5px;
+}
+.addBtnBox{
+    width: 100%;
+    height: 30px;
+}
+.addBtn{
+    float: right;
 }
 </style>
 

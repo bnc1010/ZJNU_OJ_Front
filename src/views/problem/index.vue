@@ -116,7 +116,7 @@
           <div slot="header" class="clearfix">
             <span>
               <el-tooltip class="item" effect="dark" content="点击查看更多题单" placement="right">
-                <router-link :to="'./problemSet'" >题单</router-link>
+                <router-link :to="'./problemSet'" >题目集</router-link>
               </el-tooltip>
             </span>
           </div>
@@ -181,11 +181,13 @@ export default {
     },
     handleTagClose: function(tag) {
       this.searchTag.splice(this.searchTag.indexOf(tag), 1)
+      this.handleSearch()
     },
     handleAddSearchTag: function(tag) {
       if (this.searchTag.indexOf(tag) === -1) {
         this.searchTag.push(tag)
       }
+      this.handleSearch()
     },
     flushProblemList: function() {
       getProblems(this.page.index, this.page.size, this.page.query).then(res => {
