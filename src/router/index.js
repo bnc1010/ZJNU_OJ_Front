@@ -151,6 +151,30 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/status',
+    component: Layout,
+    children: [
+      {
+        path: '/status',
+        component: () => import('@/views/status'),
+        name: 'status',
+        meta: { title: '提交列表', icon: 'status' }
+      }
+    ]
+  },
+  {
+    path: '/rankList',
+    component: Layout,
+    children: [
+      {
+        path: '/rankList',
+        component: () => import('@/views/rankList'),
+        name: 'rankList',
+        meta: { title: '排名', icon: 'ranklist' }
+      }
+    ]
+  },
+  {
     path: '/contest',
     redirect: '/contest/index',
     meta: { title: '比赛', icon: 'contest2' },
@@ -191,30 +215,6 @@ export const constantRoutes = [
         component: () => import('@/views/team/teamdetial'),
         name: 'teamdetial',
         meta: { title: '学生组详情', activeMenu: '/team', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/status',
-    component: Layout,
-    children: [
-      {
-        path: '/status',
-        component: () => import('@/views/status'),
-        name: 'status',
-        meta: { title: '评测器', icon: 'status' }
-      }
-    ]
-  },
-  {
-    path: '/rankList',
-    component: Layout,
-    children: [
-      {
-        path: '/rankList',
-        component: () => import('@/views/rankList'),
-        name: 'rankList',
-        meta: { title: '排名', icon: 'ranklist' }
       }
     ]
   }

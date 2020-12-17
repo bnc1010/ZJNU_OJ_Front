@@ -48,7 +48,7 @@
                 </el-table-column>
                 <el-table-column width="150">
                     <template slot-scope="scope">
-                        <el-button type="warning" plain size="small" @click="handleUpdate(scope.row.id)">管理</el-button>
+                        <el-button type="primary" plain size="small" @click="handleUpdate(scope.row.id)">管理</el-button>
                     </template>
                 </el-table-column>
                 </el-table>
@@ -199,7 +199,6 @@ export default {
 .teamBox .titleFont{
     font-size: 16px;
     font-weight: bold;
-    cursor: pointer;
 }
 .el-col{
     border: 1px solid transparent;

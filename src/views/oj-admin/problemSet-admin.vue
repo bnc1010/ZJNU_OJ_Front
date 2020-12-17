@@ -7,13 +7,13 @@
                 <el-col :span="6"><div class="grid-content bg-purple" /></el-col>
                 <el-col :span="12">
                 <div class="grid-content bg-purple">
-                    <el-input v-model="page.query" placeholder="搜索题单" class="input-with-select">
+                    <el-input v-model="page.query" placeholder="搜索题目集" class="input-with-select">
                     <el-button slot="append" icon="el-icon-search" @click="handleSearch" />
                     </el-input>
                 </div>
                 </el-col>
                 <el-col :span="6"><div class="grid-content bg-purple">
-                <el-button type="primary" plain @click="addDialogVisible = true">新建题单</el-button>
+                <el-button type="primary" plain @click="addDialogVisible = true">新建题目集</el-button>
                 </div></el-col>
             </el-row>
             </el-card>
@@ -43,7 +43,7 @@
                     label="ID"
                     width="80"
                 />
-                <el-table-column label="题单名称" width="320">
+                <el-table-column label="题目集名称" width="320">
                     <template slot-scope="scope">
                     <!-- <router-link :to="'/problem/detial/' + scope.row.id"> -->
                         {{ scope.row.title }}
@@ -92,13 +92,13 @@
         </el-col>
         </el-row>
         <el-dialog
-        title="新建题单"
+        title="新建题目集"
         :visible.sync="addDialogVisible"
         width="50%"
         :before-close="handleClose">
         <span>
             <el-form label-position="left" label-width="120px" :model="addProblemSet">
-                    <el-form-item label="题单名">
+                    <el-form-item label="题目集名">
                         <el-input v-model="addProblemSet.title" style="width:300px"></el-input>
                     </el-form-item>
                     <el-form-item label="是否公开">
@@ -108,7 +108,7 @@
                             inactive-color="#ff4949">
                         </el-switch>
                     </el-form-item>
-                    <el-form-item label='题单描述' >
+                    <el-form-item label='题目集描述' >
                         <mavonEditor
                         v-model="addProblemSet.description"
                         :ishljs="true"
@@ -164,7 +164,7 @@
         :before-close="handleClose">
         <span>
             <el-form label-position="left" label-width="120px" :model="editProblemSet">
-                    <el-form-item label="题单名">
+                    <el-form-item label="题目集名称">
                         <el-input v-model="editProblemSet.title" style="width:300px"></el-input>
                     </el-form-item>
                     <el-form-item label="是否公开">
@@ -174,7 +174,7 @@
                             inactive-color="#ff4949">
                         </el-switch>
                     </el-form-item>
-                    <el-form-item label='题单描述' >
+                    <el-form-item label='题目集描述' >
                         <mavonEditor
                         v-model="editProblemSet.description"
                         :ishljs="true"
