@@ -137,6 +137,7 @@
 <script>
 import { getProblems, getTags } from '@/api/problem'
 import { getProblemSetList } from '@/api/problemSet'
+import { sn_problemPage } from '@/utils/sessionStorgeName'
 export default {
   name: 'Problem',
   components: {},
@@ -158,11 +159,12 @@ export default {
   mounted() {
     this.handleTags()
     this.handleProblemSet()
-    this.flushProblemList()
+    this.flushProblemList(true)
   },
   methods: {
     handleCurrentChange: function(val) {
       this.page.index = val
+      sessionStorage.setItem(sn_problemPage, val)
       this.flushProblemList()
     },
     handleSizeChange: function(val) {
@@ -189,13 +191,19 @@ export default {
       }
       this.handleSearch()
     },
-    flushProblemList: function() {
+    flushProblemList: function(needLoad) {
       getProblems(this.page.index, this.page.size, this.page.query).then(res => {
         this.tableData = res.data.content
         this.page.total = res.data.totalElements
         for (const idx in this.tableData) {
           for (const jdx in this.tableData[idx].tags) {
             this.tableData[idx].tags[jdx] = this.tableData[idx].tags[jdx].name
+          }
+        }
+        if(needLoad) {
+          let _pageid = sessionStorage.getItem(sn_problemPage)
+            if(_pageid && _pageid.length > 0){
+              this.handleCurrentChange(parseInt(_pageid))
           }
         }
       }).catch(err => {
